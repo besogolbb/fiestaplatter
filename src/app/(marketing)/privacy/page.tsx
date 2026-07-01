@@ -24,7 +24,7 @@ export default function PrivacyPage() {
         description={`Last updated: ${updated}`}
         crumbs={[{ name: "Privacy Policy", path: "/privacy" }]}
       />
-      <Section className="bg-cream">
+      <Section className="bg-background">
         <LegalContent>
           <p>
             {siteConfig.legalName} (&quot;we&quot;, &quot;us&quot;) respects your privacy.

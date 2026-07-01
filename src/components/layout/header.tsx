@@ -40,7 +40,7 @@ export function Header() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-black/5 bg-cream/90 backdrop-blur-md shadow-sm"
+          ? "border-b border-white/5 bg-background/90 backdrop-blur-md shadow-sm"
           : "bg-transparent",
       )}
     >
@@ -58,7 +58,7 @@ export function Header() {
                 aria-current={active ? "page" : undefined}
                 className={cn(
                   "rounded-full px-3.5 py-2 text-sm font-semibold transition-colors",
-                  active ? "text-brand" : "text-ink/70 hover:text-brand",
+                  active ? "text-brand" : "text-foreground/70 hover:text-brand",
                 )}
               >
                 {item.label}
@@ -88,7 +88,7 @@ export function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-black/10 text-ink"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-foreground"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -97,7 +97,7 @@ export function Header() {
 
       {/* Mobile drawer */}
       {open ? (
-        <div className="fixed inset-x-0 top-16 z-40 h-[calc(100dvh-4rem)] overflow-y-auto border-t border-black/5 bg-cream lg:hidden">
+        <div className="fixed inset-x-0 top-16 z-40 h-[calc(100dvh-4rem)] overflow-y-auto border-t border-white/5 bg-background lg:hidden">
           <nav aria-label="Mobile navigation" className="container flex flex-col py-4">
             {mainNav.map((item) => {
               const active =
@@ -108,8 +108,8 @@ export function Header() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "border-b border-black/5 py-4 text-lg font-semibold",
-                    active ? "text-brand" : "text-ink",
+                    "border-b border-white/5 py-4 text-lg font-semibold",
+                    active ? "text-brand" : "text-foreground",
                   )}
                 >
                   {item.label}

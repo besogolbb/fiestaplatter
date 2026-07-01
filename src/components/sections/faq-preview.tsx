@@ -15,7 +15,7 @@ export function FaqPreview({ limit = 6 }: { limit?: number }) {
   const list = faqs.slice(0, limit);
 
   return (
-    <Section id="faq" className="bg-cream">
+    <Section id="faq" className="bg-background">
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.4fr]">
         <div>
           <SectionHeading

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export function FinalCta() {
   return (
-    <section className="bg-cream py-14 sm:py-20">
+    <section className="bg-background py-14 sm:py-20">
       <div className="container">
         <div className="relative overflow-hidden rounded-3xl bg-brand px-6 py-14 text-center shadow-xl sm:px-12">
           {/* Decorative glow */}
@@ -14,7 +14,7 @@ export function FinalCta() {
             aria-hidden
           />
           <div
-            className="pointer-events-none absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-white/10 blur-3xl"
+            className="pointer-events-none absolute -bottom-20 -left-16 h-64 w-64 rounded-full bg-card/10 blur-3xl"
             aria-hidden
           />
 

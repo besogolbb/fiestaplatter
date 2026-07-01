@@ -121,7 +121,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
 
       {/* Contact */}
       <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-ink">
+        <legend className="mb-2 font-display text-lg font-bold text-foreground">
           1. Your Contact Details
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -142,7 +142,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
 
       {/* Delivery */}
       <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-ink">
+        <legend className="mb-2 font-display text-lg font-bold text-foreground">
           2. Delivery Schedule
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -177,7 +177,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
 
       {/* Event */}
       <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-ink">
+        <legend className="mb-2 font-display text-lg font-bold text-foreground">
           3. About Your Event
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
@@ -209,7 +209,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
 
       {/* Order */}
       <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-ink">
+        <legend className="mb-2 font-display text-lg font-bold text-foreground">
           4. Your Order
         </legend>
         <Field label="Choose a Package" htmlFor="packageSlug" required error={errors.packageSlug?.message}>
@@ -235,8 +235,8 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
         </Field>
 
         <div>
-          <p className="text-sm font-semibold text-ink">
-            Add Extra Trays <span className="font-normal text-ink/40">(optional)</span>
+          <p className="text-sm font-semibold text-foreground">
+            Add Extra Trays <span className="font-normal text-foreground/40">(optional)</span>
           </p>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
             {additionalItemOptions.map((opt) => {
@@ -245,7 +245,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                 <label
                   key={opt.value}
                   className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
-                    checked ? "border-brand bg-brand/5 text-ink" : "border-input bg-white text-ink/80 hover:border-brand/40"
+                    checked ? "border-brand bg-brand/5 text-foreground" : "border-input bg-card text-foreground/80 hover:border-brand/40"
                   }`}
                 >
                   <input
@@ -297,7 +297,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
             "Submit Order"
           )}
         </Button>
-        <p className="flex items-center justify-center gap-1.5 text-center text-xs text-ink/50">
+        <p className="flex items-center justify-center gap-1.5 text-center text-xs text-foreground/50">
           <ShieldCheck className="h-4 w-4 text-green-600" />
           No payment yet. We&apos;ll confirm your order and total before anything is charged.
         </p>

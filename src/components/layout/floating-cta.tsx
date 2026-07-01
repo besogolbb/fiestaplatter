@@ -42,7 +42,7 @@ export function FloatingCta() {
 
       {/* Sticky mobile order bar */}
       {!onOrderPage ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-cream/95 p-3 backdrop-blur-md sm:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-background/95 p-3 backdrop-blur-md sm:hidden">
           <Button asChild size="lg" className="w-full shadow-md">
             <Link href="/order">Order Now — Reserve Your Date</Link>
           </Button>

@@ -35,13 +35,13 @@ export default function AboutPage() {
         crumbs={[{ name: "About", path: "/about" }]}
       />
 
-      <Section className="bg-cream">
+      <Section className="bg-background">
         <div className="grid items-center gap-10 lg:grid-cols-2">
           <div className="relative mx-auto aspect-square w-full max-w-md">
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-accent/20 to-brand/10 blur-2xl" />
             <Image
-              src="/images/menu/palabok.webp"
-              alt="Fiesta Platter signature pancit palabok party tray"
+              src="/images/menu/chicken-embutido.webp"
+              alt="Fiesta Platter signature chicken embutido party tray"
               fill
               sizes="(max-width: 1024px) 90vw, 45vw"
               className="object-contain drop-shadow-2xl"
@@ -53,7 +53,7 @@ export default function AboutPage() {
               eyebrow="Who We Are"
               title="A Family Kitchen You Can Count On"
             />
-            <div className="mt-5 space-y-4 text-pretty leading-relaxed text-ink/75">
+            <div className="mt-5 space-y-4 text-pretty leading-relaxed text-foreground/75">
               <p>
                 Fiesta Platter started with a simple belief: every celebration deserves
                 food that tastes like it was made at home — because it is. What began as
@@ -65,7 +65,7 @@ export default function AboutPage() {
                 house blessings and holidays. Through it all, our promise hasn&apos;t changed:
                 fresh ingredients, generous servings, honest prices, and on-time delivery.
               </p>
-              <p className="font-semibold text-ink">
+              <p className="font-semibold text-foreground">
                 When you order from Fiesta Platter, you&apos;re not just getting food —
                 you&apos;re getting a partner who wants your celebration to be perfect.
               </p>
@@ -83,13 +83,13 @@ export default function AboutPage() {
           {values.map((v) => (
             <li
               key={v.title}
-              className="flex h-full flex-col rounded-2xl border border-black/5 bg-white p-6 shadow-sm"
+              className="flex h-full flex-col rounded-2xl border border-white/5 bg-card p-6 shadow-sm"
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand">
                 <v.icon className="h-6 w-6" aria-hidden />
               </span>
-              <h3 className="mt-4 font-display text-lg font-bold text-ink">{v.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-ink/70">{v.text}</p>
+              <h3 className="mt-4 font-display text-lg font-bold text-foreground">{v.title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-foreground/70">{v.text}</p>
             </li>
           ))}
         </ul>

@@ -19,7 +19,7 @@ export function GalleryGrid({
       {images.map((img, i) => (
         <li
           key={img.src}
-          className="group relative aspect-square overflow-hidden rounded-2xl border border-black/5 bg-gradient-to-br from-cream to-accent/10 shadow-sm"
+          className="group relative aspect-square overflow-hidden rounded-2xl border border-white/5 bg-gradient-to-br from-white/5 to-accent/10 shadow-sm"
         >
           <Image
             src={img.src}
@@ -29,7 +29,7 @@ export function GalleryGrid({
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-contain p-3 transition-transform duration-500 group-hover:scale-105 drop-shadow-md"
           />
-          <span className="absolute bottom-2 left-2 rounded-full bg-white/85 px-2.5 py-0.5 text-[11px] font-semibold text-ink/70 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
+          <span className="absolute bottom-2 left-2 rounded-full bg-card/85 px-2.5 py-0.5 text-[11px] font-semibold text-foreground/70 opacity-0 backdrop-blur transition-opacity group-hover:opacity-100">
             {img.category}
           </span>
         </li>

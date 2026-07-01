@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Check } from "lucide-react";
+import { Check, Users } from "lucide-react";
 import type { PackageItem } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,63 +12,63 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
   return (
     <article
       className={cn(
-        "relative flex h-full flex-col overflow-hidden rounded-3xl border bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl",
-        pkg.featured ? "border-brand ring-2 ring-brand/20" : "border-black/5",
+        "relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40",
+        pkg.featured ? "border-brand ring-2 ring-brand/30" : "border-white/8 hover:border-brand/40",
       )}
     >
       {pkg.featured ? (
         <div className="bg-brand py-1.5 text-center text-xs font-bold uppercase tracking-wider text-white">
-          ⭐ Most Popular Choice
+          ⭐ Chef&apos;s Recommendation
         </div>
       ) : null}
 
-      <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-cream to-accent/10">
+      <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={pkg.image}
           alt={pkg.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-contain p-4 drop-shadow-md"
+          className="object-cover"
         />
         {pkg.badge ? (
-          <Badge variant="accent" className="absolute left-3 top-3 shadow-sm">
+          <Badge variant="accent" className="absolute left-3 top-3 shadow-md">
             {pkg.badge}
           </Badge>
         ) : null}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
       </div>
 
       <div className="flex flex-1 flex-col p-6">
-        <h3 className="font-display text-xl font-extrabold text-ink">{pkg.name}</h3>
-        <p className="text-sm font-medium text-accent-600">{pkg.audience}</p>
-        <p className="mt-2 text-sm leading-relaxed text-ink/70">{pkg.description}</p>
+        <h3 className="font-display text-xl font-extrabold text-foreground">{pkg.name}</h3>
+        <p className="text-sm font-semibold text-brand">{pkg.audience}</p>
+        <p className="mt-2 text-sm leading-relaxed text-foreground/60">{pkg.description}</p>
 
         <ul className="mt-4 space-y-2" aria-label={`Included in ${pkg.name}`}>
           {pkg.includes.map((inc) => (
-            <li key={inc} className="flex items-start gap-2 text-sm text-ink/80">
+            <li key={inc} className="flex items-start gap-2 text-sm text-foreground/80">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-brand" aria-hidden />
               <span>{inc}</span>
             </li>
           ))}
         </ul>
 
-        <div className="mt-5 border-t border-dashed border-black/10 pt-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-ink/50">
-            {pkg.serving}
-          </p>
-          <div className="mt-1 flex items-end gap-2">
+        <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-foreground/50">
+          <Users className="h-4 w-4 text-brand" aria-hidden /> {pkg.serving}
+        </div>
+
+        <div className="mt-3 border-t border-dashed border-white/10 pt-4">
+          <div className="flex items-end gap-2">
             <span className="font-display text-3xl font-extrabold text-brand">
               {formatPrice(pkg.price)}
             </span>
             {pkg.compareAtPrice ? (
-              <span className="mb-1 text-sm text-ink/40 line-through">
+              <span className="mb-1 text-sm text-foreground/40 line-through">
                 {formatPrice(pkg.compareAtPrice)}
               </span>
             ) : null}
           </div>
           {saving > 0 ? (
-            <p className="mt-1 text-xs font-bold text-green-600">
-              You save {formatPrice(saving)}
-            </p>
+            <p className="mt-1 text-xs font-bold text-green-500">You save {formatPrice(saving)}</p>
           ) : null}
         </div>
 

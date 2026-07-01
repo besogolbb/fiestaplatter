@@ -39,10 +39,10 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
     <div className="py-10 sm:py-14">
       <div className="container">
         <div className="mx-auto mb-8 max-w-2xl text-center">
-          <h1 className="text-balance font-display text-3xl font-extrabold tracking-tight text-ink sm:text-4xl">
+          <h1 className="text-balance font-display text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
             Reserve Your Party Trays
           </h1>
-          <p className="mt-3 text-pretty text-ink/70">
+          <p className="mt-3 text-pretty text-foreground/70">
             Fill in a few details and we&apos;ll confirm your order and delivery schedule.
             {item ? (
               <>
@@ -60,7 +60,7 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
             ) : null}
           </p>
 
-          <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-medium text-ink/60">
+          <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-medium text-foreground/60">
             {assurances.map((a) => (
               <li key={a.text} className="inline-flex items-center gap-1.5">
                 <a.icon className="h-4 w-4 text-brand" aria-hidden /> {a.text}

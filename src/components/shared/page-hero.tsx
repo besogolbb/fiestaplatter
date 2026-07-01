@@ -19,7 +19,7 @@ export function PageHero({ eyebrow, title, description, crumbs }: PageHeroProps)
     <section className="bg-warm">
       <div className="container py-12 sm:py-16">
         <nav aria-label="Breadcrumb">
-          <ol className="flex flex-wrap items-center gap-1 text-sm text-ink/50">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-foreground/50">
             {trail.map((c, i) => (
               <li key={c.path} className="flex items-center gap-1">
                 {i > 0 ? <ChevronRight className="h-4 w-4" aria-hidden /> : null}
@@ -28,7 +28,7 @@ export function PageHero({ eyebrow, title, description, crumbs }: PageHeroProps)
                     {c.name}
                   </Link>
                 ) : (
-                  <span className="font-semibold text-ink/70" aria-current="page">
+                  <span className="font-semibold text-foreground/70" aria-current="page">
                     {c.name}
                   </span>
                 )}
@@ -43,11 +43,11 @@ export function PageHero({ eyebrow, title, description, crumbs }: PageHeroProps)
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="text-balance font-display text-4xl font-extrabold leading-tight tracking-tight text-ink sm:text-5xl">
+          <h1 className="text-balance font-display text-4xl font-extrabold leading-tight tracking-tight text-foreground sm:text-5xl">
             {title}
           </h1>
           {description ? (
-            <p className="mt-4 text-pretty text-lg leading-relaxed text-ink/70">
+            <p className="mt-4 text-pretty text-lg leading-relaxed text-foreground/70">
               {description}
             </p>
           ) : null}

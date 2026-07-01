@@ -9,7 +9,7 @@ import { bestSellers } from "@/data/menu";
 
 export function BestSellers() {
   return (
-    <Section id="best-sellers" className="bg-cream">
+    <Section id="best-sellers" className="bg-background">
       <SectionHeading
         eyebrow="Crowd Favorites"
         title="Our Best-Selling Party Trays"

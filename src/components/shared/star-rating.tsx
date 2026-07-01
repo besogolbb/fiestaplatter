@@ -22,13 +22,13 @@ export function StarRating({ rating, size = 16, className, showValue = false }: 
           key={i}
           style={{ width: size, height: size }}
           className={cn(
-            i < rounded ? "fill-accent text-accent" : "fill-black/10 text-black/10",
+            i < rounded ? "fill-accent text-accent" : "fill-white/10 text-white/10",
           )}
           aria-hidden
         />
       ))}
       {showValue ? (
-        <span className="ml-1.5 text-sm font-bold text-ink">{rating.toFixed(1)}</span>
+        <span className="ml-1.5 text-sm font-bold text-foreground">{rating.toFixed(1)}</span>
       ) : null}
     </span>
   );

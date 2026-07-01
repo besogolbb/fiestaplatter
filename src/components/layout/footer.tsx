@@ -10,7 +10,7 @@ export function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="border-t border-black/5 bg-ink text-white/80">
+    <footer className="border-t border-white/5 bg-[#0d0b0a] text-white/80">
       <div className="container py-14">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr_1fr]">
           {/* Brand column */}
@@ -32,7 +32,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Facebook"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-brand"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-card/10 transition-colors hover:bg-brand"
                 >
                   <Facebook className="h-5 w-5" />
                 </a>
@@ -43,7 +43,7 @@ export function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Instagram"
-                  className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 transition-colors hover:bg-brand"
+                  className="flex h-10 w-10 items-center justify-center rounded-full bg-card/10 transition-colors hover:bg-brand"
                 >
                   <Instagram className="h-5 w-5" />
                 </a>

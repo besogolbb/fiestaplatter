@@ -32,9 +32,9 @@ export default function MenuPage() {
         return (
           <Section
             key={cat.id}
-            className={ci % 2 === 0 ? "bg-cream" : "bg-warm"}
+            className={ci % 2 === 0 ? "bg-background" : "bg-warm"}
           >
-            <h2 className="font-display text-2xl font-extrabold text-ink sm:text-3xl">
+            <h2 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
               {cat.label}
             </h2>
             <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

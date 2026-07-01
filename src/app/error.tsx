@@ -17,14 +17,14 @@ export default function Error({
   }, [error]);
 
   return (
-    <div className="flex min-h-dvh flex-col items-center justify-center bg-cream px-4 text-center">
+    <div className="flex min-h-dvh flex-col items-center justify-center bg-background px-4 text-center">
       <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand/10 text-brand">
         <AlertTriangle className="h-8 w-8" aria-hidden />
       </span>
-      <h1 className="mt-6 font-display text-2xl font-extrabold text-ink">
+      <h1 className="mt-6 font-display text-2xl font-extrabold text-foreground">
         Something went wrong
       </h1>
-      <p className="mt-2 max-w-md text-ink/60">
+      <p className="mt-2 max-w-md text-foreground/60">
         Sorry, an unexpected error occurred. Please try again — or reach us directly and
         we&apos;ll take your order right away.
       </p>

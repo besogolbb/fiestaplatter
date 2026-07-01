@@ -12,19 +12,19 @@ const SITE_URL =
 export const siteConfig = {
   name: "Fiesta Platter",
   legalName: "Fiesta Platter Catering Services",
-  tagline: "Premium Party Trays Made for Every Celebration",
+  tagline: "Made for Every Occasion",
   description:
-    "Premium Filipino party trays and catering. Freshly prepared bilao favorites — spaghetti, palabok, pancit, lumpia, siomai and more — perfect for birthdays, family gatherings, office events and special occasions.",
+    "Premium homemade Filipino party trays prepared fresh for birthdays, family gatherings, office celebrations, reunions and special occasions. Signature Chicken Embutido, jumbo siomai, pork BBQ, pancit, carbonara and more.",
   url: SITE_URL,
 
-  // ── Contact — TODO: replace with real details ──────────────────────────
+  // ── Contact ────────────────────────────────────────────────────────────
   contact: {
-    phoneDisplay: "+63 9XX XXX XXXX", // TODO
-    phoneE164: "+639000000000", // TODO — used for tel: and wa.me links
-    email: "hello@fiestaplatter.ph", // TODO
+    phoneDisplay: "0968 570 7018",
+    phoneE164: "+639685707018",
+    email: "hello@fiestaplatter.com", // TODO: confirm email
     // Messenger username or full m.me link target (page username after m.me/)
-    messengerUsername: "FiestaPlatterPH", // TODO
-    facebookUrl: "https://facebook.com/FiestaPlatterPH", // TODO
+    messengerUsername: "fiestaplatterph",
+    facebookUrl: "https://facebook.com/fiestaplatterph",
     instagramUrl: "", // optional
     tiktokUrl: "", // optional
   },

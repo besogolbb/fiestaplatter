@@ -9,17 +9,17 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-brand text-white shadow-sm hover:bg-brand-600 hover:shadow-md",
+          "bg-brand text-white shadow-sm shadow-brand/20 hover:bg-brand-600 hover:shadow-md hover:shadow-brand/30",
         accent:
           "bg-accent text-ink shadow-sm hover:bg-accent-600 hover:shadow-md",
         outline:
-          "border-2 border-brand/20 bg-transparent text-brand hover:border-brand hover:bg-brand/5",
+          "border-2 border-brand/40 bg-transparent text-brand hover:border-brand hover:bg-brand/10",
         secondary:
-          "bg-brand/10 text-brand hover:bg-brand/15",
-        ghost: "hover:bg-black/5 text-ink",
+          "bg-white/10 text-foreground hover:bg-white/15",
+        ghost: "hover:bg-white/10 text-foreground",
         link: "text-brand underline-offset-4 hover:underline rounded-none",
         white:
-          "bg-white text-brand shadow-sm hover:bg-cream hover:shadow-md",
+          "bg-white text-ink shadow-sm hover:bg-white/90 hover:shadow-md",
       },
       size: {
         default: "h-11 px-6 py-2",

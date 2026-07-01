@@ -11,13 +11,13 @@ export function TrustBar() {
   ];
 
   return (
-    <section aria-label="Business highlights" className="border-y border-black/5 bg-white">
+    <section aria-label="Business highlights" className="border-y border-white/5 bg-card">
       <div className="container grid grid-cols-2 gap-y-6 py-8 sm:grid-cols-4">
         {items.map((item) => (
           <div key={item.label} className="flex flex-col items-center text-center">
             <item.icon className="mb-2 h-6 w-6 text-accent-600" aria-hidden />
-            <p className="font-display text-2xl font-extrabold text-ink">{item.value}</p>
-            <p className="text-xs font-medium uppercase tracking-wide text-ink/50">
+            <p className="font-display text-2xl font-extrabold text-foreground">{item.value}</p>
+            <p className="text-xs font-medium uppercase tracking-wide text-foreground/50">
               {item.label}
             </p>
           </div>

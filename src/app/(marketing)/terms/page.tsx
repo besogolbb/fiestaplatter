@@ -22,7 +22,7 @@ export default function TermsPage() {
         description={`Last updated: ${updated}`}
         crumbs={[{ name: "Terms of Service", path: "/terms" }]}
       />
-      <Section className="bg-cream">
+      <Section className="bg-background">
         <LegalContent>
           <p>
             These Terms of Service govern your use of the {siteConfig.name} website and the

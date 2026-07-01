@@ -9,8 +9,8 @@ export default function NotFound() {
         <UtensilsCrossed className="h-8 w-8" aria-hidden />
       </span>
       <p className="mt-6 font-display text-6xl font-extrabold text-brand">404</p>
-      <h1 className="mt-2 font-display text-2xl font-extrabold text-ink">Page not found</h1>
-      <p className="mt-2 max-w-md text-ink/60">
+      <h1 className="mt-2 font-display text-2xl font-extrabold text-foreground">Page not found</h1>
+      <p className="mt-2 max-w-md text-foreground/60">
         The page you&apos;re looking for has moved or doesn&apos;t exist. Let&apos;s get you
         back to the good stuff.
       </p>

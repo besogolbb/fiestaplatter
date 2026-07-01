@@ -4,29 +4,30 @@
 
 @layer base {
   :root {
-    --background: 44 100% 99%; /* #FFFDF8 cream */
-    --foreground: 0 0% 18%; /* #2E2E2E ink */
+    /* Dark "Tasty" theme — charcoal surfaces + warm orange accent */
+    --background: 30 9% 8%; /* page ~#161310 */
+    --foreground: 40 33% 96%; /* near-white ~#F7F3EC */
 
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 18%;
+    --card: 30 8% 11%; /* card surface ~#1E1B18 */
+    --card-foreground: 40 33% 96%;
 
-    --primary: 0 66% 47%; /* #C62828 */
-    --primary-foreground: 0 0% 100%;
+    --primary: 27 91% 54%; /* orange #F5821F */
+    --primary-foreground: 30 20% 10%;
 
-    --secondary: 0 66% 96%;
-    --secondary-foreground: 0 66% 40%;
+    --secondary: 30 6% 16%;
+    --secondary-foreground: 40 20% 92%;
 
-    --muted: 40 20% 94%;
-    --muted-foreground: 0 0% 40%;
+    --muted: 30 6% 15%;
+    --muted-foreground: 40 6% 62%;
 
-    --destructive: 0 72% 45%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 90%;
-    --input: 0 0% 88%;
-    --ring: 0 66% 47%;
+    --border: 40 8% 20%;
+    --input: 40 8% 24%;
+    --ring: 27 91% 54%;
 
-    --radius: 0.75rem;
+    --radius: 0.9rem;
   }
 
   * {
@@ -36,6 +37,7 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    color-scheme: dark;
   }
 
   body {
@@ -44,7 +46,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Respect reduced-motion preferences globally. */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -59,19 +60,24 @@
   }
 
   ::selection {
-    @apply bg-brand/20 text-brand-700;
+    @apply bg-brand/30 text-white;
   }
 }
 
 @layer components {
-  /* Soft warm section background used across the funnel. */
+  /* Warm dark backdrop used to break up sections */
   .bg-warm {
     background-image: radial-gradient(
-        60% 60% at 50% 0%,
-        rgba(249, 168, 37, 0.08) 0%,
-        transparent 100%
+        70% 60% at 50% 0%,
+        rgba(245, 130, 31, 0.12) 0%,
+        transparent 70%
       ),
-      linear-gradient(180deg, #fffdf8 0%, #fff8ee 100%);
+      linear-gradient(180deg, #17130e 0%, #100d0b 100%);
+  }
+
+  /* Slightly lifted surface for alternating sections */
+  .bg-surface {
+    background-color: #131110;
   }
 
   .text-balance {

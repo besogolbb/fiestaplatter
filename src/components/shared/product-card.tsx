@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Flame, Star } from "lucide-react";
+import { Flame, Star, Users, UtensilsCrossed } from "lucide-react";
 import type { MenuItem } from "@/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -13,60 +13,68 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ item, priority = false }: ProductCardProps) {
+  // pull the "good for X pax" out of the serving string for the meta row
+  const paxMatch = item.serving.match(/good for ([^·]+)/i);
+  const pax = paxMatch ? paxMatch[1].trim() : item.serving;
+
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/5 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-      <div className="relative aspect-[4/3] overflow-hidden bg-gradient-to-br from-cream to-accent/10">
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/8 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/40">
+      <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={item.image}
           alt={item.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-contain p-4 transition-transform duration-500 group-hover:scale-105 drop-shadow-md"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
           priority={priority}
         />
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
           {item.bestSeller ? (
-            <Badge variant="default" className="shadow-sm">
+            <Badge variant="default" className="shadow-md">
               <Flame className="h-3 w-3" /> Best Seller
             </Badge>
           ) : null}
           {item.popular && !item.bestSeller ? (
-            <Badge variant="accent" className="shadow-sm">
+            <Badge variant="accent" className="shadow-md">
               <Star className="h-3 w-3" /> Popular
             </Badge>
           ) : null}
         </div>
+        {/* gradient so the image melts into the card */}
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-start justify-between gap-3">
-          <div>
-            <h3 className="font-display text-lg font-bold leading-tight text-ink">
-              {item.name}
-            </h3>
-            {item.shortName ? (
-              <p className="text-sm text-ink/50">{item.shortName}</p>
-            ) : null}
-          </div>
-          <p className="shrink-0 text-right">
-            <span className="block font-display text-xl font-extrabold text-brand">
-              {formatPrice(item.price)}
-            </span>
-            {item.unitPrice ? (
-              <span className="text-xs text-ink/50">
-                {formatPrice(item.unitPrice.amount)} {item.unitPrice.unit}
-              </span>
-            ) : null}
-          </p>
-        </div>
+        <h3 className="font-display text-lg font-extrabold leading-tight text-foreground">
+          {item.name}
+        </h3>
+        {item.shortName ? (
+          <p className="font-display text-sm font-bold text-brand">{item.shortName}</p>
+        ) : null}
 
-        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-ink/70">
+        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-foreground/60">
           {item.description}
         </p>
 
-        <p className="mt-3 text-xs font-semibold uppercase tracking-wide text-accent-600">
-          {item.serving}
-        </p>
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/8 pt-4 text-xs text-foreground/70">
+          <span className="inline-flex items-center gap-1.5">
+            <Users className="h-4 w-4 text-brand" aria-hidden /> {pax}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <UtensilsCrossed className="h-4 w-4 text-brand" aria-hidden /> Ready to serve
+          </span>
+        </div>
+
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <span className="rounded-full bg-brand px-4 py-1.5 font-display text-lg font-extrabold text-white shadow-sm shadow-brand/30">
+            {formatPrice(item.price)}
+          </span>
+          {item.unitPrice ? (
+            <span className="text-xs text-foreground/50">
+              {formatPrice(item.unitPrice.amount)} {item.unitPrice.unit}
+            </span>
+          ) : null}
+        </div>
 
         <Button asChild className="mt-4 w-full" size="sm">
           <Link href={`/order?item=${item.slug}`}>Quick Order</Link>

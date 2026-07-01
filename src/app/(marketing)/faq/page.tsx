@@ -30,14 +30,14 @@ export default function FaqPage() {
         crumbs={[{ name: "FAQ", path: "/faq" }]}
       />
 
-      <Section className="bg-cream">
+      <Section className="bg-background">
         <div className="mx-auto max-w-3xl space-y-10">
           {faqCategories.map((cat) => {
             const items = faqs.filter((f) => f.category === cat);
             if (items.length === 0) return null;
             return (
               <div key={cat}>
-                <h2 className="mb-4 font-display text-xl font-extrabold text-ink">{cat}</h2>
+                <h2 className="mb-4 font-display text-xl font-extrabold text-foreground">{cat}</h2>
                 <Accordion type="single" collapsible className="flex flex-col gap-3">
                   {items.map((faq, i) => (
                     <AccordionItem key={faq.question} value={`${cat}-${i}`}>

@@ -77,7 +77,7 @@ export const howItWorks: HowItWorksStep[] = [
 /** Curated gallery — one to three shots per dish, cross-category tagged. */
 export const gallery: GalleryImage[] = [
   { src: "/images/gallery/spaghetti-1.webp", alt: "Filipino-style spaghetti party tray", category: "Food" },
-  { src: "/images/gallery/palabok-1.webp", alt: "Pancit palabok with shrimp and egg", category: "Food" },
+  { src: "/images/gallery/chicken-embutido-3.webp", alt: "Signature chicken embutido, sliced", category: "Food" },
   { src: "/images/gallery/carbonara-3.webp", alt: "Creamy carbonara bilao", category: "Food" },
   { src: "/images/gallery/lumpia-2.webp", alt: "Crispy cheesy pork lumpia", category: "Food" },
   { src: "/images/gallery/pork-bbq-1.webp", alt: "Grilled pork BBQ skewers", category: "Food" },
@@ -90,7 +90,7 @@ export const gallery: GalleryImage[] = [
   { src: "/images/gallery/lumpia-4.webp", alt: "Lumpia tray with dipping sauce", category: "Packaging" },
   { src: "/images/gallery/jumbo-siomai-1.webp", alt: "Siomai tray with chili-garlic sauce", category: "Packaging" },
   { src: "/images/gallery/pork-bbq-3.webp", alt: "BBQ skewers arranged on banana leaf", category: "Packaging" },
-  { src: "/images/gallery/palabok-2.webp", alt: "Palabok garnished and ready to serve", category: "Events" },
+  { src: "/images/gallery/spaghetti-2.webp", alt: "Spaghetti bilao served at a celebration", category: "Events" },
   { src: "/images/gallery/carbonara-1.webp", alt: "Carbonara served at an event", category: "Events" },
   { src: "/images/gallery/chicken-embutido-2.webp", alt: "Embutido platter at a celebration", category: "Events" },
   { src: "/images/gallery/puto-pao-3.webp", alt: "Puto pao merienda spread", category: "Events" },

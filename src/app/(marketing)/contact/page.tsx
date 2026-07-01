@@ -47,7 +47,7 @@ export default function ContactPage() {
         crumbs={[{ name: "Contact", path: "/contact" }]}
       />
 
-      <Section className="bg-cream">
+      <Section className="bg-background">
         <div className="grid gap-6 lg:grid-cols-2">
           <ul className="grid gap-4 sm:grid-cols-2">
             {channels.map((c) => (
@@ -58,50 +58,50 @@ export default function ContactPage() {
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
                   className={`flex h-full flex-col rounded-2xl border p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                    c.primary ? "border-brand bg-brand/5" : "border-black/5 bg-white"
+                    c.primary ? "border-brand bg-brand/5" : "border-white/5 bg-card"
                   }`}
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand">
                     <c.icon className="h-5 w-5" aria-hidden />
                   </span>
-                  <span className="mt-4 font-display text-base font-bold text-ink">
+                  <span className="mt-4 font-display text-base font-bold text-foreground">
                     {c.label}
                   </span>
-                  <span className="mt-1 text-sm text-ink/70">{c.value}</span>
+                  <span className="mt-1 text-sm text-foreground/70">{c.value}</span>
                 </a>
               </li>
             ))}
           </ul>
 
-          <div className="rounded-2xl border border-black/5 bg-white p-6 shadow-sm sm:p-8">
-            <h2 className="font-display text-xl font-extrabold text-ink">Business Details</h2>
+          <div className="rounded-2xl border border-white/5 bg-card p-6 shadow-sm sm:p-8">
+            <h2 className="font-display text-xl font-extrabold text-foreground">Business Details</h2>
             <dl className="mt-5 space-y-4 text-sm">
               <div className="flex items-start gap-3">
                 <MapPin className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden />
                 <div>
-                  <dt className="font-semibold text-ink">Service Area</dt>
-                  <dd className="text-ink/70">{location.serviceArea}</dd>
+                  <dt className="font-semibold text-foreground">Service Area</dt>
+                  <dd className="text-foreground/70">{location.serviceArea}</dd>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Clock className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden />
                 <div>
-                  <dt className="font-semibold text-ink">Business Hours</dt>
-                  <dd className="text-ink/70">{hours.display}</dd>
+                  <dt className="font-semibold text-foreground">Business Hours</dt>
+                  <dd className="text-foreground/70">{hours.display}</dd>
                 </div>
               </div>
               <div className="flex items-start gap-3">
                 <Phone className="mt-0.5 h-5 w-5 shrink-0 text-brand" aria-hidden />
                 <div>
-                  <dt className="font-semibold text-ink">Phone</dt>
-                  <dd className="text-ink/70">{contact.phoneDisplay}</dd>
+                  <dt className="font-semibold text-foreground">Phone</dt>
+                  <dd className="text-foreground/70">{contact.phoneDisplay}</dd>
                 </div>
               </div>
             </dl>
 
-            <div className="mt-6 rounded-xl bg-cream p-4">
-              <p className="text-sm font-semibold text-ink">Ready to reserve your date?</p>
-              <p className="mt-1 text-sm text-ink/60">
+            <div className="mt-6 rounded-xl bg-background p-4">
+              <p className="text-sm font-semibold text-foreground">Ready to reserve your date?</p>
+              <p className="mt-1 text-sm text-foreground/60">
                 Book at least {siteConfig.ordering.minLeadTimeHours} hours ahead to secure
                 your schedule.
               </p>

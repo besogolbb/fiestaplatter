@@ -25,7 +25,7 @@ export default function PackagesPage() {
         crumbs={[{ name: "Packages", path: "/packages" }]}
       />
 
-      <Section className="bg-cream">
+      <Section className="bg-background">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {packages.map((pkg, i) => (
             <Reveal key={pkg.slug} delay={i * 0.05}>

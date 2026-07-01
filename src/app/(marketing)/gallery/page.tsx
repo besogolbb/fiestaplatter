@@ -27,8 +27,8 @@ export default function GalleryPage() {
         const images = gallery.filter((g) => g.category === cat);
         if (images.length === 0) return null;
         return (
-          <Section key={cat} className={i % 2 === 0 ? "bg-cream" : "bg-warm"}>
-            <h2 className="font-display text-2xl font-extrabold text-ink sm:text-3xl">
+          <Section key={cat} className={i % 2 === 0 ? "bg-background" : "bg-warm"}>
+            <h2 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
               {cat}
             </h2>
             <GalleryGrid images={images} className="mt-8" />

@@ -16,7 +16,7 @@ export function Logo({ className, onDark = false }: { className?: string; onDark
       <span
         className={cn(
           "font-display text-lg font-extrabold leading-none tracking-tight",
-          onDark ? "text-white" : "text-ink",
+          onDark ? "text-white" : "text-foreground",
         )}
       >
         Fiesta <span className={onDark ? "text-accent" : "text-brand"}>Platter</span>
