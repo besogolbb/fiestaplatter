@@ -1,5 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Emit a self-contained server bundle for small, fast Docker images.
+  output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
   images: {

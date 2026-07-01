@@ -1,0 +1,14 @@
+node_modules
+.next
+.git
+.github
+npm-debug.log*
+Dockerfile
+.dockerignore
+.env
+.env*.local
+.vercel
+no-background
+*.HEIC
+*.md
+.agents
