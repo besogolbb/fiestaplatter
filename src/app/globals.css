@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 44 100% 99%; /* #FFFDF8 cream */
+    --foreground: 0 0% 18%; /* #2E2E2E ink */
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 18%;
+
+    --primary: 0 66% 47%; /* #C62828 */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 66% 96%;
+    --secondary-foreground: 0 66% 40%;
+
+    --muted: 40 20% 94%;
+    --muted-foreground: 0 0% 40%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 88%;
+    --ring: 0 66% 47%;
+
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Respect reduced-motion preferences globally. */
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  ::selection {
+    @apply bg-brand/20 text-brand-700;
+  }
+}
+
+@layer components {
+  /* Soft warm section background used across the funnel. */
+  .bg-warm {
+    background-image: radial-gradient(
+        60% 60% at 50% 0%,
+        rgba(249, 168, 37, 0.08) 0%,
+        transparent 100%
+      ),
+      linear-gradient(180deg, #fffdf8 0%, #fff8ee 100%);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+}
