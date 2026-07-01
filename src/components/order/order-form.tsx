@@ -3,15 +3,16 @@
 import { useState, useTransition } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Check, Loader2, Sparkles, ShieldCheck, Users, Wrench } from "lucide-react";
 import { orderSchema, type OrderInput, eventTypes, paymentMethods } from "@/lib/order-schema";
-import { additionalItemOptions } from "@/lib/order-schema";
 import { submitOrder, type OrderActionState } from "@/app/(order)/order/actions";
 import { packages } from "@/data/packages";
+import { menu } from "@/data/menu";
 import { Field } from "@/components/order/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -20,7 +21,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { OrderSuccess } from "@/components/order/order-success";
-import { formatPrice } from "@/lib/utils";
+import { cn, formatPrice } from "@/lib/utils";
 
 const timeSlots = [
   "8:00 AM – 10:00 AM",
@@ -68,7 +69,16 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
     mode: "onTouched",
   });
 
+  const selectedPackage = watch("packageSlug");
   const selectedAddOns = watch("additionalItems") ?? [];
+  const isCustom = selectedPackage === "custom";
+
+  function selectPackage(slug: string) {
+    setValue("packageSlug", slug as OrderInput["packageSlug"], {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }
 
   function toggleAddOn(slug: string) {
     const set = new Set(selectedAddOns);
@@ -76,6 +86,14 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
     else set.add(slug);
     setValue("additionalItems", Array.from(set), { shouldDirty: true });
   }
+
+  // Live estimated subtotal (final total confirmed on checkout)
+  const pkg = packages.find((p) => p.slug === selectedPackage);
+  const addOnTotal = selectedAddOns.reduce((sum, slug) => {
+    const item = menu.find((m) => m.slug === slug);
+    return sum + (item?.price ?? 0);
+  }, 0);
+  const estimatedTotal = (pkg?.price ?? 0) + addOnTotal;
 
   const onSubmit = (data: OrderInput) => {
     const fd = new FormData();
@@ -108,21 +126,168 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
       aria-label="Order form"
     >
       {result?.status === "error" ? (
-        <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/5 px-4 py-3 text-sm font-medium text-destructive">
+        <p role="alert" className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm font-medium text-destructive">
           {result.message}
         </p>
       ) : null}
 
-      {/* Honeypot — hidden from users, catches bots */}
+      {/* Honeypot */}
       <div className="absolute left-[-9999px]" aria-hidden>
         <label htmlFor="company">Company</label>
         <input id="company" type="text" tabIndex={-1} autoComplete="off" {...register("company")} />
       </div>
 
-      {/* Contact */}
+      {/* Step 1 — Choose a package */}
+      <fieldset className="space-y-4">
+        <legend className="mb-1 font-display text-lg font-bold text-foreground">
+          1. Choose Your Bundle
+        </legend>
+        <p className="text-sm text-foreground/60">
+          Pick a ready-made Fiesta bundle, or build your own with Customize Bundle.
+        </p>
+
+        <div
+          role="radiogroup"
+          aria-label="Choose a bundle"
+          className="grid gap-3 sm:grid-cols-2"
+        >
+          {packages.map((p) => {
+            const active = selectedPackage === p.slug;
+            return (
+              <button
+                type="button"
+                key={p.slug}
+                role="radio"
+                aria-checked={active}
+                onClick={() => selectPackage(p.slug)}
+                className={cn(
+                  "relative flex flex-col rounded-2xl border p-4 text-left transition-all",
+                  active
+                    ? "border-brand bg-brand/10 ring-1 ring-brand"
+                    : "border-white/10 bg-card hover:border-brand/40",
+                )}
+              >
+                <span
+                  className={cn(
+                    "absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border",
+                    active ? "border-brand bg-brand text-white" : "border-white/25",
+                  )}
+                  aria-hidden
+                >
+                  {active ? <Check className="h-3.5 w-3.5" /> : null}
+                </span>
+                <span className="flex items-center gap-2 pr-6">
+                  <span className="font-display text-base font-bold text-foreground">
+                    {p.name}
+                  </span>
+                  {p.badge ? (
+                    <Badge variant="muted" className="shrink-0 text-[10px]">
+                      {p.badge}
+                    </Badge>
+                  ) : null}
+                </span>
+                <span className="mt-1 inline-flex items-center gap-1.5 text-xs text-foreground/55">
+                  <Users className="h-3.5 w-3.5 text-brand" /> {p.serving}
+                </span>
+                <span className="mt-2 font-display text-lg font-extrabold text-brand">
+                  {formatPrice(p.price)}
+                </span>
+              </button>
+            );
+          })}
+
+          {/* Customize Bundle option */}
+          <button
+            type="button"
+            role="radio"
+            aria-checked={isCustom}
+            onClick={() => selectPackage("custom")}
+            className={cn(
+              "relative flex flex-col justify-center rounded-2xl border border-dashed p-4 text-left transition-all",
+              isCustom
+                ? "border-brand bg-brand/10 ring-1 ring-brand"
+                : "border-white/20 bg-card hover:border-brand/40",
+            )}
+          >
+            <span
+              className={cn(
+                "absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border",
+                isCustom ? "border-brand bg-brand text-white" : "border-white/25",
+              )}
+              aria-hidden
+            >
+              {isCustom ? <Check className="h-3.5 w-3.5" /> : null}
+            </span>
+            <span className="flex items-center gap-2 font-display text-base font-bold text-foreground">
+              <Wrench className="h-4 w-4 text-brand" /> Customize Bundle
+            </span>
+            <span className="mt-1 text-xs text-foreground/55">
+              Build your own — pick exactly the trays you want below.
+            </span>
+          </button>
+        </div>
+
+        {errors.packageSlug ? (
+          <p role="alert" className="text-xs font-medium text-destructive">
+            {errors.packageSlug.message}
+          </p>
+        ) : null}
+
+        {/* Item picker — extra trays / custom builder */}
+        <div className="rounded-2xl border border-white/10 bg-card/60 p-4">
+          <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Sparkles className="h-4 w-4 text-brand" />
+            {isCustom ? "Build your bundle — pick your trays" : "Add extra trays"}
+            {!isCustom ? (
+              <span className="font-normal text-foreground/40">(optional)</span>
+            ) : null}
+          </p>
+          <div className="mt-3 grid gap-2 sm:grid-cols-2">
+            {menu.map((item) => {
+              const checked = selectedAddOns.includes(item.slug);
+              return (
+                <label
+                  key={item.slug}
+                  className={cn(
+                    "flex cursor-pointer items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
+                    checked
+                      ? "border-brand bg-brand/10 text-foreground"
+                      : "border-white/10 bg-card text-foreground/80 hover:border-brand/40",
+                  )}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 accent-brand"
+                      checked={checked}
+                      onChange={() => toggleAddOn(item.slug)}
+                    />
+                    {item.name}
+                  </span>
+                  <span className="shrink-0 font-semibold text-brand">
+                    {formatPrice(item.price)}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Live estimated total */}
+        {estimatedTotal > 0 ? (
+          <div className="flex items-center justify-between rounded-xl border border-brand/30 bg-brand/10 px-4 py-3">
+            <span className="text-sm font-semibold text-foreground">Estimated total</span>
+            <span className="font-display text-xl font-extrabold text-brand">
+              {formatPrice(estimatedTotal)}
+            </span>
+          </div>
+        ) : null}
+      </fieldset>
+
+      {/* Step 2 — Contact */}
       <fieldset className="space-y-4">
         <legend className="mb-2 font-display text-lg font-bold text-foreground">
-          1. Your Contact Details
+          2. Your Contact Details
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Full Name" htmlFor="name" required error={errors.name?.message}>
@@ -140,10 +305,10 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
         </div>
       </fieldset>
 
-      {/* Delivery */}
+      {/* Step 3 — Delivery */}
       <fieldset className="space-y-4">
         <legend className="mb-2 font-display text-lg font-bold text-foreground">
-          2. Delivery Schedule
+          3. Delivery Schedule
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Delivery Date" htmlFor="deliveryDate" required error={errors.deliveryDate?.message}>
@@ -175,10 +340,10 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
         </Field>
       </fieldset>
 
-      {/* Event */}
+      {/* Step 4 — Event */}
       <fieldset className="space-y-4">
         <legend className="mb-2 font-display text-lg font-bold text-foreground">
-          3. About Your Event
+          4. About Your Event
         </legend>
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="Event Type" htmlFor="eventType" required error={errors.eventType?.message}>
@@ -205,66 +370,9 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
             <Input id="guests" type="number" inputMode="numeric" min={1} placeholder="e.g. 20" aria-invalid={!!errors.guests} {...register("guests")} />
           </Field>
         </div>
-      </fieldset>
-
-      {/* Order */}
-      <fieldset className="space-y-4">
-        <legend className="mb-2 font-display text-lg font-bold text-foreground">
-          4. Your Order
-        </legend>
-        <Field label="Choose a Package" htmlFor="packageSlug" required error={errors.packageSlug?.message}>
-          <Controller
-            control={control}
-            name="packageSlug"
-            render={({ field }) => (
-              <Select value={field.value} onValueChange={field.onChange}>
-                <SelectTrigger id="packageSlug" aria-invalid={!!errors.packageSlug}>
-                  <SelectValue placeholder="Select a package" />
-                </SelectTrigger>
-                <SelectContent>
-                  {packages.map((p) => (
-                    <SelectItem key={p.slug} value={p.slug}>
-                      {p.name} — {formatPrice(p.price)}
-                    </SelectItem>
-                  ))}
-                  <SelectItem value="custom">Custom order / not sure yet</SelectItem>
-                </SelectContent>
-              </Select>
-            )}
-          />
-        </Field>
-
-        <div>
-          <p className="text-sm font-semibold text-foreground">
-            Add Extra Trays <span className="font-normal text-foreground/40">(optional)</span>
-          </p>
-          <div className="mt-2 grid gap-2 sm:grid-cols-2">
-            {additionalItemOptions.map((opt) => {
-              const checked = selectedAddOns.includes(opt.value);
-              return (
-                <label
-                  key={opt.value}
-                  className={`flex cursor-pointer items-center gap-2.5 rounded-xl border px-3.5 py-2.5 text-sm transition-colors ${
-                    checked ? "border-brand bg-brand/5 text-foreground" : "border-input bg-card text-foreground/80 hover:border-brand/40"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-brand"
-                    checked={checked}
-                    onChange={() => toggleAddOn(opt.value)}
-                  />
-                  {opt.label}
-                </label>
-              );
-            })}
-          </div>
-        </div>
-
         <Field label="Special Instructions" htmlFor="specialInstructions" error={errors.specialInstructions?.message} hint="Allergies, custom requests, delivery notes, etc.">
           <Textarea id="specialInstructions" placeholder="Anything we should know?" {...register("specialInstructions")} />
         </Field>
-
         <Field label="Preferred Payment" htmlFor="paymentMethod" required error={errors.paymentMethod?.message}>
           <Controller
             control={control}
@@ -298,7 +406,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
           )}
         </Button>
         <p className="flex items-center justify-center gap-1.5 text-center text-xs text-foreground/50">
-          <ShieldCheck className="h-4 w-4 text-green-600" />
+          <ShieldCheck className="h-4 w-4 text-green-500" />
           No payment yet. We&apos;ll confirm your order and total before anything is charged.
         </p>
       </div>
