@@ -74,26 +74,17 @@ export const howItWorks: HowItWorksStep[] = [
   },
 ];
 
-/** Curated gallery — one to three shots per dish, cross-category tagged. */
+/** Gallery — our signature studio shots of every tray. */
 export const gallery: GalleryImage[] = [
-  { src: "/images/gallery/spaghetti-1.webp", alt: "Filipino-style spaghetti party tray", category: "Food" },
-  { src: "/images/gallery/chicken-embutido-3.webp", alt: "Signature chicken embutido, sliced", category: "Food" },
-  { src: "/images/gallery/carbonara-3.webp", alt: "Creamy carbonara bilao", category: "Food" },
-  { src: "/images/gallery/lumpia-2.webp", alt: "Crispy cheesy pork lumpia", category: "Food" },
-  { src: "/images/gallery/pork-bbq-1.webp", alt: "Grilled pork BBQ skewers", category: "Food" },
-  { src: "/images/gallery/jumbo-siomai-2.webp", alt: "Jumbo pork siomai tray", category: "Food" },
-  { src: "/images/gallery/pansit-3.webp", alt: "Pancit bihon guisado", category: "Food" },
-  { src: "/images/gallery/chicken-embutido-5.webp", alt: "Sliced embutido meatloaf", category: "Food" },
-  { src: "/images/gallery/puto-pao-1.webp", alt: "Puto pao with cheese topping", category: "Food" },
-  { src: "/images/gallery/maja-blanca-2.webp", alt: "Maja blanca coconut dessert", category: "Food" },
-  { src: "/images/gallery/spaghetti-3.webp", alt: "Spaghetti bilao ready for a party", category: "Packaging" },
-  { src: "/images/gallery/lumpia-4.webp", alt: "Lumpia tray with dipping sauce", category: "Packaging" },
-  { src: "/images/gallery/jumbo-siomai-1.webp", alt: "Siomai tray with chili-garlic sauce", category: "Packaging" },
-  { src: "/images/gallery/pork-bbq-3.webp", alt: "BBQ skewers arranged on banana leaf", category: "Packaging" },
-  { src: "/images/gallery/spaghetti-2.webp", alt: "Spaghetti bilao served at a celebration", category: "Events" },
-  { src: "/images/gallery/carbonara-1.webp", alt: "Carbonara served at an event", category: "Events" },
-  { src: "/images/gallery/chicken-embutido-2.webp", alt: "Embutido platter at a celebration", category: "Events" },
-  { src: "/images/gallery/puto-pao-3.webp", alt: "Puto pao merienda spread", category: "Events" },
+  { src: "/images/menu/chicken-embutido.webp", alt: "Signature chicken embutido bilao, sliced with sweet chili dip", category: "Food" },
+  { src: "/images/menu/jumbo-siomai.webp", alt: "Jumbo pork siomai tray with chili-garlic sauce", category: "Food" },
+  { src: "/images/menu/pork-bbq.webp", alt: "Grilled pork BBQ skewers on banana leaf", category: "Packaging" },
+  { src: "/images/menu/lumpia.webp", alt: "Crispy cheesy pork lumpiang shanghai with dip", category: "Packaging" },
+  { src: "/images/menu/spaghetti.webp", alt: "Filipino-style spaghetti bilao topped with hotdog and cheese", category: "Food" },
+  { src: "/images/menu/carbonara.webp", alt: "Creamy carbonara pasta bilao with bacon and parmesan", category: "Food" },
+  { src: "/images/menu/pansit.webp", alt: "Pancit bihon bilao with vegetables and meat", category: "Food" },
+  { src: "/images/menu/puto-pao.webp", alt: "Puto pao, steamed rice cakes topped with cheese", category: "Food" },
+  { src: "/images/menu/maja-blanca.webp", alt: "Maja blanca coconut pudding topped with corn and cheese", category: "Food" },
 ];
 
-export const galleryCategories = ["Food", "Packaging", "Events"] as const;
+export const galleryCategories = ["Food", "Packaging"] as const;
