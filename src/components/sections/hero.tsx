@@ -12,14 +12,14 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden bg-warm">
       <div className="container grid items-center gap-10 py-12 lg:grid-cols-2 lg:gap-12 lg:py-20">
-        {/* Copy */}
-        <div className="max-w-xl">
-          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1.5 text-sm font-semibold text-brand">
-            <ChefHat className="h-4 w-4" />
-            Home-cooked recipes, made fresh to order
+        {/* Copy — on mobile this renders below the photo (order-2); desktop keeps text left / photo right as before */}
+        <div className="order-2 max-w-xl lg:order-1">
+          <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1.5 text-xs font-semibold text-brand sm:text-sm">
+            <ChefHat className="h-4 w-4 shrink-0" />
+            Home-cooked, made fresh to order
           </span>
 
-          <h1 className="mt-5 text-balance font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+          <h1 className="mt-5 text-balance font-display text-4xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             Made for <span className="text-brand">Every Occasion</span>
           </h1>
 
@@ -52,8 +52,8 @@ export function Hero() {
           </ul>
         </div>
 
-        {/* Visual — signature product */}
-        <div className="relative mx-auto mt-6 w-full max-w-lg sm:mt-8 sm:pb-6">
+        {/* Visual — signature product. order-1 puts it right after the headline on mobile instead of below the whole copy block. */}
+        <div className="relative order-1 mx-auto w-full max-w-lg lg:order-2 lg:mt-8 lg:pb-6">
           <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-brand/25 via-accent/10 to-transparent blur-2xl" />
           <div className="relative overflow-hidden rounded-[2rem] border border-border shadow-2xl shadow-black/20 dark:shadow-black/50">
             <div className="relative aspect-[4/5]">
