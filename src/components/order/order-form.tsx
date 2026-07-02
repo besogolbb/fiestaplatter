@@ -1,14 +1,15 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
-import { Loader2, Sparkles, ShieldCheck } from "lucide-react";
+import { Loader2, Sparkles, ShieldCheck, TrendingUp, Truck } from "lucide-react";
 import { orderSchema, type OrderInput, eventTypes, paymentMethods } from "@/lib/order-schema";
 import { submitOrder, type OrderActionState } from "@/app/(order)/order/actions";
 import { packages } from "@/data/packages";
 import { menu } from "@/data/menu";
+import { siteConfig } from "@/config/site";
 import { Field } from "@/components/order/field";
 import { SelectableBundleCard, CustomizeBundleCard } from "@/components/order/selectable-bundle-card";
 import { SelectedBundleSummary } from "@/components/order/selected-bundle-summary";
@@ -24,6 +25,7 @@ import {
 } from "@/components/ui/select";
 import { OrderSuccess } from "@/components/order/order-success";
 import { cn, formatPrice } from "@/lib/utils";
+import { trackSelectBundle, trackBeginCheckout, trackLead } from "@/lib/analytics-events";
 
 const timeSlots = [
   "8:00 AM – 10:00 AM",
@@ -105,13 +107,54 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
   const isCustom = selectedPackage === "custom";
   const selectedPkgData = packages.find((p) => p.slug === selectedPackage);
 
+  // Next-tier bundle, sorted by price, for the "upgrade for +₱X" upsell nudge.
+  const sortedPackages = [...packages].sort((a, b) => a.price - b.price);
+  const nextTierPackage = selectedPkgData
+    ? sortedPackages.find((p) => p.price > selectedPkgData.price)
+    : undefined;
+
   function selectBundle(slug: string) {
     setValue("packageSlug", slug as OrderInput["packageSlug"], {
       shouldValidate: true,
       shouldDirty: true,
     });
     setStep("details");
+
+    const pkg = packages.find((p) => p.slug === slug);
+    if (pkg) {
+      trackSelectBundle({ id: pkg.slug, name: pkg.name, price: pkg.price });
+      trackBeginCheckout(pkg.price, [{ id: pkg.slug, name: pkg.name, price: pkg.price }]);
+    }
   }
+
+  // Deep-linked entry (?package=/?item=) skips step 1, so fire the same
+  // funnel events once on mount instead of via the selectBundle handler.
+  const firedEntryEvents = useRef(false);
+  useEffect(() => {
+    if (!hasPreselection || firedEntryEvents.current) return;
+    firedEntryEvents.current = true;
+    if (selectedPkgData) {
+      trackSelectBundle({ id: selectedPkgData.slug, name: selectedPkgData.name, price: selectedPkgData.price });
+    }
+    trackBeginCheckout(estimatedTotal, [
+      ...(selectedPkgData
+        ? [{ id: selectedPkgData.slug, name: selectedPkgData.name, price: selectedPkgData.price }]
+        : []),
+      ...selectedAddOns
+        .map((slug) => menu.find((m) => m.slug === slug))
+        .filter((m): m is (typeof menu)[number] => Boolean(m))
+        .map((m) => ({ id: m.slug, name: m.name, price: m.price })),
+    ]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const firedLeadEvent = useRef(false);
+  useEffect(() => {
+    if (result?.status === "success" && result.summary && !firedLeadEvent.current) {
+      firedLeadEvent.current = true;
+      trackLead(result.summary.estimatedTotal ?? 0, result.summary.reference);
+    }
+  }, [result]);
 
   function toggleAddOn(slug: string) {
     const set = new Set(selectedAddOns);
@@ -220,6 +263,27 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                       {errors.packageSlug.message}
                     </p>
                   ) : null}
+
+                  {/* Upsell nudge — small price gap to the next bundle tier */}
+                  {nextTierPackage && selectedPkgData ? (
+                    <button
+                      type="button"
+                      onClick={() => selectBundle(nextTierPackage.slug)}
+                      className="mt-3 flex w-full items-center justify-between gap-3 rounded-xl border border-dashed border-brand/40 bg-brand/5 px-4 py-3 text-left transition-colors hover:bg-brand/10"
+                    >
+                      <span className="flex items-center gap-2 text-sm text-foreground">
+                        <TrendingUp className="h-4 w-4 shrink-0 text-brand" />
+                        Add{" "}
+                        <strong className="text-brand">
+                          {formatPrice(nextTierPackage.price - selectedPkgData.price)}
+                        </strong>{" "}
+                        to upgrade to <strong>{nextTierPackage.name}</strong>
+                      </span>
+                      <span className="shrink-0 text-xs font-semibold text-brand underline underline-offset-2">
+                        Upgrade
+                      </span>
+                    </button>
+                  ) : null}
                 </div>
 
                 {/* Item picker — extra trays / custom builder */}
@@ -232,42 +296,88 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                     ) : null}
                   </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                    {menu.map((item) => {
-                      const checked = selectedAddOns.includes(item.slug);
-                      return (
-                        <label
-                          key={item.slug}
-                          className={cn(
-                            "flex cursor-pointer items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
-                            checked
-                              ? "border-brand bg-brand/10 text-foreground"
-                              : "border-border bg-card text-foreground/80 hover:border-brand/40",
-                          )}
-                        >
-                          <span className="flex items-center gap-2.5">
-                            <input
-                              type="checkbox"
-                              className="h-4 w-4 accent-brand"
-                              checked={checked}
-                              onChange={() => toggleAddOn(item.slug)}
-                            />
-                            {item.name}
-                          </span>
-                          <span className="shrink-0 font-semibold text-brand">
-                            {formatPrice(item.price)}
-                          </span>
-                        </label>
-                      );
-                    })}
+                    {[...menu]
+                      .sort(
+                        (a, b) =>
+                          Number(Boolean(b.bestSeller || b.popular)) -
+                          Number(Boolean(a.bestSeller || a.popular)),
+                      )
+                      .map((item) => {
+                        const checked = selectedAddOns.includes(item.slug);
+                        return (
+                          <label
+                            key={item.slug}
+                            className={cn(
+                              "flex cursor-pointer items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
+                              checked
+                                ? "border-brand bg-brand/10 text-foreground"
+                                : "border-border bg-card text-foreground/80 hover:border-brand/40",
+                            )}
+                          >
+                            <span className="flex items-center gap-2.5">
+                              <input
+                                type="checkbox"
+                                className="h-4 w-4 accent-brand"
+                                checked={checked}
+                                onChange={() => toggleAddOn(item.slug)}
+                              />
+                              {item.name}
+                              {item.bestSeller || item.popular ? (
+                                <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-600">
+                                  Popular
+                                </span>
+                              ) : null}
+                            </span>
+                            <span className="shrink-0 font-semibold text-brand">
+                              {formatPrice(item.price)}
+                            </span>
+                          </label>
+                        );
+                      })}
                   </div>
                 </div>
 
                 {estimatedTotal > 0 ? (
-                  <div className="flex items-center justify-between rounded-xl border border-brand/30 bg-brand/10 px-4 py-3">
-                    <span className="text-sm font-semibold text-foreground">Estimated total</span>
-                    <span className="font-display text-xl font-extrabold text-brand">
-                      {formatPrice(estimatedTotal)}
-                    </span>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between rounded-xl border border-brand/30 bg-brand/10 px-4 py-3">
+                      <span className="text-sm font-semibold text-foreground">Estimated total</span>
+                      <span className="font-display text-xl font-extrabold text-brand">
+                        {formatPrice(estimatedTotal)}
+                      </span>
+                    </div>
+
+                    {/* Free-delivery progress nudge */}
+                    {(() => {
+                      const threshold = siteConfig.ordering.freeDeliveryThreshold;
+                      const remaining = threshold - estimatedTotal;
+                      const pct = Math.min(100, Math.round((estimatedTotal / threshold) * 100));
+                      return (
+                        <div className="rounded-xl border border-border bg-background/60 px-4 py-3">
+                          <p className="flex items-center gap-1.5 text-xs font-semibold text-foreground/80">
+                            <Truck className="h-3.5 w-3.5 text-brand" />
+                            {remaining > 0 ? (
+                              <>
+                                Add <span className="text-brand">{formatPrice(remaining)}</span> more
+                                for FREE delivery!
+                              </>
+                            ) : (
+                              <span className="text-green-600">
+                                🎉 You&apos;ve unlocked free delivery!
+                              </span>
+                            )}
+                          </p>
+                          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-border">
+                            <div
+                              className={cn(
+                                "h-full rounded-full transition-all duration-500",
+                                remaining > 0 ? "bg-brand" : "bg-green-500",
+                              )}
+                              style={{ width: `${pct}%` }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })()}
                   </div>
                 ) : null}
 

@@ -8,6 +8,7 @@ import {
   type OrderSummary,
 } from "@/lib/order-format";
 import { siteConfig } from "@/config/site";
+import { sendMetaCapiLead } from "@/lib/meta-capi";
 
 export interface OrderActionState {
   status: "idle" | "success" | "error";
@@ -79,6 +80,14 @@ export async function submitOrder(
       console.error("[submitOrder] email send failed:", err);
     }
   }
+
+  // Server-side Lead event for Meta CAPI, deduped against the client Pixel
+  // event by reference. No-ops until credentials are set. Awaited (not
+  // fire-and-forget) so it isn't cut short on serverless runtimes.
+  await sendMetaCapiLead({
+    eventId: summary.reference,
+    value: summary.estimatedTotal ?? 0,
+  });
 
   return {
     status: "success",

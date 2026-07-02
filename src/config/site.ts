@@ -69,6 +69,8 @@ export const siteConfig = {
     downpaymentNote: "50% down payment to reserve your schedule.",
     paymentMethods: ["GCash", "Maya", "Bank Transfer", "Cash on Delivery"] as const,
     deliveryNote: "Free delivery within the city for orders over ₱1,500.",
+    /** Order subtotal (PHP) at or above which delivery is free — drives the AOV nudge in the order form. */
+    freeDeliveryThreshold: 1500,
     currency: "PHP",
     currencySymbol: "₱",
   },
