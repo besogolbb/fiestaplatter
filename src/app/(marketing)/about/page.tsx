@@ -5,7 +5,6 @@ import { PageHero } from "@/components/shared/page-hero";
 import { Section } from "@/components/shared/section";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { WhyChooseUs } from "@/components/sections/why-choose-us";
-import { TestimonialsSection } from "@/components/sections/testimonials-section";
 import { FinalCta } from "@/components/sections/final-cta";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/config/site";
@@ -96,7 +95,6 @@ export default function AboutPage() {
       </Section>
 
       <WhyChooseUs />
-      <TestimonialsSection limit={3} />
       <FinalCta />
     </>
   );

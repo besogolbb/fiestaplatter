@@ -6,7 +6,7 @@ import type { FaqItem } from "@/types";
 
 /** FoodEstablishment / LocalBusiness — rendered site-wide in the root layout. */
 export function localBusinessSchema() {
-  const { contact, location, hours, stats } = siteConfig;
+  const { contact, location, hours } = siteConfig;
   return {
     "@context": "https://schema.org",
     "@type": "FoodEstablishment",
@@ -40,12 +40,6 @@ export function localBusinessSchema() {
       closes: s.closes,
     })),
     sameAs: [contact.facebookUrl, contact.instagramUrl, contact.tiktokUrl].filter(Boolean),
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: stats.ratingValue,
-      reviewCount: stats.ratingCount,
-      bestRating: 5,
-    },
   };
 }
 

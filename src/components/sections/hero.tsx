@@ -1,9 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Star, Truck, Users } from "lucide-react";
+import { ArrowRight, CheckCircle2, Truck, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
-import { StarRating } from "@/components/shared/star-rating";
 import { heroProduct } from "@/data/menu";
 import { formatPrice } from "@/lib/utils";
 
@@ -16,8 +15,8 @@ export function Hero() {
         {/* Copy */}
         <div className="max-w-xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1.5 text-sm font-semibold text-brand">
-            <Star className="h-4 w-4 fill-brand text-brand" />
-            {stats.ratingValue} rating · {stats.ratingCount}+ happy customers
+            <Users className="h-4 w-4" />
+            {stats.happyFamilies} happy families served
           </span>
 
           <h1 className="mt-5 text-balance font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
@@ -88,11 +87,6 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Floating rating chip — top-right, opposite the in-image Signature tag */}
-          <div className="absolute -right-3 -top-4 z-10 hidden items-center gap-2 rounded-2xl border border-border bg-card px-3.5 py-2.5 shadow-xl sm:flex">
-            <StarRating rating={stats.ratingValue} size={14} />
-            <span className="text-sm font-bold text-foreground">{stats.ratingValue}</span>
-          </div>
           {/* Floating orders chip — bottom-left, dropped clear below the image so it never meets the price tag */}
           <div className="absolute -bottom-6 -left-4 z-10 hidden rounded-2xl border border-border bg-card px-4 py-3 text-center shadow-xl sm:block">
             <p className="font-display text-xl font-extrabold text-brand">{stats.ordersServed}</p>

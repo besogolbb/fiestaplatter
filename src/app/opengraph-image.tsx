@@ -46,8 +46,7 @@ export default function OpengraphImage() {
           {siteConfig.tagline}
         </div>
         <div style={{ marginTop: 28, fontSize: 30, color: "rgba(255,255,255,0.9)" }}>
-          Freshly prepared Filipino party trays · {siteConfig.stats.ratingValue}★ from{" "}
-          {siteConfig.stats.ratingCount}+ customers
+          Freshly prepared Filipino party trays for every celebration
         </div>
       </div>
     ),

@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { ChevronLeft, ShieldCheck, Star } from "lucide-react";
+import { ChevronLeft, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
 import { FloatingCta } from "@/components/layout/floating-cta";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
-import { siteConfig } from "@/config/site";
 
 /**
  * Minimal, distraction-free shell for the order flow — fewer escape routes
@@ -33,10 +32,6 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
         <div className="container flex flex-col items-center justify-center gap-2 text-center text-xs text-foreground/50 sm:flex-row sm:gap-6">
           <span className="inline-flex items-center gap-1.5">
             <ShieldCheck className="h-4 w-4 text-green-600" /> Secure &amp; no upfront payment
-          </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Star className="h-4 w-4 fill-accent text-accent" /> {siteConfig.stats.ratingValue}/5
-            from {siteConfig.stats.ratingCount}+ customers
           </span>
         </div>
       </footer>

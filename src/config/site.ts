@@ -58,8 +58,6 @@ export const siteConfig = {
 
   // ── Social proof (shown in hero + trust bar) — TODO: verify numbers ────
   stats: {
-    ratingValue: 4.9, // TODO
-    ratingCount: 320, // TODO — number of reviews
     ordersServed: "5,000+", // TODO
     yearsServing: 6, // TODO
     happyFamilies: "2,000+", // TODO

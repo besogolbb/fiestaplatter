@@ -37,15 +37,6 @@ export interface PackageItem {
   featured?: boolean;
 }
 
-export interface Testimonial {
-  name: string;
-  role: string;
-  rating: number;
-  quote: string;
-  event: string;
-  avatarInitials: string;
-}
-
 export interface FaqItem {
   question: string;
   answer: string;

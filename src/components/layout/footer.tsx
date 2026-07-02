@@ -3,10 +3,9 @@ import { Facebook, Instagram, Mail, MapPin, Phone, Clock } from "lucide-react";
 import { footerNav } from "@/config/nav";
 import { siteConfig, telLink, mailtoLink, messengerLink } from "@/config/site";
 import { Logo } from "@/components/layout/logo";
-import { StarRating } from "@/components/shared/star-rating";
 
 export function Footer() {
-  const { contact, location, hours, stats } = siteConfig;
+  const { contact, location, hours } = siteConfig;
   const year = new Date().getFullYear();
 
   return (
@@ -19,12 +18,6 @@ export function Footer() {
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
               {siteConfig.description}
             </p>
-            <div className="mt-4 flex items-center gap-2">
-              <StarRating rating={stats.ratingValue} />
-              <span className="text-sm text-white/70">
-                {stats.ratingValue} · {stats.ratingCount} reviews
-              </span>
-            </div>
             <div className="mt-5 flex gap-3">
               {contact.facebookUrl ? (
                 <a
