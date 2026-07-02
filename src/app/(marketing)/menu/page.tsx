@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { PageHero } from "@/components/shared/page-hero";
-import { Section } from "@/components/shared/section";
-import { ProductCard } from "@/components/shared/product-card";
-import { Reveal } from "@/components/shared/reveal";
+import { MenuBrowser } from "@/components/shared/menu-browser";
 import { FinalCta } from "@/components/sections/final-cta";
 import { JsonLd } from "@/components/shared/json-ld";
 import { menuSchema } from "@/lib/structured-data";
@@ -26,27 +24,7 @@ export default function MenuPage() {
         crumbs={[{ name: "Menu", path: "/menu" }]}
       />
 
-      {menuCategories.map((cat, ci) => {
-        const items = menu.filter((m) => m.category === cat.id);
-        if (items.length === 0) return null;
-        return (
-          <Section
-            key={cat.id}
-            className={ci % 2 === 0 ? "bg-background" : "bg-warm"}
-          >
-            <h2 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
-              {cat.label}
-            </h2>
-            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-              {items.map((item, i) => (
-                <Reveal key={item.slug} delay={i * 0.05}>
-                  <ProductCard item={item} priority={ci === 0 && i < 2} />
-                </Reveal>
-              ))}
-            </div>
-          </Section>
-        );
-      })}
+      <MenuBrowser items={menu} categories={menuCategories} />
 
       <FinalCta />
       <JsonLd data={menuSchema()} />

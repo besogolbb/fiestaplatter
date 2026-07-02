@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { toast } from "sonner";
 import { Loader2, Sparkles, ShieldCheck, TrendingUp, Truck } from "lucide-react";
 import { orderSchema, type OrderInput, eventTypes, paymentMethods } from "@/lib/order-schema";
 import { submitOrder, type OrderActionState } from "@/app/(order)/order/actions";
@@ -185,6 +186,8 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
       setResult(state);
       if (state.status === "success") {
         window.scrollTo({ top: 0, behavior: "smooth" });
+      } else if (state.status === "error") {
+        toast.error(state.message ?? "Please review the highlighted fields and try again.");
       }
     });
   };
@@ -205,7 +208,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
         <input id="company" type="text" tabIndex={-1} autoComplete="off" {...register("company")} />
       </div>
 
-      <div className="mx-auto max-w-3xl">
+      <div className={cn("mx-auto max-w-3xl", step === "details" ? "pb-20 sm:pb-0" : "")}>
         <StepIndicator step={step} />
 
         <AnimatePresence mode="wait" initial={false}>
@@ -502,7 +505,13 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                 </fieldset>
 
                 <div className="space-y-3">
-                  <Button type="submit" size="lg" className="w-full shadow-md" disabled={pending}>
+                  <Button
+                    id="order-submit-btn"
+                    type="submit"
+                    size="lg"
+                    className="w-full shadow-md"
+                    disabled={pending}
+                  >
                     {pending ? (
                       <>
                         <Loader2 className="h-5 w-5 animate-spin" /> Submitting…
@@ -522,6 +531,32 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
           )}
         </AnimatePresence>
       </div>
+
+      {/* Sticky mobile running total — keeps the price visible while scrolling the long form */}
+      {step === "details" && estimatedTotal > 0 ? (
+        <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md sm:hidden">
+          <div>
+            <p className="text-[11px] font-medium uppercase tracking-wide text-foreground/50">
+              Estimated Total
+            </p>
+            <p className="font-display text-lg font-extrabold text-brand">
+              {formatPrice(estimatedTotal)}
+            </p>
+          </div>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() =>
+              document.getElementById("order-submit-btn")?.scrollIntoView({
+                behavior: reduceMotion ? "auto" : "smooth",
+                block: "center",
+              })
+            }
+          >
+            Review &amp; Submit
+          </Button>
+        </div>
+      ) : null}
     </form>
   );
 }

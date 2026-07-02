@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect } from "react";
 import Link from "next/link";
 import { CheckCircle2, MessageCircle, Home, Phone } from "lucide-react";
 import type { OrderSummary } from "@/lib/order-format";
@@ -8,6 +11,18 @@ import { formatPrice } from "@/lib/utils";
 
 export function OrderSuccess({ summary }: { summary: OrderSummary }) {
   const messenger = messengerLink(orderToMessengerText(summary));
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    import("canvas-confetti").then(({ default: confetti }) => {
+      confetti({
+        particleCount: 120,
+        spread: 90,
+        origin: { y: 0.3 },
+        colors: ["#F5821F", "#F9A825", "#161310", "#FBF9F5"],
+      });
+    });
+  }, []);
 
   return (
     <div className="mx-auto max-w-2xl">

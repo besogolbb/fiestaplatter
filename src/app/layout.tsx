@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Plus_Jakarta_Sans } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { JsonLd } from "@/components/shared/json-ld";
@@ -92,6 +93,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </head>
       <body className="font-sans">
         {children}
+        <Toaster
+          position="top-center"
+          richColors
+          closeButton
+          toastOptions={{ className: "font-sans", duration: 5000 }}
+        />
         <JsonLd id="ld-business" data={localBusinessSchema()} />
         <JsonLd id="ld-website" data={websiteSchema()} />
         <Analytics />
