@@ -176,16 +176,16 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                 >
                   {active ? <Check className="h-3.5 w-3.5" /> : null}
                 </span>
-                <span className="flex items-center gap-2 pr-6">
-                  <span className="font-display text-base font-bold text-foreground">
+                <div className="pr-7">
+                  <p className="font-display text-base font-bold leading-snug text-foreground">
                     {p.name}
-                  </span>
+                  </p>
                   {p.badge ? (
-                    <Badge variant="muted" className="shrink-0 text-[10px]">
+                    <Badge variant="muted" className="mt-1.5 text-[10px]">
                       {p.badge}
                     </Badge>
                   ) : null}
-                </span>
+                </div>
                 <span className="mt-1 inline-flex items-center gap-1.5 text-xs text-foreground/55">
                   <Users className="h-3.5 w-3.5 text-brand" /> {p.serving}
                 </span>
