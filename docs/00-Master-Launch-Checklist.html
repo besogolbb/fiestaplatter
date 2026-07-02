@@ -1,0 +1,547 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fiesta Platter — Master Launch Checklist</title>
+<style>
+  :root {
+    --brand: #F5821F;
+    --brand-dark: #B85C0E;
+    --ink: #241F1B;
+    --bg: #FBF9F5;
+    --card: #FFFFFF;
+    --border: #E7DFD3;
+    --muted: #7A7268;
+    --green: #1E8E5A;
+    --amber: #B8860B;
+    --red: #C62828;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+  }
+  header.top {
+    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
+    color: white;
+    padding: 28px 24px 36px;
+  }
+  header.top h1 { margin: 0 0 4px; font-size: 22px; }
+  header.top p.sub { margin: 0; opacity: .85; font-size: 14px; }
+
+  .stats {
+    max-width: 1100px;
+    margin: -28px auto 0;
+    padding: 0 24px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+  .stat-card .value { font-size: 26px; font-weight: 800; }
+  .stat-card .label { font-size: 11px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin-top: 2px; }
+
+  .progress-bar-outer {
+    grid-column: 1 / -1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 6px 18px rgba(0,0,0,.06);
+  }
+  .progress-bar-outer .row { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .progress-track { height: 10px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--brand), var(--brand-dark)); transition: width .4s ease; }
+
+  main { max-width: 1100px; margin: 0 auto; padding: 28px 24px 80px; }
+
+  .controls {
+    display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; align-items: center;
+  }
+  .controls select, .controls input[type="text"] {
+    border: 1px solid var(--border); border-radius: 10px; padding: 8px 12px; font-size: 13px; background: var(--card); color: var(--ink);
+  }
+  .controls button {
+    border: 1px solid var(--border); background: var(--card); border-radius: 10px; padding: 8px 14px; font-size: 13px; cursor: pointer; color: var(--ink);
+  }
+  .controls button:hover { border-color: var(--brand); color: var(--brand-dark); }
+
+  section.group {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  section.group > .group-header {
+    padding: 14px 18px;
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer;
+    user-select: none;
+  }
+  section.group > .group-header:hover { background: rgba(245,130,31,.05); }
+  .group-title { font-weight: 800; font-size: 15px; }
+  .group-meta { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 10px; }
+  .mini-track { width: 80px; height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; }
+  .mini-fill { height: 100%; background: var(--brand); }
+  .chevron { transition: transform .2s ease; }
+  .group.collapsed .chevron { transform: rotate(-90deg); }
+  .group.collapsed .tasks { display: none; }
+
+  .tasks { border-top: 1px solid var(--border); }
+  .task { padding: 14px 18px; border-bottom: 1px solid var(--border); display: grid; grid-template-columns: 24px 1fr; gap: 12px; }
+  .task:last-child { border-bottom: none; }
+  .task.done { background: rgba(30,142,90,.04); }
+  .task input[type="checkbox"] { width: 18px; height: 18px; margin-top: 2px; accent-color: var(--brand); cursor: pointer; }
+
+  .task-title-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .task-title { font-weight: 700; font-size: 14px; }
+  .task.done .task-title { text-decoration: line-through; color: var(--muted); }
+
+  .badge { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; padding: 2px 8px; border-radius: 999px; }
+  .badge.high { background: rgba(198,40,40,.12); color: var(--red); }
+  .badge.medium { background: rgba(184,134,11,.14); color: var(--amber); }
+  .badge.low { background: rgba(30,142,90,.12); color: var(--green); }
+  .badge.external { background: rgba(36,31,27,.08); color: var(--muted); }
+
+  .task-desc { font-size: 13px; color: var(--ink); opacity: .8; margin-top: 4px; }
+  .task-success { font-size: 12px; color: var(--muted); margin-top: 4px; font-style: italic; }
+  .task-success b { font-style: normal; color: var(--ink); opacity: .7; }
+
+  .task-status-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+  .task-status-row select {
+    font-size: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 4px 8px; background: var(--bg); color: var(--ink);
+  }
+  .task-notes {
+    width: 100%; margin-top: 8px; font-size: 12px; border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px;
+    background: var(--bg); color: var(--ink); resize: vertical; min-height: 32px; font-family: inherit;
+  }
+  .task-notes::placeholder { color: #B3ABA0; }
+
+  footer.foot { max-width: 1100px; margin: 0 auto; padding: 0 24px 40px; font-size: 12px; color: var(--muted); }
+  .hint { background: rgba(245,130,31,.08); border: 1px solid rgba(245,130,31,.25); border-radius: 12px; padding: 12px 16px; font-size: 13px; margin-bottom: 20px; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>🎉 Fiesta Platter — Master Launch Checklist</h1>
+  <p class="sub">Tracks real launch readiness. Checkboxes and notes save automatically in this browser (localStorage) — nothing is sent anywhere.</p>
+</header>
+
+<div class="stats" id="stats"></div>
+
+<main>
+  <div class="hint">
+    <strong>How this was seeded:</strong> items under Website / SEO / Analytics-readiness are checked off based on the actual codebase as of this session — verified against real files, not assumed. Everything under Branding, Costing, Marketing, Social Media, Google Business, Packaging, Operations, Delivery-data, Launch and Growth is business work only you (or your team) can complete — it starts unchecked. "External" items are things outside this codebase (account sign-ups, ad platforms) that need to happen off-repo.
+  </div>
+
+  <div class="controls">
+    <select id="filterSection"><option value="">All sections</option></select>
+    <select id="filterPriority">
+      <option value="">All priorities</option>
+      <option value="high">High</option>
+      <option value="medium">Medium</option>
+      <option value="low">Low</option>
+    </select>
+    <select id="filterStatus">
+      <option value="">All statuses</option>
+      <option value="done">Done</option>
+      <option value="not-done">Not done</option>
+    </select>
+    <button id="expandAll">Expand all</button>
+    <button id="collapseAll">Collapse all</button>
+    <button id="resetData">Reset to defaults</button>
+  </div>
+
+  <div id="groups"></div>
+</main>
+
+<footer class="foot">
+  Fiesta Platter internal planning doc — not part of the deployed website. Safe to edit; regenerate by asking Claude to re-seed from repo state.
+</footer>
+
+<script>
+/* ---------------------------------------------------------------
+   Task data — seeded honestly from the actual repo/codebase state.
+   priority: "high" | "medium" | "low"
+   external: true = requires an action outside this codebase
+--------------------------------------------------------------- */
+const TASKS = [
+  // ── Branding ─────────────────────────────────────────────────
+  { id: "brand-icons", section: "Branding", priority: "high", title: "Logo & favicon / PWA icon set",
+    description: "Branded favicon, apple-touch-icon, and manifest icons.",
+    success: "Correct icon shows in the browser tab, phone home-screen install, and social share previews.",
+    done: true },
+  { id: "brand-theme", section: "Branding", priority: "medium", title: "Brand color system & typography",
+    description: "Orange/charcoal theme, light + dark mode, Poppins/Plus Jakarta Sans applied site-wide.",
+    success: "Every page uses the same palette and type scale — no ad-hoc colors.",
+    done: true },
+  { id: "brand-photos", section: "Branding", priority: "medium", title: "Professional, consistent bundle photography",
+    description: "Real tray photos are live on the site for every bundle and most menu items.",
+    success: "You personally look at every product/bundle photo and judge it 'launch quality' and visually consistent.",
+    done: false },
+  { id: "brand-guidelines", section: "Branding", priority: "low", title: "Written brand guidelines doc",
+    description: "Logo usage, color hex codes, tone of voice for captions/replies.",
+    success: "Anyone helping with social posts can stay on-brand without asking you each time.",
+    done: false },
+
+  // ── Menu & Pricing ───────────────────────────────────────────
+  { id: "menu-data", section: "Menu & Pricing", priority: "high", title: "Menu items match official price list",
+    description: "src/data/menu.ts mirrors pricing.md — 9 items, real prices.",
+    success: "Every price on the site matches what you'd charge on the phone.",
+    done: true },
+  { id: "menu-bundles", section: "Menu & Pricing", priority: "high", title: "Bundle packages defined with real savings",
+    description: "5 bundles (Family → Ultimate Fiesta), real compare-at pricing and savings shown.",
+    success: "Each bundle's 'you save ₱X' is mathematically correct.",
+    done: true },
+  { id: "menu-doc", section: "Menu & Pricing", priority: "low", title: "Pricing reference doc in repo",
+    description: "pricing.md at repo root.",
+    success: "Source of truth exists outside the code for quick price updates.",
+    done: true },
+
+  // ── Costing ──────────────────────────────────────────────────
+  { id: "cost-per-tray", section: "Costing", priority: "high", title: "Cost-per-tray breakdown (ingredients + packaging + labor)",
+    description: "Not in the repo — this is real food-cost math only you can do accurately.",
+    success: "You know your actual margin % on every menu item and bundle before spending on ads.",
+    done: false },
+  { id: "cost-bundle-margin", section: "Costing", priority: "high", title: "Bundle margin analysis",
+    description: "Which bundle is highest-margin vs. highest-volume — decides what to promote.",
+    success: "You can say 'Fiesta Signature earns us ₱X profit per order' with confidence.",
+    done: false },
+
+  // ── Website ──────────────────────────────────────────────────
+  { id: "web-home", section: "Website", priority: "high", title: "Homepage complete",
+    description: "Hero, trust bar, best sellers, bundles, how-it-works, FAQ preview, final CTA.",
+    success: "A stranger understands what you sell and how to order within 10 seconds.",
+    done: true },
+  { id: "web-packages", section: "Website", priority: "high", title: "Bundle / packages page",
+    description: "/packages — all 5 bundles with photos, includes, pricing.",
+    success: "Customer can compare all bundles side by side and pick one.",
+    done: true },
+  { id: "web-menu", section: "Website", priority: "high", title: "Menu page with search & filter",
+    description: "/menu — full à la carte menu, live search + category chips.",
+    success: "Returning customer finds their usual item in under 5 seconds.",
+    done: true },
+  { id: "web-order", section: "Website", priority: "high", title: "Order flow (cart/checkout equivalent)",
+    description: "2-step wizard: choose bundle → contact/delivery/payment details, with live total.",
+    success: "A customer can complete an order end-to-end on mobile without confusion.",
+    done: true },
+  { id: "web-addons", section: "Website", priority: "medium", title: "Add-on / upsell recommendations",
+    description: "Popular-item tagging, bundle-upgrade nudge, free-delivery progress bar.",
+    success: "Average order value trends upward after launch (needs real data to confirm — see Analytics).",
+    done: true },
+  { id: "web-faq", section: "Website", priority: "medium", title: "FAQ page", description: "/faq with FAQ schema.",
+    success: "Common questions (lead time, payment, delivery) are answered without contacting you.", done: true },
+  { id: "web-contact", section: "Website", priority: "medium", title: "Contact page", description: "/contact with all channels.",
+    success: "Every contact method (Messenger, call, email) works and is correct.", done: true },
+  { id: "web-legal", section: "Website", priority: "low", title: "Terms & Privacy pages", description: "/terms and /privacy exist.",
+    success: "Legal pages exist and describe your actual policies (re-read them once for accuracy).", done: true },
+  { id: "web-404", section: "Website", priority: "low", title: "404 page", description: "Custom not-found page with nav back to menu/home.",
+    success: "Broken/old links don't dead-end the visitor.", done: true },
+  { id: "web-success", section: "Website", priority: "medium", title: "Order success / confirmation page",
+    description: "Order summary, reference number, Messenger hand-off, confetti.",
+    success: "Customer knows their order was received and exactly what to do next.", done: true },
+  { id: "web-product-pages", section: "Website", priority: "low", title: "Individual product detail pages",
+    description: "Currently items are cards on /menu with 'Quick Order' deep-links — no dedicated /menu/[slug] page.",
+    success: "Decide if this is even needed: mainly matters if you want to run ads or share links to a single dish.",
+    done: false },
+  { id: "web-real-address", section: "Website", priority: "high", title: "Replace placeholder business address & map coordinates",
+    description: "src/config/site.ts still has '123 Sample St., Barangay Uno', ZIP 1100, and placeholder lat/long — this is what's currently live in your LocalBusiness schema.",
+    success: "Real street address, barangay, city, ZIP and map coordinates are in the code and match your Google Business Profile exactly (NAP consistency).",
+    done: false },
+
+  // ── SEO ──────────────────────────────────────────────────────
+  { id: "seo-meta", section: "SEO", priority: "high", title: "Metadata, Open Graph, Twitter Cards",
+    description: "Per-page titles/descriptions, OG image, canonical URLs.", success: "Shared links preview correctly on Facebook/Messenger/iMessage.", done: true },
+  { id: "seo-sitemap", section: "SEO", priority: "high", title: "robots.txt & sitemap.xml", description: "Auto-generated, correct priorities.",
+    success: "Google can crawl and index every real page.", done: true },
+  { id: "seo-schema", section: "SEO", priority: "high", title: "Structured data (LocalBusiness, Menu, FAQ, Breadcrumb)",
+    description: "JSON-LD present site-wide.", success: "Google Rich Results Test shows no errors for these types.", done: true },
+  { id: "seo-icons", section: "SEO", priority: "medium", title: "Favicon / manifest / PWA icons", description: "See Branding — same work, SEO-relevant too.",
+    success: "Search results and browser tabs show your icon, not a blank page.", done: true },
+  { id: "seo-headers", section: "SEO", priority: "medium", title: "Security headers (CSP, HSTS, etc.)", description: "Set in next.config.mjs.",
+    success: "securityheaders.com scan comes back A/A+.", done: true },
+  { id: "seo-llms", section: "SEO", priority: "low", title: "llms.txt for AI answer engines", description: "public/llms.txt with business facts.",
+    success: "ChatGPT/Perplexity-style answers about Fiesta Platter are accurate.", done: true },
+  { id: "seo-gsc", section: "SEO", priority: "high", title: "Verify site in Google Search Console", external: true,
+    description: "Not code — requires logging into Search Console and verifying domain ownership.",
+    success: "Search Console shows indexing status and real query data.", done: false },
+
+  // ── Marketing ────────────────────────────────────────────────
+  { id: "mkt-ads-account", section: "Marketing", priority: "medium", title: "Facebook Ads Manager account set up", external: true,
+    description: "Business Manager + ad account + payment method.", success: "You can launch a campaign the day you're ready.", done: false },
+  { id: "mkt-ad-creative", section: "Marketing", priority: "medium", title: "Ad creative for Fiesta Signature & Fiesta Celebration",
+    description: "Photos/copy specifically for paid promotion of your two priority bundles.",
+    success: "3–5 ad variations ready to test.", done: false },
+  { id: "mkt-messenger-auto", section: "Marketing", priority: "low", title: "Messenger quick-replies / automation", external: true,
+    description: "Facebook Page inbox automation for common questions.", success: "Customers get an instant reply outside business hours.", done: false },
+  { id: "mkt-referral", section: "Marketing", priority: "low", title: "Referral program design",
+    description: "e.g. ₱50 off next order for referring a friend.", success: "Program rules are simple enough to explain in one sentence.", done: false },
+
+  // ── Social Media ─────────────────────────────────────────────
+  { id: "social-fb", section: "Social Media", priority: "high", title: "Facebook Page live & on-brand", external: true,
+    description: "Site links to facebook.com/fiestaplatterph — verify the page itself is live, branded, and active.",
+    success: "Page has cover photo, profile photo, correct hours/contact, and recent posts.", done: false },
+  { id: "social-ig", section: "Social Media", priority: "low", title: "Instagram account", external: true,
+    description: "siteConfig.contact.instagramUrl is currently empty.", success: "Handle exists, bio links to fiestaplatter.com, 9+ grid posts.", done: false },
+  { id: "social-tiktok", section: "Social Media", priority: "low", title: "TikTok profile", external: true,
+    description: "Not started.", success: "Handle secured, at least 3 posts (kitchen/behind-the-scenes content performs well for food brands).", done: false },
+
+  // ── Google Business ──────────────────────────────────────────
+  { id: "gbp-listing", section: "Google Business", priority: "high", title: "Google Business Profile created & verified", external: true,
+    description: "Not started — this is one of the highest-leverage local SEO actions available.",
+    success: "Appears in Google Maps + local pack search results with correct NAP, hours, category ('Caterer').", done: false },
+  { id: "gbp-photos", section: "Google Business", priority: "medium", title: "GBP photos, posts, and Q&A seeded", external: true,
+    description: "Upload real food/packaging photos, answer likely questions preemptively.",
+    success: "Profile looks active, not abandoned.", done: false },
+
+  // ── Packaging ────────────────────────────────────────────────
+  { id: "pack-sticker", section: "Packaging", priority: "medium", title: "Packaging sticker / label design",
+    description: "Branded sticker for bilao/tray lids.", success: "Every delivered order is visually branded, even without a box.", done: false },
+  { id: "pack-thankyou", section: "Packaging", priority: "low", title: "Thank-you card insert",
+    description: "Small card with QR to reorder + review request.", success: "Every order includes a nudge to leave a review or reorder.", done: false },
+
+  // ── Operations ───────────────────────────────────────────────
+  { id: "ops-kitchen-sop", section: "Operations", priority: "high", title: "Kitchen SOP (food safety, prep schedule)",
+    description: "Not in repo — real operational procedure only you can write accurately for your kitchen.",
+    success: "Anyone helping in the kitchen can follow the same food-safety and prep steps you do.", done: false },
+  { id: "ops-delivery-sop", section: "Operations", priority: "high", title: "Delivery SOP",
+    description: "Who delivers, how orders are packed, how delays are communicated.",
+    success: "A late or missing delivery has a clear escalation path, not improvisation.", done: false },
+  { id: "ops-fulfillment", section: "Operations", priority: "medium", title: "Order fulfillment process defined",
+    description: "From 'order received' email → who confirms on Messenger → who cooks → who delivers.",
+    success: "No order can silently fall through the cracks between steps.", done: false },
+
+  // ── Delivery ─────────────────────────────────────────────────
+  { id: "delivery-zones", section: "Delivery", priority: "high", title: "Real delivery radius / zones defined",
+    description: "siteConfig only has a generic 'Metro Manila and nearby areas' string — no concrete zone list.",
+    success: "You can answer 'do you deliver to X' instantly, and the site reflects the same zones.", done: false },
+  { id: "delivery-fees", section: "Delivery", priority: "medium", title: "Delivery fee table for outside the free-delivery zone",
+    description: "Site promises free delivery over ₱1,500 'within the city' but has no fee table beyond that.",
+    success: "No customer is surprised by a delivery fee at confirmation.", done: false },
+
+  // ── Analytics ────────────────────────────────────────────────
+  { id: "analytics-ga4-property", section: "Analytics", priority: "high", title: "GA4 property created, ID added to env", external: true,
+    description: "Code reads NEXT_PUBLIC_GA_ID but no property has been created/confirmed yet.",
+    success: "Real-time traffic shows up in GA4 when you visit the site.", done: false },
+  { id: "analytics-pixel", section: "Analytics", priority: "high", title: "Meta Pixel created, ID added to env", external: true,
+    description: "Code reads NEXT_PUBLIC_FB_PIXEL_ID but no Pixel has been created/confirmed yet.",
+    success: "Meta Events Manager shows PageView/Lead events firing.", done: false },
+  { id: "analytics-events-code", section: "Analytics", priority: "medium", title: "E-commerce event tracking code",
+    description: "add_to_cart/begin_checkout/generate_lead (GA4) and AddToCart/InitiateCheckout/Lead (Meta) already wired into the order flow.",
+    success: "Once IDs above are set, funnel drop-off is visible without further dev work.", done: true },
+  { id: "analytics-capi", section: "Analytics", priority: "low", title: "Meta Conversions API token", external: true,
+    description: "Server-side event plumbing is built (src/lib/meta-capi.ts) — needs META_CAPI_ACCESS_TOKEN from Meta Business Manager.",
+    success: "Lead events survive iOS tracking restrictions and ad blockers.", done: false },
+
+  // ── Launch ───────────────────────────────────────────────────
+  { id: "launch-soft", section: "Launch", priority: "high", title: "Soft launch to friends/family/barangay groups",
+    description: "Not started.", success: "Real orders come in from people who aren't you.", done: false },
+  { id: "launch-first-orders", section: "Launch", priority: "high", title: "First 20–30 real orders",
+    description: "Not started.", success: "You've stress-tested the full order → kitchen → delivery pipeline at real volume.", done: false },
+  { id: "launch-reviews", section: "Launch", priority: "medium", title: "10+ real reviews collected",
+    description: "None yet — and none should be faked (this site had placeholder testimonials removed for exactly this reason).",
+    success: "Real Facebook/Google reviews exist before any testimonials section is rebuilt.", done: false },
+
+  // ── Growth ───────────────────────────────────────────────────
+  { id: "growth-tracking", section: "Growth", priority: "medium", title: "Best-seller / AOV / repeat-customer tracking",
+    description: "GA4 + Pixel will supply raw data once configured; still needs a weekly review habit.",
+    success: "You can name your best-selling bundle and your highest-margin bundle without guessing.", done: false },
+  { id: "growth-repeat-campaign", section: "Growth", priority: "low", title: "Repeat-customer campaign",
+    description: "e.g. re-order reminder 3 weeks after last order.", success: "A defined trigger + message exists for winning back past customers.", done: false },
+];
+
+const SECTION_ORDER = ["Branding","Menu & Pricing","Costing","Website","SEO","Marketing","Social Media","Google Business","Packaging","Operations","Delivery","Analytics","Launch","Growth"];
+const PRIORITY_WEIGHT = { high: 3, medium: 2, low: 1 };
+const STORAGE_KEY = "fiestaLaunchChecklist_v1";
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+function saveState(state) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+let state = loadState();
+let collapsedSections = new Set(JSON.parse(localStorage.getItem(STORAGE_KEY + "_collapsed") || "[]"));
+
+function getTaskState(task) {
+  const s = state[task.id] || {};
+  return {
+    done: s.done !== undefined ? s.done : task.done,
+    status: s.status || (s.done ?? task.done ? "Done" : "Not Started"),
+    notes: s.notes || "",
+  };
+}
+function setTaskState(id, patch) {
+  state[id] = { ...(state[id] || {}), ...patch };
+  saveState(state);
+  render();
+}
+
+function computeStats() {
+  const total = TASKS.length;
+  let doneCount = 0, weightTotal = 0, weightDone = 0, highRemaining = 0;
+  TASKS.forEach((t) => {
+    const s = getTaskState(t);
+    const w = PRIORITY_WEIGHT[t.priority];
+    weightTotal += w;
+    if (s.done) { doneCount++; weightDone += w; }
+    else if (t.priority === "high") highRemaining++;
+  });
+  const overallPct = Math.round((doneCount / total) * 100);
+  const readinessPct = Math.round((weightDone / weightTotal) * 100);
+  const estDays = Math.max(0, highRemaining * 1.5 + (total - doneCount - highRemaining) * 0.4);
+  return { total, doneCount, overallPct, readinessPct, remaining: total - doneCount, estDays: Math.round(estDays) };
+}
+
+function renderStats() {
+  const s = computeStats();
+  document.getElementById("stats").innerHTML = `
+    <div class="progress-bar-outer">
+      <div class="row"><span>Launch Readiness (priority-weighted)</span><span>${s.readinessPct}%</span></div>
+      <div class="progress-track"><div class="progress-fill" style="width:${s.readinessPct}%"></div></div>
+    </div>
+    <div class="stat-card"><div class="value">${s.overallPct}%</div><div class="label">Overall complete</div></div>
+    <div class="stat-card"><div class="value">${s.doneCount}/${s.total}</div><div class="label">Tasks done</div></div>
+    <div class="stat-card"><div class="value">${s.remaining}</div><div class="label">Remaining</div></div>
+    <div class="stat-card"><div class="value">~${s.estDays}d</div><div class="label">Est. days to launch*</div></div>
+  `;
+}
+
+function badgeHtml(task) {
+  let out = `<span class="badge ${task.priority}">${task.priority}</span>`;
+  if (task.external) out += `<span class="badge external">external</span>`;
+  return out;
+}
+
+function render() {
+  renderStats();
+
+  const filterSection = document.getElementById("filterSection").value;
+  const filterPriority = document.getElementById("filterPriority").value;
+  const filterStatus = document.getElementById("filterStatus").value;
+
+  const sectionSelect = document.getElementById("filterSection");
+  if (sectionSelect.options.length <= 1) {
+    SECTION_ORDER.forEach((sec) => {
+      const opt = document.createElement("option");
+      opt.value = sec; opt.textContent = sec;
+      sectionSelect.appendChild(opt);
+    });
+  }
+
+  const groupsEl = document.getElementById("groups");
+  groupsEl.innerHTML = "";
+
+  SECTION_ORDER.forEach((section) => {
+    if (filterSection && filterSection !== section) return;
+    let tasks = TASKS.filter((t) => t.section === section);
+    if (filterPriority) tasks = tasks.filter((t) => t.priority === filterPriority);
+    if (filterStatus) tasks = tasks.filter((t) => (filterStatus === "done") === getTaskState(t).done);
+    if (tasks.length === 0) return;
+
+    const doneInSection = tasks.filter((t) => getTaskState(t).done).length;
+    const pct = Math.round((doneInSection / tasks.length) * 100);
+    const collapsed = collapsedSections.has(section);
+
+    const groupEl = document.createElement("section");
+    groupEl.className = "group" + (collapsed ? " collapsed" : "");
+    groupEl.innerHTML = `
+      <div class="group-header" data-section="${section}">
+        <span class="group-title">${section}</span>
+        <span class="group-meta">
+          ${doneInSection}/${tasks.length} done
+          <span class="mini-track"><span class="mini-fill" style="width:${pct}%"></span></span>
+          <span class="chevron">▾</span>
+        </span>
+      </div>
+      <div class="tasks">
+        ${tasks.map((t) => taskHtml(t)).join("")}
+      </div>
+    `;
+    groupsEl.appendChild(groupEl);
+  });
+
+  // wire events
+  document.querySelectorAll(".group-header").forEach((el) => {
+    el.onclick = () => {
+      const sec = el.dataset.section;
+      if (collapsedSections.has(sec)) collapsedSections.delete(sec); else collapsedSections.add(sec);
+      localStorage.setItem(STORAGE_KEY + "_collapsed", JSON.stringify([...collapsedSections]));
+      render();
+    };
+  });
+  document.querySelectorAll("input[type=checkbox][data-task]").forEach((el) => {
+    el.onchange = () => {
+      const id = el.dataset.task;
+      const done = el.checked;
+      setTaskState(id, { done, status: done ? "Done" : "Not Started" });
+    };
+  });
+  document.querySelectorAll("select[data-status-task]").forEach((el) => {
+    el.onchange = () => {
+      const id = el.dataset.statusTask;
+      const status = el.value;
+      setTaskState(id, { status, done: status === "Done" });
+    };
+  });
+  document.querySelectorAll("textarea[data-notes-task]").forEach((el) => {
+    el.onblur = () => setTaskState(el.dataset.notesTask, { notes: el.value });
+  });
+}
+
+function taskHtml(task) {
+  const s = getTaskState(task);
+  const statusOptions = ["Not Started", "In Progress", "Blocked", "Done"];
+  return `
+    <div class="task ${s.done ? "done" : ""}">
+      <input type="checkbox" data-task="${task.id}" ${s.done ? "checked" : ""} aria-label="Mark ${task.title} done" />
+      <div>
+        <div class="task-title-row">
+          <span class="task-title">${task.title}</span>
+          ${badgeHtml(task)}
+        </div>
+        <div class="task-desc">${task.description}</div>
+        <div class="task-success"><b>Success looks like:</b> ${task.success}</div>
+        <div class="task-status-row">
+          <select data-status-task="${task.id}">
+            ${statusOptions.map((o) => `<option value="${o}" ${s.status === o ? "selected" : ""}>${o}</option>`).join("")}
+          </select>
+        </div>
+        <textarea class="task-notes" data-notes-task="${task.id}" placeholder="Notes...">${s.notes}</textarea>
+      </div>
+    </div>
+  `;
+}
+
+document.getElementById("filterSection").onchange = render;
+document.getElementById("filterPriority").onchange = render;
+document.getElementById("filterStatus").onchange = render;
+document.getElementById("expandAll").onclick = () => { collapsedSections.clear(); localStorage.setItem(STORAGE_KEY + "_collapsed", "[]"); render(); };
+document.getElementById("collapseAll").onclick = () => { collapsedSections = new Set(SECTION_ORDER); localStorage.setItem(STORAGE_KEY + "_collapsed", JSON.stringify(SECTION_ORDER)); render(); };
+document.getElementById("resetData").onclick = () => {
+  if (confirm("Reset all checkboxes/notes back to the seeded defaults? This clears your saved progress in this browser.")) {
+    state = {};
+    saveState(state);
+    render();
+  }
+};
+
+render();
+</script>
+</body>
+</html>
