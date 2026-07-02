@@ -22,20 +22,29 @@ const config: Config = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        // DEFAULT/500 deepened from the original #F5821F — the bright shade
+        // fails WCAG AA contrast (~2.4-2.6:1) both as text on light
+        // backgrounds and as a background behind white button text. This
+        // darker value keeps the same hue but clears 4.5:1 in both
+        // directions (verified against the site's actual card/warm
+        // backgrounds, not just pure white).
         brand: {
-          DEFAULT: "#F5821F",
+          DEFAULT: "#AF5308",
           50: "#FCEEDF",
           100: "#FBD9B8",
           400: "#F89A47",
-          500: "#F5821F",
-          600: "#DE7212",
-          700: "#B85C0E",
+          500: "#AF5308",
+          600: "#9C4A07",
+          700: "#7F3C06",
         },
         accent: {
           DEFAULT: "#FBA94C",
           foreground: "#1A1613",
           500: "#FBA94C",
-          600: "#F5821F",
+          // Was the same bright #F5821F as the old brand color — same
+          // contrast failure (2.44:1 as text on light backgrounds).
+          // Aligned to the same WCAG-safe dark orange used for `brand`.
+          600: "#AF5308",
         },
         cream: "#17130E",
         ink: "#211D17",

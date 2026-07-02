@@ -58,7 +58,7 @@ export function SelectableBundleCard({ pkg, active, onSelect }: SelectableBundle
         <p className="font-display text-base font-extrabold text-foreground">{pkg.name}</p>
         <p className="text-xs font-semibold text-brand">{pkg.audience}</p>
 
-        <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-foreground/55">
+        <p className="mt-2 inline-flex items-center gap-1.5 text-xs text-foreground/70">
           <Users className="h-3.5 w-3.5 text-brand" /> {pkg.serving}
         </p>
         <p className="mt-1.5 text-xs leading-relaxed text-foreground/70">
@@ -71,7 +71,7 @@ export function SelectableBundleCard({ pkg, active, onSelect }: SelectableBundle
             {formatPrice(pkg.price)}
           </span>
           {pkg.compareAtPrice ? (
-            <span className="mb-0.5 text-xs text-foreground/40 line-through">
+            <span className="mb-0.5 text-xs text-foreground/70 line-through">
               {formatPrice(pkg.compareAtPrice)}
             </span>
           ) : null}
@@ -110,7 +110,7 @@ export function CustomizeBundleCard({ active, onSelect }: { active: boolean; onS
         <Wrench className="h-6 w-6" />
       </span>
       <p className="font-display text-base font-extrabold text-foreground">Customize Bundle</p>
-      <p className="max-w-[16rem] text-xs leading-relaxed text-foreground/60">
+      <p className="max-w-[16rem] text-xs leading-relaxed text-foreground/70">
         Build your own — pick exactly the trays you want.
       </p>
     </button>

@@ -37,7 +37,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
           Thank you, <strong>{summary.lines[0]?.value}</strong>! Your order reference is{" "}
           <strong className="text-brand">{summary.reference}</strong>.
         </p>
-        <p className="mt-1 text-sm text-foreground/60">
+        <p className="mt-1 text-sm text-foreground/70">
           One last step — tap below to confirm on Messenger so we can lock in your slot and
           finalize your {siteConfig.ordering.downpaymentNote.toLowerCase()}
         </p>
@@ -61,7 +61,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
           <dl className="mt-3 divide-y divide-border">
             {summary.lines.map((line) => (
               <div key={line.label} className="flex justify-between gap-4 py-2 text-sm">
-                <dt className="shrink-0 text-foreground/50">{line.label}</dt>
+                <dt className="shrink-0 text-foreground/70">{line.label}</dt>
                 <dd className="text-right font-medium text-foreground">{line.value}</dd>
               </div>
             ))}
@@ -74,7 +74,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
               </div>
             ) : null}
           </dl>
-          <p className="mt-3 text-xs text-foreground/50">
+          <p className="mt-3 text-xs text-foreground/70">
             This is an estimate. We&apos;ll confirm the final total (including any delivery
             fee) when we process your order.
           </p>

@@ -30,7 +30,7 @@ export function TrustBar() {
           <div key={item.label} className="flex flex-col items-center text-center">
             <item.icon className="mb-2 h-6 w-6 text-accent-600" aria-hidden />
             <p className="font-display text-2xl font-extrabold text-foreground">{item.value}</p>
-            <p className="text-xs font-medium uppercase tracking-wide text-foreground/50">
+            <p className="text-xs font-medium uppercase tracking-wide text-foreground/70">
               {item.label}
             </p>
           </div>

@@ -37,7 +37,7 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
       </main>
 
       <footer className="border-t border-border py-6">
-        <div className="container flex flex-col items-center justify-center gap-2 text-center text-xs text-foreground/50 sm:flex-row sm:gap-6">
+        <div className="container flex flex-col items-center justify-center gap-2 text-center text-xs text-foreground/70 sm:flex-row sm:gap-6">
           <span className="inline-flex items-center gap-1.5">
             <ShieldCheck className="h-4 w-4 text-green-600" /> Secure &amp; no upfront payment
           </span>

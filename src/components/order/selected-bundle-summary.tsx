@@ -35,7 +35,7 @@ export function SelectedBundleSummary({ pkg, isCustom, onChange }: SelectedBundl
           {pkg ? pkg.name : "Custom Order"}
         </p>
         {pkg ? (
-          <p className="text-xs text-foreground/60">{formatPrice(pkg.price)}</p>
+          <p className="text-xs text-foreground/70">{formatPrice(pkg.price)}</p>
         ) : null}
       </div>
 

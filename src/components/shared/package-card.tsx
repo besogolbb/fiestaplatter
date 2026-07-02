@@ -40,7 +40,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
       <div className="flex flex-1 flex-col p-6">
         <h3 className="font-display text-xl font-extrabold text-foreground">{pkg.name}</h3>
         <p className="text-sm font-semibold text-brand">{pkg.audience}</p>
-        <p className="mt-2 text-sm leading-relaxed text-foreground/60">{pkg.description}</p>
+        <p className="mt-2 text-sm leading-relaxed text-foreground/70">{pkg.description}</p>
 
         <ul className="mt-4 space-y-2" aria-label={`Included in ${pkg.name}`}>
           {pkg.includes.map((inc) => (
@@ -51,7 +51,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
           ))}
         </ul>
 
-        <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-foreground/50">
+        <div className="mt-5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-foreground/70">
           <Users className="h-4 w-4 text-brand" aria-hidden /> {pkg.serving}
         </div>
 
@@ -61,7 +61,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
               {formatPrice(pkg.price)}
             </span>
             {pkg.compareAtPrice ? (
-              <span className="mb-1 text-sm text-foreground/40 line-through">
+              <span className="mb-1 text-sm text-foreground/70 line-through">
                 {formatPrice(pkg.compareAtPrice)}
               </span>
             ) : null}

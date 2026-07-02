@@ -31,7 +31,7 @@ export default function GalleryPage() {
             <h2 className="font-display text-2xl font-extrabold text-foreground sm:text-3xl">
               {cat}
             </h2>
-            <GalleryGrid images={images} className="mt-8" />
+            <GalleryGrid images={images} className="mt-8" eagerCount={i === 0 ? 4 : 0} />
           </Section>
         );
       })}

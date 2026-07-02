@@ -62,6 +62,7 @@ export function Hero() {
                 alt={heroProduct.imageAlt}
                 fill
                 priority
+                fetchPriority="high"
                 sizes="(max-width: 1024px) 90vw, 45vw"
                 className="object-cover"
               />
@@ -94,7 +95,7 @@ export function Hero() {
               <p className="font-display text-base font-extrabold leading-tight text-brand">
                 {formatPrice(ordering.freeDeliveryThreshold)}+
               </p>
-              <p className="text-xs font-medium leading-tight text-foreground/60">free delivery</p>
+              <p className="text-xs font-medium leading-tight text-foreground/70">free delivery</p>
             </div>
           </div>
         </div>

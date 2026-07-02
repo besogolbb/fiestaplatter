@@ -61,9 +61,9 @@ function StepCard({ children, className }: { children: React.ReactNode; classNam
 function StepIndicator({ step }: { step: Step }) {
   return (
     <div className="mb-6 flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-wide">
-      <span className={step === "bundle" ? "text-brand" : "text-foreground/40"}>1. Bundle</span>
+      <span className={step === "bundle" ? "text-brand" : "text-foreground/70"}>1. Bundle</span>
       <span className="h-px w-8 bg-border" aria-hidden />
-      <span className={step === "details" ? "text-brand" : "text-foreground/40"}>2. Details</span>
+      <span className={step === "details" ? "text-brand" : "text-foreground/70"}>2. Details</span>
     </div>
   );
 }
@@ -224,7 +224,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                 <h2 className="font-display text-xl font-extrabold text-foreground sm:text-2xl">
                   Choose Your Bundle
                 </h2>
-                <p className="mt-1 text-sm text-foreground/60">
+                <p className="mt-1 text-sm text-foreground/70">
                   Pick a ready-made Fiesta bundle, or build your own with Customize Bundle. Tap a
                   card to continue.
                 </p>
@@ -295,7 +295,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                     <Sparkles className="h-4 w-4 text-brand" />
                     {isCustom ? "Build your bundle — pick your trays" : "Add extra trays"}
                     {!isCustom ? (
-                      <span className="font-normal text-foreground/40">(optional)</span>
+                      <span className="font-normal text-foreground/70">(optional)</span>
                     ) : null}
                   </p>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -520,7 +520,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                       "Submit Order"
                     )}
                   </Button>
-                  <p className="flex items-center justify-center gap-1.5 text-center text-xs text-foreground/50">
+                  <p className="flex items-center justify-center gap-1.5 text-center text-xs text-foreground/70">
                     <ShieldCheck className="h-4 w-4 text-green-500" />
                     No payment yet. We&apos;ll confirm your order and total before anything is
                     charged.
@@ -536,7 +536,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
       {step === "details" && estimatedTotal > 0 ? (
         <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md sm:hidden">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-foreground/50">
+            <p className="text-[11px] font-medium uppercase tracking-wide text-foreground/70">
               Estimated Total
             </p>
             <p className="font-display text-lg font-extrabold text-brand">

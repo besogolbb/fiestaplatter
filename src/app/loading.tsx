@@ -5,7 +5,7 @@ export default function Loading() {
     <div className="flex min-h-dvh items-center justify-center bg-background" role="status" aria-label="Loading">
       <div className="flex flex-col items-center gap-3 text-brand">
         <Loader2 className="h-9 w-9 animate-spin" aria-hidden />
-        <p className="text-sm font-medium text-foreground/60">Preparing your feast…</p>
+        <p className="text-sm font-medium text-foreground/70">Preparing your feast…</p>
       </div>
     </div>
   );

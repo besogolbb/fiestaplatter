@@ -50,7 +50,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
           <p className="font-display text-sm font-bold text-brand">{item.shortName}</p>
         ) : null}
 
-        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-foreground/60">
+        <p className="mt-2 line-clamp-2 flex-1 text-sm leading-relaxed text-foreground/70">
           {item.description}
         </p>
 
@@ -68,7 +68,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
             {formatPrice(item.price)}
           </span>
           {item.unitPrice ? (
-            <span className="text-xs text-foreground/50">
+            <span className="text-xs text-foreground/70">
               {formatPrice(item.unitPrice.amount)} {item.unitPrice.unit}
             </span>
           ) : null}

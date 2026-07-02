@@ -19,7 +19,7 @@ export function BestSellers() {
       <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {bestSellers.map((item, i) => (
           <Reveal key={item.slug} delay={i * 0.06}>
-            <ProductCard item={item} priority={i < 2} />
+            <ProductCard item={item} />
           </Reveal>
         ))}
       </div>

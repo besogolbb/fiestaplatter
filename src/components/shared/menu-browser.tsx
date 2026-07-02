@@ -38,7 +38,7 @@ export function MenuBrowser({ items, categories }: MenuBrowserProps) {
         <div className="mx-auto flex max-w-2xl flex-col gap-4 sm:flex-row sm:items-center">
           <div className="relative flex-1">
             <Search
-              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/40"
+              className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/70"
               aria-hidden
             />
             <Input
@@ -96,7 +96,7 @@ export function MenuBrowser({ items, categories }: MenuBrowserProps) {
 
       {filtered.length === 0 ? (
         <Section className="bg-background">
-          <p className="text-center text-foreground/60">
+          <p className="text-center text-foreground/70">
             No dishes match &ldquo;{query}&rdquo;. Try a different search or{" "}
             <button type="button" onClick={() => setQuery("")} className="font-semibold text-brand underline">
               clear the search

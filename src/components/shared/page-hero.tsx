@@ -19,7 +19,7 @@ export function PageHero({ eyebrow, title, description, crumbs }: PageHeroProps)
     <section className="bg-warm">
       <div className="container py-12 sm:py-16">
         <nav aria-label="Breadcrumb">
-          <ol className="flex flex-wrap items-center gap-1 text-sm text-foreground/50">
+          <ol className="flex flex-wrap items-center gap-1 text-sm text-foreground/70">
             {trail.map((c, i) => (
               <li key={c.path} className="flex items-center gap-1">
                 {i > 0 ? <ChevronRight className="h-4 w-4" aria-hidden /> : null}

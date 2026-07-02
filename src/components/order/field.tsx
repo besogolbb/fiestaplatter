@@ -34,11 +34,11 @@ export function Field({
             *
           </span>
         ) : (
-          <span className="ml-1 text-xs font-normal text-foreground/40">(optional)</span>
+          <span className="ml-1 text-xs font-normal text-foreground/70">(optional)</span>
         )}
       </Label>
       {hint ? (
-        <p id={hintId} className="text-xs text-foreground/50">
+        <p id={hintId} className="text-xs text-foreground/70">
           {hint}
         </p>
       ) : null}

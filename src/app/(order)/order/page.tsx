@@ -60,7 +60,7 @@ export default async function OrderPage({ searchParams }: OrderPageProps) {
             ) : null}
           </p>
 
-          <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-medium text-foreground/60">
+          <ul className="mt-5 flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-medium text-foreground/70">
             {assurances.map((a) => (
               <li key={a.text} className="inline-flex items-center gap-1.5">
                 <a.icon className="h-4 w-4 text-brand" aria-hidden /> {a.text}

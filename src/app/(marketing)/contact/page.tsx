@@ -101,7 +101,7 @@ export default function ContactPage() {
 
             <div className="mt-6 rounded-xl bg-background p-4">
               <p className="text-sm font-semibold text-foreground">Ready to reserve your date?</p>
-              <p className="mt-1 text-sm text-foreground/60">
+              <p className="mt-1 text-sm text-foreground/70">
                 Book at least {siteConfig.ordering.minLeadTimeHours} hours ahead to secure
                 your schedule.
               </p>

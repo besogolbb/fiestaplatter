@@ -25,7 +25,7 @@ export function FinalCta() {
             <h2 className="mt-3 text-balance font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
               Ready for Your Next Celebration?
             </h2>
-            <p className="mt-4 text-pretty text-lg leading-relaxed text-white/85">
+            <p className="mt-4 text-pretty text-lg leading-relaxed text-white">
               Order today and reserve your preferred delivery schedule. Fresh trays,
               generous servings, and on-time delivery — {siteConfig.location.serviceArea}.
             </p>

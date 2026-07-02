@@ -5,9 +5,12 @@ import { cn } from "@/lib/utils";
 export function GalleryGrid({
   images,
   className,
+  eagerCount = 0,
 }: {
   images: GalleryImage[];
   className?: string;
+  /** How many leading images to load eagerly — only set this for grids that render near the top of the page. */
+  eagerCount?: number;
 }) {
   return (
     <ul
@@ -25,7 +28,7 @@ export function GalleryGrid({
             src={img.src}
             alt={img.alt}
             fill
-            loading={i < 4 ? "eager" : "lazy"}
+            loading={i < eagerCount ? "eager" : "lazy"}
             sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
             className="object-cover transition-transform duration-500 group-hover:scale-110"
           />

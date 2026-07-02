@@ -24,7 +24,7 @@ export default function Error({
       <h1 className="mt-6 font-display text-2xl font-extrabold text-foreground">
         Something went wrong
       </h1>
-      <p className="mt-2 max-w-md text-foreground/60">
+      <p className="mt-2 max-w-md text-foreground/70">
         Sorry, an unexpected error occurred. Please try again — or reach us directly and
         we&apos;ll take your order right away.
       </p>
