@@ -29,18 +29,21 @@ export const siteConfig = {
     tiktokUrl: "", // optional
   },
 
-  // ── Location / service area — TODO ────────────────────────────────────
+  // ── Location / service area ────────────────────────────────────────────
   location: {
-    streetAddress: "123 Sample St., Barangay Uno", // TODO
-    city: "Quezon City", // TODO
-    region: "Metro Manila", // TODO
-    postalCode: "1100", // TODO
+    // Barangay-level only, intentionally no house/unit number (home-based kitchen).
+    streetAddress: "San Jose, Brgy. Francisco Reyes",
+    city: "General Mariano Alvarez (GMA)",
+    region: "Cavite",
+    postalCode: "4117",
     country: "PH",
-    serviceArea: "Metro Manila and nearby areas", // TODO
-    // Optional map coordinates for LocalBusiness schema
-    latitude: 14.676, // TODO
-    longitude: 121.0437, // TODO
-    googleMapsUrl: "", // optional
+    serviceArea: "General Mariano Alvarez, Cavite and nearby towns", // TODO: confirm exact delivery radius/towns
+    // Approximate GMA, Cavite town-center coordinates — NOT verified against
+    // the actual barangay location. Refine by dropping a pin on Google Maps
+    // (right-click your spot > "What's here?") and pasting the lat/long here.
+    latitude: 14.308, // TODO: verify
+    longitude: 120.9924, // TODO: verify
+    googleMapsUrl: "", // optional — add once your Google Business Profile is live
   },
 
   // ── Hours — TODO ──────────────────────────────────────────────────────
