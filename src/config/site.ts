@@ -63,13 +63,6 @@ export const siteConfig = {
     ],
   },
 
-  // ── Social proof (shown in hero + trust bar) — TODO: verify numbers ────
-  stats: {
-    ordersServed: "5,000+", // TODO
-    yearsServing: 6, // TODO
-    happyFamilies: "2,000+", // TODO
-  },
-
   // ── Ordering rules ────────────────────────────────────────────────────
   ordering: {
     minLeadTimeHours: 24,

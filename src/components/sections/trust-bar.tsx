@@ -1,25 +1,35 @@
-import { Users, CalendarClock, HeartHandshake } from "lucide-react";
+import { Flame, CalendarClock, Truck } from "lucide-react";
 import { siteConfig } from "@/config/site";
-import { CountUpStat } from "@/components/shared/count-up-stat";
+import { formatPrice } from "@/lib/utils";
 
+/**
+ * Honest, verifiable claims only — no order counts/tenure/customer numbers
+ * until we actually have real ones to report. Every value here comes
+ * straight from the ordering rules in siteConfig, not a placeholder stat.
+ */
 export function TrustBar() {
-  const { stats } = siteConfig;
+  const { ordering } = siteConfig;
   const items = [
-    { icon: Users, value: stats.ordersServed, label: "Orders served" },
-    { icon: CalendarClock, value: `${stats.yearsServing} yrs`, label: "Serving celebrations" },
-    { icon: HeartHandshake, value: stats.happyFamilies, label: "Happy families" },
+    { icon: Flame, value: "Fresh", label: "Cooked to order, never frozen" },
+    {
+      icon: CalendarClock,
+      value: `${ordering.minLeadTimeHours}-Hr`,
+      label: "Advance booking",
+    },
+    {
+      icon: Truck,
+      value: `${formatPrice(ordering.freeDeliveryThreshold)}+`,
+      label: "Free delivery",
+    },
   ];
 
   return (
-    <section aria-label="Business highlights" className="border-y border-border bg-card">
+    <section aria-label="Why order from us" className="border-y border-border bg-card">
       <div className="container grid grid-cols-3 gap-y-6 py-8">
         {items.map((item) => (
           <div key={item.label} className="flex flex-col items-center text-center">
             <item.icon className="mb-2 h-6 w-6 text-accent-600" aria-hidden />
-            <CountUpStat
-              value={item.value}
-              className="font-display text-2xl font-extrabold text-foreground"
-            />
+            <p className="font-display text-2xl font-extrabold text-foreground">{item.value}</p>
             <p className="text-xs font-medium uppercase tracking-wide text-foreground/50">
               {item.label}
             </p>

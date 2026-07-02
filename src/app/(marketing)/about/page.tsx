@@ -24,13 +24,12 @@ const values = [
 ];
 
 export default function AboutPage() {
-  const { stats } = siteConfig;
   return (
     <>
       <PageHero
         eyebrow="Our Story"
         title="Home-Made Filipino Flavors for Every Celebration"
-        description={`For over ${stats.yearsServing} years, Fiesta Platter has been serving fresh, generous party trays to families across ${siteConfig.location.serviceArea}.`}
+        description={`Fiesta Platter serves fresh, generous party trays to families across ${siteConfig.location.serviceArea}.`}
         crumbs={[{ name: "About", path: "/about" }]}
       />
 
@@ -56,13 +55,14 @@ export default function AboutPage() {
               <p>
                 Fiesta Platter started with a simple belief: every celebration deserves
                 food that tastes like it was made at home — because it is. What began as
-                cooking for family birthdays and fiestas grew into a trusted name for party
-                trays across the community.
+                cooking for family birthdays and fiestas grew into Fiesta Platter, bringing
+                that same home-cooked quality to more tables.
               </p>
               <p>
-                Today we prepare thousands of orders for birthdays, office events, weddings,
-                house blessings and holidays. Through it all, our promise hasn&apos;t changed:
-                fresh ingredients, generous servings, honest prices, and on-time delivery.
+                Every order is prepared fresh on your delivery date — whether it&apos;s a
+                birthday, office event, wedding, house blessing or holiday gathering. Our
+                promise: fresh ingredients, generous servings, honest prices, and on-time
+                delivery.
               </p>
               <p className="font-semibold text-foreground">
                 When you order from Fiesta Platter, you&apos;re not just getting food —

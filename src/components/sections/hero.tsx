@@ -1,13 +1,13 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Truck, Users } from "lucide-react";
+import { ArrowRight, CheckCircle2, ChefHat, Truck, Users } from "lucide-react";
 import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { heroProduct } from "@/data/menu";
 import { formatPrice } from "@/lib/utils";
 
 export function Hero() {
-  const { stats } = siteConfig;
+  const { ordering } = siteConfig;
 
   return (
     <section className="relative overflow-hidden bg-warm">
@@ -15,8 +15,8 @@ export function Hero() {
         {/* Copy */}
         <div className="max-w-xl">
           <span className="inline-flex items-center gap-2 rounded-full border border-brand/30 bg-brand/10 px-3.5 py-1.5 text-sm font-semibold text-brand">
-            <Users className="h-4 w-4" />
-            {stats.happyFamilies} happy families served
+            <ChefHat className="h-4 w-4" />
+            Home-cooked recipes, made fresh to order
           </span>
 
           <h1 className="mt-5 text-balance font-display text-5xl font-extrabold leading-[1.05] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
@@ -87,10 +87,15 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Floating orders chip — bottom-left, dropped clear below the image so it never meets the price tag */}
-          <div className="absolute -bottom-6 -left-4 z-10 hidden rounded-2xl border border-border bg-card px-4 py-3 text-center shadow-xl sm:block">
-            <p className="font-display text-xl font-extrabold text-brand">{stats.ordersServed}</p>
-            <p className="text-xs font-medium text-foreground/60">orders served</p>
+          {/* Floating delivery-threshold chip — bottom-left, dropped clear below the image so it never meets the price tag */}
+          <div className="absolute -bottom-6 -left-4 z-10 hidden items-center gap-2 rounded-2xl border border-border bg-card px-4 py-3 text-center shadow-xl sm:flex">
+            <Truck className="h-5 w-5 shrink-0 text-brand" aria-hidden />
+            <div className="text-left">
+              <p className="font-display text-base font-extrabold leading-tight text-brand">
+                {formatPrice(ordering.freeDeliveryThreshold)}+
+              </p>
+              <p className="text-xs font-medium leading-tight text-foreground/60">free delivery</p>
+            </div>
           </div>
         </div>
       </div>

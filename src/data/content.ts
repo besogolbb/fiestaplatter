@@ -34,9 +34,9 @@ export const benefits: Benefit[] = [
   },
   {
     icon: "HeartHandshake",
-    title: "Trusted by Families",
+    title: "Family-Run Kitchen",
     description:
-      "Thousands of birthdays, fiestas and office events served. Real families keep coming back — and so will you.",
+      "A home-based kitchen that treats every order like it's for our own family — the same care and consistency, every time.",
   },
 ];
 
