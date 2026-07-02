@@ -9,8 +9,25 @@ export async function loginAdmin(formData: FormData) {
   const next = String(formData.get("next") ?? "/admin");
   const safeNext = next.startsWith("/admin") ? next : "/admin";
 
-  const expectedPassword = process.env.ADMIN_PASSWORD;
-  if (!expectedPassword || !process.env.ADMIN_SESSION_SECRET) {
+  // .trim() guards against a trailing newline/space from copy-pasting the
+  // value into EasyPanel's Environment tab — a very common way this silently
+  // breaks without looking wrong anywhere.
+  const expectedPassword = process.env.ADMIN_PASSWORD?.trim();
+  const sessionSecretSet = Boolean(process.env.ADMIN_SESSION_SECRET);
+
+  // TEMPORARY diagnostic — never logs the actual password/secret values,
+  // only whether they're present and their lengths, to debug a live login
+  // failure via EasyPanel's log viewer. Remove once resolved.
+  console.log(
+    "[loginAdmin]",
+    "ADMIN_PASSWORD set:", Boolean(expectedPassword),
+    "| length:", expectedPassword?.length ?? 0,
+    "| ADMIN_SESSION_SECRET set:", sessionSecretSet,
+    "| submitted length:", password.length,
+    "| match:", password === expectedPassword,
+  );
+
+  if (!expectedPassword || !sessionSecretSet) {
     // Not configured yet — same error message as a wrong password so we
     // don't leak which env var is missing to an unauthenticated visitor.
     redirect(`/admin/login?error=1&next=${encodeURIComponent(safeNext)}`);
