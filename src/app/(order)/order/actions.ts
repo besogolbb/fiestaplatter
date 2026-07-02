@@ -9,6 +9,7 @@ import {
 } from "@/lib/order-format";
 import { siteConfig } from "@/config/site";
 import { sendMetaCapiLead } from "@/lib/meta-capi";
+import { appendOrderToGoogleSheet } from "@/lib/google-sheets";
 
 export interface OrderActionState {
   status: "idle" | "success" | "error";
@@ -81,13 +82,17 @@ export async function submitOrder(
     }
   }
 
-  // Server-side Lead event for Meta CAPI, deduped against the client Pixel
-  // event by reference. No-ops until credentials are set. Awaited (not
-  // fire-and-forget) so it isn't cut short on serverless runtimes.
-  await sendMetaCapiLead({
-    eventId: summary.reference,
-    value: summary.estimatedTotal ?? 0,
-  });
+  // Record the order in Google Sheets (source of truth for the admin
+  // dashboard) and fire the Meta CAPI Lead event in parallel — both are
+  // independent, no-op safely if unconfigured, and neither should block
+  // or fail because of the other.
+  await Promise.allSettled([
+    appendOrderToGoogleSheet(order, summary),
+    sendMetaCapiLead({
+      eventId: summary.reference,
+      value: summary.estimatedTotal ?? 0,
+    }),
+  ]);
 
   return {
     status: "success",

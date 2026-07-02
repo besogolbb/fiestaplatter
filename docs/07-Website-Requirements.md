@@ -29,6 +29,8 @@ This documents what is actually built, as of this session. It reflects the real 
 | `/privacy`, `/terms` | Legal | |
 | `/robots.txt`, `/sitemap.xml`, `/manifest.webmanifest` | Generated via Next's file conventions (`robots.ts`, `sitemap.ts`, `manifest.ts`) |
 | `/opengraph-image` | Dynamic OG image (edge runtime) | |
+| `/admin` | Order dashboard (stats, calendar, searchable table) | Password-gated, excluded from `robots.txt`. Reads live from Google Sheets — see below |
+| `/admin/login` | Admin sign-in | |
 
 ## Order flow (functions as cart + checkout)
 
@@ -36,10 +38,19 @@ There is no traditional multi-item cart — the order form itself serves that ro
 
 1. **Step 1 — Bundle selection:** visual cards for all 5 bundles + a "Customize Bundle" option, styled like the `/packages` page.
 2. **Step 2 — Details:** selected bundle summary (with "Change" to go back), optional add-on trays (best-seller/popular items surfaced first), live estimated total, free-delivery progress nudge, next-tier upgrade nudge, then contact/delivery/event/payment fields.
-3. **Submit:** Server Action (`submitOrder` in `src/app/(order)/order/actions.ts`) validates with Zod, checks a honeypot field, emails the business via Resend if configured, fires a server-side Meta Conversions API Lead event if configured, and returns a structured summary.
+3. **Submit:** Server Action (`submitOrder` in `src/app/(order)/order/actions.ts`) validates with Zod, checks a honeypot field, emails the business via Resend if configured, appends a row to the Google Sheet order log if configured, fires a server-side Meta Conversions API Lead event if configured, and returns a structured summary. The email/sheet/CAPI calls are independent (`Promise.allSettled`) — none of them can block the customer's success screen or fail because of another.
 4. **Success:** `OrderSuccess` shows the reference number, a prefilled Messenger confirmation link (this is the actual "checkout" — payment is arranged manually via Messenger/call, not on-site), and the order summary.
 
 **No online payment is processed on the site.** This is intentional — orders are confirmed and paid via Messenger/GCash/Maya/bank transfer/COD after submission.
+
+## Order records & admin dashboard
+
+There is no database. The Google Sheet populated by the order flow (above) *is* the order record — see `docs/08-Google-Sheets-Setup.md` for the one-time setup (a small Apps Script "web app" that both appends new orders and serves them back as JSON; no Google Cloud project or service account needed).
+
+- `src/lib/google-sheets.ts` — `appendOrderToGoogleSheet()` (write, called from the order action) and `fetchOrdersFromGoogleSheet()` (read, called from `/admin`). Both no-op safely if `GOOGLE_SHEETS_WEBHOOK_URL` is unset.
+- `/admin` (`src/app/admin/(dashboard)/page.tsx` + `src/components/admin/admin-dashboard.tsx`) — stat cards (total orders, estimated revenue, this month's count, top package), a month calendar showing order counts per delivery date (click a day to filter), and a searchable table. All client-side filtering over data fetched fresh on every page load (`export const dynamic = "force-dynamic"` — must never be statically cached, especially now that Cloudflare edge-caches HTML).
+- **Auth:** `src/middleware.ts` (note: lives under `src/`, not the repo root, since this project uses a `src/` directory — Next.js silently ignores `middleware.ts` at the wrong location) guards every `/admin/*` route except `/admin/login`. Session is a single HMAC token derived from `ADMIN_SESSION_SECRET` (`src/lib/admin-session.ts`) stored in an `httpOnly`/`secure`/`sameSite: strict` cookie — stateless, no session store/database needed, works because there's exactly one admin account. Login (`src/app/admin/login/actions.ts`) checks the submitted password against `ADMIN_PASSWORD`.
+- `/admin` is excluded from `robots.txt` and not linked from anywhere in the public site nav — but the URL itself isn't secret, don't post it publicly.
 
 ## Analytics & tracking
 
@@ -63,14 +74,15 @@ There is no traditional multi-item cart — the order form itself serves that ro
 - `next.config.mjs` sets: `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy`, `Permissions-Policy`, `Strict-Transport-Security`, and a `Content-Security-Policy`.
 - Origin server sits behind a Cloudflare-only iptables allowlist (`CF-LOCK` chain) — direct requests to the VPS IP or any non-Cloudflare-proxied hostname are dropped. **This means any hostname pointed at this deployment must be Cloudflare-proxied (orange cloud) or it will be unreachable.**
 - Server Action validates all input with Zod and rejects honeypot hits silently.
+- `/admin` is password-gated (see "Order records & admin dashboard" above) and excluded from search indexing.
 
 ## Known placeholder data (must be replaced before launch)
 
 `src/config/site.ts` still contains TODO values that are currently live:
 
 - `contact.email` — confirm the real inbox
-- `location.streetAddress`, `city`, `region`, `postalCode`, `latitude`, `longitude`, `serviceArea` — **currently a fake sample address**, which is what's in the `LocalBusiness` JSON-LD right now
-- `stats.ordersServed`, `stats.yearsServing`, `stats.happyFamilies` — placeholder numbers shown in the trust bar and hero
+- `location.latitude`, `location.longitude` — town-level approximation, not your actual barangay pin (see the comment in `site.ts` for how to get the exact coordinates)
+- `location.serviceArea` — confirm your actual delivery radius/towns; currently a reasonable guess from the address alone
 
 `.env.example` documents all required/optional environment variables — copy to `.env.local` for local dev, and set the real values in EasyPanel's Environment tab for production.
 

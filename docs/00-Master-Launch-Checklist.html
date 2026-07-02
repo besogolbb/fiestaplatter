@@ -343,6 +343,9 @@ const TASKS = [
   { id: "analytics-capi", section: "Analytics", priority: "low", title: "Meta Conversions API token", external: true,
     description: "Server-side event plumbing is built (src/lib/meta-capi.ts) — needs META_CAPI_ACCESS_TOKEN from Meta Business Manager.",
     success: "Lead events survive iOS tracking restrictions and ad blockers.", done: false },
+  { id: "analytics-sheets-setup", section: "Analytics", priority: "high", title: "Google Sheets order log + admin dashboard", external: true,
+    description: "Code is fully built (docs/08-Google-Sheets-Setup.md) — needs the one-time Apps Script deploy + GOOGLE_SHEETS_WEBHOOK_URL/SECRET and ADMIN_PASSWORD/ADMIN_SESSION_SECRET set in EasyPanel.",
+    success: "Every order appears as a row in your Google Sheet, and fiestaplatter.com/admin shows a working stats/calendar/table dashboard.", done: false },
 
   // ── Launch ───────────────────────────────────────────────────
   { id: "launch-soft", section: "Launch", priority: "high", title: "Soft launch to friends/family/barangay groups",

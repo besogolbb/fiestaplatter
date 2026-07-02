@@ -1,0 +1,250 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  TrendingUp,
+  Package,
+  CalendarDays,
+  Award,
+  type LucideIcon,
+} from "lucide-react";
+import type { OrderRecord } from "@/lib/google-sheets";
+import { cn } from "@/lib/utils";
+
+const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
+
+function parseTotal(v: string): number {
+  const n = Number(String(v).replace(/[^0-9.]/g, ""));
+  return Number.isFinite(n) ? n : 0;
+}
+
+function formatPHP(n: number) {
+  return new Intl.NumberFormat("en-PH", {
+    style: "currency",
+    currency: "PHP",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
+
+export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
+  const now = new Date();
+  const [monthCursor, setMonthCursor] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1));
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+
+  const totalOrders = orders.length;
+  const totalRevenue = orders.reduce((sum, o) => sum + parseTotal(o.estimatedTotal), 0);
+  const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const thisMonthCount = orders.filter((o) => o.deliveryDate?.startsWith(thisMonthKey)).length;
+
+  const topPackage = useMemo(() => {
+    const counts = new Map<string, number>();
+    orders.forEach((o) => {
+      if (!o.packageName) return;
+      counts.set(o.packageName, (counts.get(o.packageName) ?? 0) + 1);
+    });
+    const sorted = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+    return sorted[0]?.[0] ?? "—";
+  }, [orders]);
+
+  const ordersByDay = useMemo(() => {
+    const map = new Map<string, OrderRecord[]>();
+    orders.forEach((o) => {
+      if (!o.deliveryDate) return;
+      const arr = map.get(o.deliveryDate) ?? [];
+      arr.push(o);
+      map.set(o.deliveryDate, arr);
+    });
+    return map;
+  }, [orders]);
+
+  const year = monthCursor.getFullYear();
+  const month = monthCursor.getMonth();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const startWeekday = new Date(year, month, 1).getDay();
+
+  const cells: (string | null)[] = [];
+  for (let i = 0; i < startWeekday; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) {
+    cells.push(`${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`);
+  }
+
+  const filtered = useMemo(() => {
+    let rows = orders;
+    if (selectedDate) rows = rows.filter((o) => o.deliveryDate === selectedDate);
+    if (query.trim()) {
+      const q = query.trim().toLowerCase();
+      rows = rows.filter(
+        (o) =>
+          o.name?.toLowerCase().includes(q) ||
+          o.phone?.toLowerCase().includes(q) ||
+          o.reference?.toLowerCase().includes(q) ||
+          o.packageName?.toLowerCase().includes(q),
+      );
+    }
+    return [...rows].sort((a, b) => (b.submittedAt || "").localeCompare(a.submittedAt || ""));
+  }, [orders, selectedDate, query]);
+
+  return (
+    <div className="space-y-6">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard icon={Package} label="Total Orders" value={String(totalOrders)} />
+        <StatCard icon={TrendingUp} label="Est. Revenue" value={formatPHP(totalRevenue)} />
+        <StatCard icon={CalendarDays} label="This Month" value={String(thisMonthCount)} />
+        <StatCard icon={Award} label="Top Package" value={topPackage} />
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
+        {/* Calendar */}
+        <div className="h-fit rounded-2xl border border-border bg-card p-5 shadow-sm">
+          <div className="flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => setMonthCursor(new Date(year, month - 1, 1))}
+              className="rounded-lg p-1.5 text-foreground/60 hover:bg-muted hover:text-foreground"
+              aria-label="Previous month"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <p className="font-display text-sm font-bold text-foreground">
+              {monthCursor.toLocaleDateString("en-US", { month: "long", year: "numeric" })}
+            </p>
+            <button
+              type="button"
+              onClick={() => setMonthCursor(new Date(year, month + 1, 1))}
+              className="rounded-lg p-1.5 text-foreground/60 hover:bg-muted hover:text-foreground"
+              aria-label="Next month"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="mt-4 grid grid-cols-7 gap-1 text-center text-[11px] font-semibold text-foreground/50">
+            {WEEKDAYS.map((w) => (
+              <div key={w}>{w}</div>
+            ))}
+          </div>
+          <div className="mt-1 grid grid-cols-7 gap-1">
+            {cells.map((dateStr, i) => {
+              if (!dateStr) return <div key={`blank-${i}`} />;
+              const dayOrders = ordersByDay.get(dateStr) ?? [];
+              const isSelected = selectedDate === dateStr;
+              return (
+                <button
+                  key={dateStr}
+                  type="button"
+                  onClick={() => setSelectedDate(isSelected ? null : dateStr)}
+                  className={cn(
+                    "flex aspect-square flex-col items-center justify-center gap-0.5 rounded-lg text-xs transition-colors",
+                    isSelected
+                      ? "bg-brand text-white"
+                      : dayOrders.length
+                        ? "bg-brand/10 font-semibold text-brand hover:bg-brand/20"
+                        : "text-foreground/70 hover:bg-muted",
+                  )}
+                >
+                  <span>{Number(dateStr.slice(-2))}</span>
+                  {dayOrders.length ? <span className="text-[10px] leading-none">{dayOrders.length}</span> : null}
+                </button>
+              );
+            })}
+          </div>
+
+          {selectedDate ? (
+            <button
+              type="button"
+              onClick={() => setSelectedDate(null)}
+              className="mt-3 text-xs font-semibold text-brand underline underline-offset-2"
+            >
+              Clear date filter ({selectedDate})
+            </button>
+          ) : (
+            <p className="mt-3 text-xs text-foreground/50">Tap a date to filter orders by delivery day.</p>
+          )}
+        </div>
+
+        {/* Table */}
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+          <div className="flex items-center gap-2 border-b border-border p-4">
+            <Search className="h-4 w-4 shrink-0 text-foreground/40" aria-hidden />
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search name, phone, reference, package…"
+              className="w-full bg-transparent text-sm text-foreground outline-none placeholder:text-foreground/40"
+            />
+            <span className="shrink-0 text-xs text-foreground/50">
+              {filtered.length} of {orders.length}
+            </span>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead>
+                <tr className="border-b border-border text-xs uppercase tracking-wide text-foreground/50">
+                  <th className="px-4 py-2.5 font-semibold">Reference</th>
+                  <th className="px-4 py-2.5 font-semibold">Customer</th>
+                  <th className="px-4 py-2.5 font-semibold">Event</th>
+                  <th className="px-4 py-2.5 font-semibold">Delivery</th>
+                  <th className="px-4 py-2.5 font-semibold">Package</th>
+                  <th className="px-4 py-2.5 font-semibold">Payment</th>
+                  <th className="px-4 py-2.5 text-right font-semibold">Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-10 text-center text-foreground/50">
+                      No orders {selectedDate || query ? "match your filters." : "yet."}
+                    </td>
+                  </tr>
+                ) : (
+                  filtered.map((o) => (
+                    <tr
+                      key={`${o.reference}-${o.submittedAt}`}
+                      className="border-b border-border last:border-0 hover:bg-muted/40"
+                    >
+                      <td className="px-4 py-2.5 font-mono text-xs text-foreground/70">{o.reference}</td>
+                      <td className="px-4 py-2.5">
+                        <p className="font-medium text-foreground">{o.name}</p>
+                        <p className="text-xs text-foreground/50">{o.phone}</p>
+                      </td>
+                      <td className="px-4 py-2.5 text-foreground/80">
+                        {o.eventType}
+                        {o.guests ? ` · ${o.guests} pax` : ""}
+                      </td>
+                      <td className="px-4 py-2.5 text-foreground/80">
+                        {o.deliveryDate} {o.deliveryTime}
+                      </td>
+                      <td className="px-4 py-2.5 text-foreground/80">
+                        {o.packageName}
+                        {o.addOns ? ` +${o.addOns.split(",").filter(Boolean).length}` : ""}
+                      </td>
+                      <td className="px-4 py-2.5 text-foreground/80">{o.paymentMethod}</td>
+                      <td className="px-4 py-2.5 text-right font-semibold text-brand">
+                        {formatPHP(parseTotal(o.estimatedTotal))}
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StatCard({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-border bg-card p-4 shadow-sm">
+      <Icon className="h-5 w-5 text-brand" aria-hidden />
+      <p className="mt-2 truncate font-display text-xl font-extrabold text-foreground">{value}</p>
+      <p className="text-xs font-medium text-foreground/50">{label}</p>
+    </div>
+  );
+}
