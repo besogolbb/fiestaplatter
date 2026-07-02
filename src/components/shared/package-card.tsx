@@ -22,20 +22,19 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
         </div>
       ) : null}
 
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-muted to-accent/10">
         <Image
           src={pkg.image}
           alt={pkg.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-cover"
+          className="object-contain p-5"
         />
         {pkg.badge ? (
           <Badge variant="accent" className="absolute left-3 top-3 shadow-md">
             {pkg.badge}
           </Badge>
         ) : null}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
       </div>
 
       <div className="flex flex-1 flex-col p-6">

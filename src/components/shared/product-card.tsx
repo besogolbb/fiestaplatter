@@ -19,13 +19,13 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/40">
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-muted to-accent/10">
         <Image
           src={item.image}
           alt={item.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          className="object-contain p-4 transition-transform duration-500 group-hover:scale-105"
           priority={priority}
         />
         <div className="absolute left-3 top-3 flex flex-col gap-1.5">
@@ -40,8 +40,6 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
             </Badge>
           ) : null}
         </div>
-        {/* gradient so the image melts into the card */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-card to-transparent" />
       </div>
 
       <div className="flex flex-1 flex-col p-5">
