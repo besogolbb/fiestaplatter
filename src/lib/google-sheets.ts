@@ -76,6 +76,48 @@ async function sheetsFetch(path: string, init?: RequestInit): Promise<Response |
   });
 }
 
+export interface SheetsConnectionStatus {
+  configured: boolean;
+  connected: boolean;
+  error?: string;
+}
+
+/**
+ * Live check used by the admin dashboard to show whether the Google Sheets
+ * integration is actually working, rather than leaving you to guess from
+ * an empty orders table (which looks the same whether nothing's connected
+ * or there just aren't any orders yet).
+ */
+export async function checkGoogleSheetsConnection(): Promise<SheetsConnectionStatus> {
+  const missing = ["GOOGLE_SERVICE_ACCOUNT_EMAIL", "GOOGLE_SERVICE_ACCOUNT_PRIVATE_KEY", "GOOGLE_SHEETS_SPREADSHEET_ID"]
+    .filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    return { configured: false, connected: false, error: `Missing: ${missing.join(", ")}` };
+  }
+
+  try {
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!A1:A1`);
+    if (!res) {
+      return { configured: false, connected: false, error: "Not configured." };
+    }
+    if (res.ok) {
+      return { configured: true, connected: true };
+    }
+    const body = await res.text();
+    return {
+      configured: true,
+      connected: false,
+      error: `Sheets API returned ${res.status}${res.status === 403 ? " (permission denied — has the sheet been shared with the service account email as Editor?)" : ""}${res.status === 404 ? " (spreadsheet not found — check GOOGLE_SHEETS_SPREADSHEET_ID)" : ""}: ${body.slice(0, 300)}`,
+    };
+  } catch (err) {
+    return {
+      configured: true,
+      connected: false,
+      error: err instanceof Error ? err.message : String(err),
+    };
+  }
+}
+
 /**
  * Appends a submitted order as a row in the "Orders" sheet (writing the
  * header row first if the sheet is empty). No-ops safely if

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { fetchOrdersFromGoogleSheet } from "@/lib/google-sheets";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { fetchOrdersFromGoogleSheet, checkGoogleSheetsConnection } from "@/lib/google-sheets";
 import { AdminDashboard } from "@/components/admin/admin-dashboard";
 
 export const metadata: Metadata = {
@@ -13,13 +14,34 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
-  const orders = await fetchOrdersFromGoogleSheet();
+  const [orders, connection] = await Promise.all([
+    fetchOrdersFromGoogleSheet(),
+    checkGoogleSheetsConnection(),
+  ]);
+
   return (
     <>
       <h1 className="font-display text-2xl font-extrabold text-foreground">Orders</h1>
       <p className="mt-1 text-sm text-foreground/60">
         Live from your Google Sheet — refresh this page for the latest submissions.
       </p>
+
+      {connection.connected ? (
+        <div className="mt-4 flex items-center gap-2 rounded-xl border border-green-600/30 bg-green-600/10 px-4 py-2.5 text-sm font-medium text-green-700 dark:text-green-400">
+          <CheckCircle2 className="h-4 w-4 shrink-0" />
+          Connected to Google Sheets
+        </div>
+      ) : (
+        <div className="mt-4 flex items-start gap-2 rounded-xl border border-destructive/30 bg-destructive/10 px-4 py-2.5 text-sm font-medium text-destructive">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Not connected to Google Sheets{connection.error ? ` — ${connection.error}` : ""}. Orders are still
+            being accepted normally on the site; they just aren&apos;t being logged to the sheet right now. See{" "}
+            <code className="rounded bg-destructive/10 px-1 py-0.5">docs/08-Google-Sheets-Setup.md</code>.
+          </span>
+        </div>
+      )}
+
       <div className="mt-6">
         <AdminDashboard orders={orders} />
       </div>
