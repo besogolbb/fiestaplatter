@@ -10,7 +10,12 @@ export async function loginAdmin(formData: FormData) {
   const safeNext = next.startsWith("/admin") ? next : "/admin";
 
   const expectedPassword = process.env.ADMIN_PASSWORD;
-  if (!expectedPassword || password !== expectedPassword) {
+  if (!expectedPassword || !process.env.ADMIN_SESSION_SECRET) {
+    // Not configured yet — same error message as a wrong password so we
+    // don't leak which env var is missing to an unauthenticated visitor.
+    redirect(`/admin/login?error=1&next=${encodeURIComponent(safeNext)}`);
+  }
+  if (password !== expectedPassword) {
     redirect(`/admin/login?error=1&next=${encodeURIComponent(safeNext)}`);
   }
 
