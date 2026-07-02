@@ -1,0 +1,21 @@
+# Fiesta Platter
+
+> Fiesta Platter is a home-based Filipino party tray and catering business serving Metro Manila and nearby areas. We prepare fresh bilao trays, grilled sticks, kakanin and bundled party packages for birthdays, office events, reunions and celebrations.
+
+Key facts:
+- Signature product: Chicken Embutido Bilao
+- Bundles range from ₱669 (Fiesta Family) to ₱2,699 (Ultimate Fiesta)
+- Orders require at least 24 hours lead time
+- 50% down payment reserves a delivery slot; balance on delivery
+- Payment methods: GCash, Maya, Bank Transfer, Cash on Delivery
+- Ordering channels: website order form, Facebook Messenger, call/text
+
+## Pages
+
+- [Home](https://fiestaplatter.com/): overview, hero product and bundle highlights
+- [Menu](https://fiestaplatter.com/menu): full à la carte menu with prices and serving sizes
+- [Packages](https://fiestaplatter.com/packages): bundled party packages and savings
+- [Order](https://fiestaplatter.com/order): online order form
+- [About](https://fiestaplatter.com/about): business background
+- [FAQ](https://fiestaplatter.com/faq): ordering, delivery, payment and serving-size questions
+- [Contact](https://fiestaplatter.com/contact): phone, Messenger, email and business hours

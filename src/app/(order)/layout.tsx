@@ -11,6 +11,12 @@ import { ThemeToggle } from "@/components/shared/theme-toggle";
 export default function OrderLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-dvh flex-col bg-background">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-brand focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg"
+      >
+        Skip to main content
+      </a>
       <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur-md">
         <div className="container flex h-16 items-center justify-between gap-3">
           <Logo />
@@ -26,7 +32,9 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
         </div>
       </header>
 
-      <main className="flex-1">{children}</main>
+      <main id="main-content" className="flex-1">
+        {children}
+      </main>
 
       <footer className="border-t border-border py-6">
         <div className="container flex flex-col items-center justify-center gap-2 text-center text-xs text-foreground/50 sm:flex-row sm:gap-6">

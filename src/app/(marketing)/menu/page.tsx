@@ -12,7 +12,7 @@ import { menu, menuCategories } from "@/data/menu";
 export const metadata: Metadata = pageMetadata({
   title: "Menu — Party Trays, Bilao & Filipino Favorites",
   description:
-    "Browse the full Fiesta Platter menu: spaghetti, palabok, pancit, carbonara, cheesy pork lumpia, jumbo siomai, pork BBQ, puto pao and maja blanca — with prices and serving sizes.",
+    "Browse the full Fiesta Platter menu: pancit, carbonara, lumpia, siomai, pork BBQ, puto pao and maja blanca — with clear prices and serving sizes.",
   path: "/menu",
 });
 

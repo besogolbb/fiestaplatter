@@ -11,7 +11,7 @@ import { packages } from "@/data/packages";
 export const metadata: Metadata = pageMetadata({
   title: "Party Packages — Bundles for Every Celebration",
   description:
-    "Save more with Fiesta Platter party bundles: Family, Birthday, Corporate, Fiesta and Holiday packages. Complete Filipino spreads with clear serving sizes and prices.",
+    "Save more with Fiesta Platter bundles: Family, Barkada, Signature, Celebration and Ultimate Fiesta packages, priced and portioned per occasion.",
   path: "/packages",
 });
 

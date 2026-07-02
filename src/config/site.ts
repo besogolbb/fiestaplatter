@@ -7,7 +7,7 @@
  */
 
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://fiestaplatter.ph";
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://fiestaplatter.com";
 
 export const siteConfig = {
   name: "Fiesta Platter",
