@@ -19,7 +19,7 @@ export function SelectedBundleSummary({ pkg, isCustom, onChange }: SelectedBundl
     <div className="flex items-center gap-3 rounded-2xl border border-brand/30 bg-brand/5 p-3 shadow-sm">
       <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-xl bg-gradient-to-br from-muted to-accent/10">
         {pkg ? (
-          <Image src={pkg.image} alt={pkg.imageAlt} fill sizes="56px" className="object-contain p-1" />
+          <Image src={pkg.image} alt={pkg.imageAlt} fill sizes="56px" className="object-cover" />
         ) : (
           <span className="flex h-full w-full items-center justify-center text-brand">
             <Wrench className="h-6 w-6" />

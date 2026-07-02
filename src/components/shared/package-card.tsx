@@ -12,7 +12,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
   return (
     <article
       className={cn(
-        "relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40",
+        "group relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40",
         pkg.featured ? "border-brand ring-2 ring-brand/30" : "border-border hover:border-brand/40",
       )}
     >
@@ -28,7 +28,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
           alt={pkg.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-contain p-5"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         {pkg.badge ? (
           <Badge variant="accent" className="absolute left-3 top-3 shadow-md">

@@ -45,7 +45,7 @@ export function SelectableBundleCard({ pkg, active, onSelect }: SelectableBundle
           alt={pkg.imageAlt}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="object-contain p-4"
+          className="object-cover"
         />
         {pkg.badge ? (
           <Badge variant="accent" className="absolute left-3 top-3 shadow-md">
