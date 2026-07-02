@@ -18,7 +18,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
   const pax = paxMatch ? paxMatch[1].trim() : item.serving;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-white/8 bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/40">
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/40">
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
           src={item.image}
@@ -56,7 +56,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
           {item.description}
         </p>
 
-        <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/8 pt-4 text-xs text-foreground/70">
+        <div className="mt-4 flex items-center justify-between gap-3 border-t border-border pt-4 text-xs text-foreground/70">
           <span className="inline-flex items-center gap-1.5">
             <Users className="h-4 w-4 text-brand" aria-hidden /> {pax}
           </span>

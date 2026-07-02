@@ -15,8 +15,8 @@ const buttonVariants = cva(
         outline:
           "border-2 border-brand/40 bg-transparent text-brand hover:border-brand hover:bg-brand/10",
         secondary:
-          "bg-white/10 text-foreground hover:bg-white/15",
-        ghost: "hover:bg-white/10 text-foreground",
+          "bg-foreground/10 text-foreground hover:bg-foreground/15",
+        ghost: "hover:bg-foreground/10 text-foreground",
         link: "text-brand underline-offset-4 hover:underline rounded-none",
         white:
           "bg-white text-ink shadow-sm hover:bg-white/90 hover:shadow-md",

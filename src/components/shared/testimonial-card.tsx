@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 
 export function TestimonialCard({ t }: { t: Testimonial }) {
   return (
-    <figure className="flex h-full flex-col rounded-2xl border border-white/5 bg-card p-6 shadow-sm">
+    <figure className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-sm">
       <div className="flex items-center justify-between">
         <StarRating rating={t.rating} />
         <Quote className="h-6 w-6 text-brand/15" aria-hidden />
@@ -15,7 +15,7 @@ export function TestimonialCard({ t }: { t: Testimonial }) {
         “{t.quote}”
       </blockquote>
 
-      <figcaption className="mt-5 flex items-center gap-3 border-t border-white/5 pt-4">
+      <figcaption className="mt-5 flex items-center gap-3 border-t border-border pt-4">
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-brand/10 font-display text-sm font-bold text-brand"
           aria-hidden

@@ -19,7 +19,7 @@ export function GalleryGrid({
       {images.map((img, i) => (
         <li
           key={img.src}
-          className="group relative aspect-square overflow-hidden rounded-2xl border border-white/8 bg-card shadow-lg"
+          className="group relative aspect-square overflow-hidden rounded-2xl border border-border bg-card shadow-lg"
         >
           <Image
             src={img.src}

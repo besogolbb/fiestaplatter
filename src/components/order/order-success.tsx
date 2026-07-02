@@ -11,7 +11,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
 
   return (
     <div className="mx-auto max-w-2xl">
-      <div className="rounded-3xl border border-white/5 bg-card p-6 text-center shadow-lg sm:p-10">
+      <div className="rounded-3xl border border-border bg-card p-6 text-center shadow-lg sm:p-10">
         <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
           <CheckCircle2 className="h-9 w-9" aria-hidden />
         </span>
@@ -43,7 +43,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
         {/* Summary */}
         <div className="mt-8 rounded-2xl bg-background p-5 text-left">
           <h2 className="font-display text-base font-bold text-foreground">Order Summary</h2>
-          <dl className="mt-3 divide-y divide-white/5">
+          <dl className="mt-3 divide-y divide-border">
             {summary.lines.map((line) => (
               <div key={line.label} className="flex justify-between gap-4 py-2 text-sm">
                 <dt className="shrink-0 text-foreground/50">{line.label}</dt>

@@ -5,6 +5,7 @@ import { siteConfig } from "@/config/site";
 import { JsonLd } from "@/components/shared/json-ld";
 import { localBusinessSchema, websiteSchema } from "@/lib/structured-data";
 import { Analytics } from "@/components/shared/analytics";
+import { ThemeScript } from "@/components/shared/theme-script";
 
 const fontSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -63,14 +64,24 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#C62828",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FBF9F5" },
+    { media: "(prefers-color-scheme: dark)", color: "#161310" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en-PH" className={`${fontSans.variable} ${fontDisplay.variable}`}>
+    <html
+      lang="en-PH"
+      className={`${fontSans.variable} ${fontDisplay.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        <ThemeScript />
+      </head>
       <body className="font-sans">
         {children}
         <JsonLd id="ld-business" data={localBusinessSchema()} />

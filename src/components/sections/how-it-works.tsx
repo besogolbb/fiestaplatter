@@ -18,7 +18,7 @@ export function HowItWorks() {
       <ol className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
         {howItWorks.map((step, i) => (
           <Reveal as="li" key={step.step} delay={i * 0.06} className="relative">
-            <div className="flex h-full flex-col items-center rounded-2xl border border-white/5 bg-card p-6 text-center shadow-sm">
+            <div className="flex h-full flex-col items-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm">
               <span className="flex h-14 w-14 items-center justify-center rounded-full bg-brand font-display text-xl font-extrabold text-white shadow-md">
                 {step.step}
               </span>

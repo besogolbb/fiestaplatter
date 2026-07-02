@@ -164,13 +164,13 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                   "relative flex flex-col rounded-2xl border p-4 text-left transition-all",
                   active
                     ? "border-brand bg-brand/10 ring-1 ring-brand"
-                    : "border-white/10 bg-card hover:border-brand/40",
+                    : "border-border bg-card hover:border-brand/40",
                 )}
               >
                 <span
                   className={cn(
                     "absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border",
-                    active ? "border-brand bg-brand text-white" : "border-white/25",
+                    active ? "border-brand bg-brand text-white" : "border-foreground/25",
                   )}
                   aria-hidden
                 >
@@ -210,13 +210,13 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
               "relative flex flex-col justify-center rounded-2xl border border-dashed p-4 text-left transition-all",
               isCustom
                 ? "border-brand bg-brand/10 ring-1 ring-brand"
-                : "border-white/20 bg-card hover:border-brand/40",
+                : "border-border bg-card hover:border-brand/40",
             )}
           >
             <span
               className={cn(
                 "absolute right-3 top-3 flex h-5 w-5 items-center justify-center rounded-full border",
-                isCustom ? "border-brand bg-brand text-white" : "border-white/25",
+                isCustom ? "border-brand bg-brand text-white" : "border-foreground/25",
               )}
               aria-hidden
             >
@@ -238,7 +238,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
         ) : null}
 
         {/* Item picker — extra trays / custom builder */}
-        <div className="rounded-2xl border border-white/10 bg-card/60 p-4">
+        <div className="rounded-2xl border border-border bg-card/60 p-4">
           <p className="flex items-center gap-2 text-sm font-semibold text-foreground">
             <Sparkles className="h-4 w-4 text-brand" />
             {isCustom ? "Build your bundle — pick your trays" : "Add extra trays"}
@@ -256,7 +256,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                     "flex cursor-pointer items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
                     checked
                       ? "border-brand bg-brand/10 text-foreground"
-                      : "border-white/10 bg-card text-foreground/80 hover:border-brand/40",
+                      : "border-border bg-card text-foreground/80 hover:border-brand/40",
                   )}
                 >
                   <span className="flex items-center gap-2.5">

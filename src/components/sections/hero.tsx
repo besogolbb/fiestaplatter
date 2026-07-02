@@ -56,7 +56,7 @@ export function Hero() {
         {/* Visual — signature product */}
         <div className="relative mx-auto mt-6 w-full max-w-lg sm:mt-8 sm:pb-6">
           <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-br from-brand/25 via-accent/10 to-transparent blur-2xl" />
-          <div className="relative overflow-hidden rounded-[2rem] border border-white/10 shadow-2xl shadow-black/50">
+          <div className="relative overflow-hidden rounded-[2rem] border border-border shadow-2xl shadow-black/20 dark:shadow-black/50">
             <div className="relative aspect-[4/5]">
               <Image
                 src={heroProduct.image}
@@ -89,12 +89,12 @@ export function Hero() {
           </div>
 
           {/* Floating rating chip — top-right, opposite the in-image Signature tag */}
-          <div className="absolute -right-3 -top-4 z-10 hidden items-center gap-2 rounded-2xl border border-white/10 bg-card px-3.5 py-2.5 shadow-xl sm:flex">
+          <div className="absolute -right-3 -top-4 z-10 hidden items-center gap-2 rounded-2xl border border-border bg-card px-3.5 py-2.5 shadow-xl sm:flex">
             <StarRating rating={stats.ratingValue} size={14} />
             <span className="text-sm font-bold text-foreground">{stats.ratingValue}</span>
           </div>
           {/* Floating orders chip — bottom-left, dropped clear below the image so it never meets the price tag */}
-          <div className="absolute -bottom-6 -left-4 z-10 hidden rounded-2xl border border-white/10 bg-card px-4 py-3 text-center shadow-xl sm:block">
+          <div className="absolute -bottom-6 -left-4 z-10 hidden rounded-2xl border border-border bg-card px-4 py-3 text-center shadow-xl sm:block">
             <p className="font-display text-xl font-extrabold text-brand">{stats.ordersServed}</p>
             <p className="text-xs font-medium text-foreground/60">orders served</p>
           </div>

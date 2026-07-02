@@ -8,6 +8,7 @@ import { mainNav } from "@/config/nav";
 import { siteConfig, telLink } from "@/config/site";
 import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/shared/theme-toggle";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -40,7 +41,7 @@ export function Header() {
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
         scrolled
-          ? "border-b border-white/5 bg-background/90 backdrop-blur-md shadow-sm"
+          ? "border-b border-border bg-background/90 backdrop-blur-md shadow-sm"
           : "bg-transparent",
       )}
     >
@@ -68,6 +69,7 @@ export function Header() {
         </nav>
 
         <div className="hidden items-center gap-2 lg:flex">
+          <ThemeToggle />
           <Button asChild variant="ghost" size="sm">
             <a href={telLink} aria-label={`Call ${siteConfig.name}`}>
               <Phone className="h-4 w-4" /> Call
@@ -80,6 +82,7 @@ export function Header() {
 
         {/* Mobile controls */}
         <div className="flex items-center gap-2 lg:hidden">
+          <ThemeToggle />
           <Button asChild size="sm" className="px-4">
             <Link href="/order">Order</Link>
           </Button>
@@ -88,7 +91,7 @@ export function Header() {
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/10 text-foreground"
+            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border text-foreground"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -97,7 +100,7 @@ export function Header() {
 
       {/* Mobile drawer */}
       {open ? (
-        <div className="fixed inset-x-0 top-16 z-40 h-[calc(100dvh-4rem)] overflow-y-auto border-t border-white/5 bg-background lg:hidden">
+        <div className="fixed inset-x-0 top-16 z-40 h-[calc(100dvh-4rem)] overflow-y-auto border-t border-border bg-background lg:hidden">
           <nav aria-label="Mobile navigation" className="container flex flex-col py-4">
             {mainNav.map((item) => {
               const active =
@@ -108,7 +111,7 @@ export function Header() {
                   href={item.href}
                   aria-current={active ? "page" : undefined}
                   className={cn(
-                    "border-b border-white/5 py-4 text-lg font-semibold",
+                    "border-b border-border py-4 text-lg font-semibold",
                     active ? "text-brand" : "text-foreground",
                   )}
                 >

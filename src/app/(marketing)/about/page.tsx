@@ -83,7 +83,7 @@ export default function AboutPage() {
           {values.map((v) => (
             <li
               key={v.title}
-              className="flex h-full flex-col rounded-2xl border border-white/5 bg-card p-6 shadow-sm"
+              className="flex h-full flex-col rounded-2xl border border-border bg-card p-6 shadow-sm"
             >
               <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand/10 text-brand">
                 <v.icon className="h-6 w-6" aria-hidden />

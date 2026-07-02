@@ -11,7 +11,7 @@ export function TrustBar() {
   ];
 
   return (
-    <section aria-label="Business highlights" className="border-y border-white/5 bg-card">
+    <section aria-label="Business highlights" className="border-y border-border bg-card">
       <div className="container grid grid-cols-2 gap-y-6 py-8 sm:grid-cols-4">
         {items.map((item) => (
           <div key={item.label} className="flex flex-col items-center text-center">

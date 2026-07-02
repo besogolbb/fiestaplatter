@@ -58,7 +58,7 @@ export default function ContactPage() {
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
                   className={`flex h-full flex-col rounded-2xl border p-6 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md ${
-                    c.primary ? "border-brand bg-brand/5" : "border-white/5 bg-card"
+                    c.primary ? "border-brand bg-brand/5" : "border-border bg-card"
                   }`}
                 >
                   <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-brand/10 text-brand">
@@ -73,7 +73,7 @@ export default function ContactPage() {
             ))}
           </ul>
 
-          <div className="rounded-2xl border border-white/5 bg-card p-6 shadow-sm sm:p-8">
+          <div className="rounded-2xl border border-border bg-card p-6 shadow-sm sm:p-8">
             <h2 className="font-display text-xl font-extrabold text-foreground">Business Details</h2>
             <dl className="mt-5 space-y-4 text-sm">
               <div className="flex items-start gap-3">

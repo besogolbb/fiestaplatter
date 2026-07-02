@@ -13,7 +13,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
     <article
       className={cn(
         "relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40",
-        pkg.featured ? "border-brand ring-2 ring-brand/30" : "border-white/8 hover:border-brand/40",
+        pkg.featured ? "border-brand ring-2 ring-brand/30" : "border-border hover:border-brand/40",
       )}
     >
       {pkg.featured ? (
@@ -56,7 +56,7 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
           <Users className="h-4 w-4 text-brand" aria-hidden /> {pkg.serving}
         </div>
 
-        <div className="mt-3 border-t border-dashed border-white/10 pt-4">
+        <div className="mt-3 border-t border-dashed border-border pt-4">
           <div className="flex items-end gap-2">
             <span className="font-display text-3xl font-extrabold text-brand">
               {formatPrice(pkg.price)}

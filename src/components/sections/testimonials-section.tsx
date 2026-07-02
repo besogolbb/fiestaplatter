@@ -17,7 +17,7 @@ export function TestimonialsSection({ limit }: { limit?: number }) {
         title="What Our Customers Say"
       />
 
-      <div className="mx-auto mt-4 flex w-fit items-center gap-3 rounded-full border border-white/5 bg-card px-5 py-2.5 shadow-sm">
+      <div className="mx-auto mt-4 flex w-fit items-center gap-3 rounded-full border border-border bg-card px-5 py-2.5 shadow-sm">
         <StarRating rating={stats.ratingValue} />
         <span className="text-sm font-semibold text-foreground">
           {stats.ratingValue} average · {stats.ratingCount}+ reviews

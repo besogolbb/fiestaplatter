@@ -4,14 +4,41 @@
 
 @layer base {
   :root {
-    /* Dark "Tasty" theme — charcoal surfaces + warm orange accent */
-    --background: 30 9% 8%; /* page ~#161310 */
-    --foreground: 40 33% 96%; /* near-white ~#F7F3EC */
+    /* Light theme (default) — warm cream surfaces + orange accent */
+    --background: 40 33% 97%; /* #FBF9F5 warm white */
+    --foreground: 20 14% 14%; /* #241F1B ink */
 
-    --card: 30 8% 11%; /* card surface ~#1E1B18 */
-    --card-foreground: 40 33% 96%;
+    --card: 0 0% 100%; /* pure white cards */
+    --card-foreground: 20 14% 14%;
 
     --primary: 27 91% 54%; /* orange #F5821F */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 27 60% 95%;
+    --secondary-foreground: 27 70% 30%;
+
+    --muted: 30 20% 94%;
+    --muted-foreground: 20 8% 42%;
+
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 30 15% 88%;
+    --input: 30 15% 85%;
+    --ring: 27 91% 54%;
+
+    --radius: 0.9rem;
+  }
+
+  .dark {
+    /* Dark theme — charcoal surfaces + warm orange accent */
+    --background: 30 9% 8%; /* #161310 */
+    --foreground: 40 33% 96%; /* #F7F3EC */
+
+    --card: 30 8% 11%; /* #1E1B18 */
+    --card-foreground: 40 33% 96%;
+
+    --primary: 27 91% 54%;
     --primary-foreground: 30 20% 10%;
 
     --secondary: 30 6% 16%;
@@ -26,8 +53,6 @@
     --border: 40 8% 20%;
     --input: 40 8% 24%;
     --ring: 27 91% 54%;
-
-    --radius: 0.9rem;
   }
 
   * {
@@ -37,11 +62,10 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
-    color-scheme: dark;
   }
 
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased transition-colors duration-200;
     font-feature-settings: "rlig" 1, "calt" 1;
     text-rendering: optimizeLegibility;
   }
@@ -60,24 +84,24 @@
   }
 
   ::selection {
-    @apply bg-brand/30 text-white;
+    @apply bg-brand/30 text-brand-700 dark:text-white;
   }
 }
 
 @layer components {
-  /* Warm dark backdrop used to break up sections */
+  /* Warm backdrop used to break up sections — adapts per theme */
   .bg-warm {
     background-image: radial-gradient(
         70% 60% at 50% 0%,
-        rgba(245, 130, 31, 0.12) 0%,
+        rgba(245, 130, 31, 0.1) 0%,
         transparent 70%
       ),
-      linear-gradient(180deg, #17130e 0%, #100d0b 100%);
+      linear-gradient(180deg, hsl(var(--background)) 0%, hsl(var(--muted)) 100%);
   }
 
   /* Slightly lifted surface for alternating sections */
   .bg-surface {
-    background-color: #131110;
+    background-color: hsl(var(--muted));
   }
 
   .text-balance {

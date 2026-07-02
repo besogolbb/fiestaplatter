@@ -22,7 +22,7 @@ export function StarRating({ rating, size = 16, className, showValue = false }: 
           key={i}
           style={{ width: size, height: size }}
           className={cn(
-            i < rounded ? "fill-accent text-accent" : "fill-white/10 text-white/10",
+            i < rounded ? "fill-accent text-accent" : "fill-foreground/10 text-foreground/10",
           )}
           aria-hidden
         />
