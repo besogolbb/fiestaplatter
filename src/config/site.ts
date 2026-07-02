@@ -6,8 +6,12 @@
  * have to hunt through components to update a phone number or a link.
  */
 
+// `||` (not `??`) is deliberate: Docker's `ARG NEXT_PUBLIC_SITE_URL` with no
+// value passed resolves to an empty string, not undefined, and `??` doesn't
+// treat "" as absent — that empty string would otherwise reach `new URL()`
+// in the root layout's metadataBase and crash the entire build.
 const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "https://fiestaplatter.com";
+  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") || "https://fiestaplatter.com";
 
 export const siteConfig = {
   name: "Fiesta Platter",
