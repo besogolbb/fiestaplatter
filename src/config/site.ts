@@ -25,7 +25,7 @@ export const siteConfig = {
   contact: {
     phoneDisplay: "0968 570 7018",
     phoneE164: "+639685707018",
-    email: "hello@fiestaplatter.com", // TODO: confirm email
+    email: "fiestaplatterph@gmail.com",
     // Messenger username or full m.me link target (page username after m.me/)
     messengerUsername: "fiestaplatterph",
     facebookUrl: "https://facebook.com/fiestaplatterph",
