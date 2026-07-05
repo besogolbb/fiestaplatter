@@ -5,7 +5,7 @@ import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
 import { toast } from "sonner";
-import { Loader2, Sparkles, ShieldCheck, TrendingUp, Truck } from "lucide-react";
+import { Loader2, Minus, Plus, Sparkles, ShieldCheck, TrendingUp, Truck } from "lucide-react";
 import { orderSchema, type OrderInput, eventTypes, paymentMethods } from "@/lib/order-schema";
 import { submitOrder, type OrderActionState } from "@/app/(order)/order/actions";
 import { packages } from "@/data/packages";
@@ -74,6 +74,19 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
   const hasPreselection = Boolean(defaultPackage) || defaultItems.length > 0;
   const [step, setStep] = useState<Step>(hasPreselection ? "details" : "bundle");
   const reduceMotion = useReducedMotion();
+  const topRef = useRef<HTMLDivElement>(null);
+
+  // Step 1 and Step 2 have very different heights. Without this, switching
+  // steps keeps the page's current scrollY, which can land the viewport
+  // mid-way through the new step's content (e.g. right on the Contact
+  // fieldset) instead of at the top of the newly shown step.
+  useEffect(() => {
+    topRef.current?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "start",
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [step]);
 
   const todayStr = new Date().toISOString().split("T")[0];
 
@@ -157,11 +170,18 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
     }
   }, [result]);
 
-  function toggleAddOn(slug: string) {
-    const set = new Set(selectedAddOns);
-    if (set.has(slug)) set.delete(slug);
-    else set.add(slug);
-    setValue("additionalItems", Array.from(set), { shouldDirty: true });
+  // Quantity per add-on is represented by how many times its slug appears
+  // in additionalItems (e.g. ["siomai", "siomai"] = qty 2) — keeps the
+  // wire format a plain string array, no schema change needed.
+  const addOnCounts = selectedAddOns.reduce<Record<string, number>>((acc, slug) => {
+    acc[slug] = (acc[slug] ?? 0) + 1;
+    return acc;
+  }, {});
+
+  function setAddOnQty(slug: string, qty: number) {
+    const others = selectedAddOns.filter((s) => s !== slug);
+    const next = qty > 0 ? [...others, ...Array(qty).fill(slug)] : others;
+    setValue("additionalItems", next, { shouldDirty: true });
   }
 
   // Live estimated subtotal (final total confirmed on checkout)
@@ -208,7 +228,7 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
         <input id="company" type="text" tabIndex={-1} autoComplete="off" {...register("company")} />
       </div>
 
-      <div className={cn("mx-auto max-w-3xl", step === "details" ? "pb-20 sm:pb-0" : "")}>
+      <div ref={topRef} className={cn("mx-auto max-w-3xl", step === "details" ? "pb-20 sm:pb-0" : "")}>
         <StepIndicator step={step} />
 
         <AnimatePresence mode="wait" initial={false}>
@@ -306,35 +326,60 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
                           Number(Boolean(a.bestSeller || a.popular)),
                       )
                       .map((item) => {
-                        const checked = selectedAddOns.includes(item.slug);
+                        const qty = addOnCounts[item.slug] ?? 0;
+                        const checked = qty > 0;
                         return (
-                          <label
+                          <div
                             key={item.slug}
                             className={cn(
-                              "flex cursor-pointer items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
+                              "flex items-center justify-between gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
                               checked
                                 ? "border-brand bg-brand/10 text-foreground"
                                 : "border-border bg-card text-foreground/80 hover:border-brand/40",
                             )}
                           >
-                            <span className="flex items-center gap-2.5">
-                              <input
-                                type="checkbox"
-                                className="h-4 w-4 accent-brand"
-                                checked={checked}
-                                onChange={() => toggleAddOn(item.slug)}
-                              />
+                            <button
+                              type="button"
+                              onClick={() => setAddOnQty(item.slug, checked ? 0 : 1)}
+                              aria-pressed={checked}
+                              className="flex flex-1 items-center gap-2.5 text-left"
+                            >
                               {item.name}
                               {item.bestSeller || item.popular ? (
                                 <span className="rounded-full bg-accent/20 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-accent-600">
                                   Popular
                                 </span>
                               ) : null}
-                            </span>
-                            <span className="shrink-0 font-semibold text-brand">
-                              {formatPrice(item.price)}
-                            </span>
-                          </label>
+                            </button>
+                            <div className="flex shrink-0 items-center gap-2.5">
+                              {checked ? (
+                                <div className="flex items-center gap-1 rounded-full border border-brand/30 bg-card">
+                                  <button
+                                    type="button"
+                                    onClick={() => setAddOnQty(item.slug, qty - 1)}
+                                    aria-label={`Decrease ${item.name} quantity`}
+                                    className="flex h-6 w-6 items-center justify-center rounded-full text-brand transition-colors hover:bg-brand/10"
+                                  >
+                                    <Minus className="h-3.5 w-3.5" />
+                                  </button>
+                                  <span className="w-4 text-center text-xs font-bold text-foreground">
+                                    {qty}
+                                  </span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setAddOnQty(item.slug, qty + 1)}
+                                    aria-label={`Increase ${item.name} quantity`}
+                                    className="flex h-6 w-6 items-center justify-center rounded-full text-brand transition-colors hover:bg-brand/10"
+                                  >
+                                    <Plus className="h-3.5 w-3.5" />
+                                  </button>
+                                </div>
+                              ) : null}
+                              <span className="font-semibold text-brand">
+                                {formatPrice(item.price * Math.max(qty, 1))}
+                              </span>
+                            </div>
+                          </div>
                         );
                       })}
                   </div>
@@ -342,12 +387,18 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
 
                 {estimatedTotal > 0 ? (
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between rounded-xl border border-brand/30 bg-brand/10 px-4 py-3">
-                      <span className="text-sm font-semibold text-foreground">Estimated total</span>
-                      <span className="font-display text-xl font-extrabold text-brand">
+                    <motion.div
+                      key={estimatedTotal}
+                      initial={reduceMotion ? undefined : { scale: 0.97 }}
+                      animate={{ scale: 1 }}
+                      transition={{ duration: 0.2, ease: "easeOut" }}
+                      className="flex items-center justify-between rounded-xl border-2 border-brand bg-brand/15 px-4 py-3.5 shadow-md shadow-brand/10 ring-1 ring-brand/20"
+                    >
+                      <span className="text-sm font-bold text-foreground">Estimated Total</span>
+                      <span className="font-display text-2xl font-extrabold text-brand sm:text-3xl">
                         {formatPrice(estimatedTotal)}
                       </span>
-                    </div>
+                    </motion.div>
 
                     {/* Free-delivery progress nudge */}
                     {(() => {
@@ -534,12 +585,12 @@ export function OrderForm({ defaultPackage, defaultItems = [] }: OrderFormProps)
 
       {/* Sticky mobile running total — keeps the price visible while scrolling the long form */}
       {step === "details" && estimatedTotal > 0 ? (
-        <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t border-border bg-background/95 px-4 py-3 backdrop-blur-md sm:hidden">
+        <div className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-between gap-3 border-t-2 border-brand bg-background/95 px-4 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.08)] backdrop-blur-md sm:hidden">
           <div>
-            <p className="text-[11px] font-medium uppercase tracking-wide text-foreground/70">
+            <p className="text-[11px] font-bold uppercase tracking-wide text-foreground/70">
               Estimated Total
             </p>
-            <p className="font-display text-lg font-extrabold text-brand">
+            <p className="font-display text-xl font-extrabold text-brand">
               {formatPrice(estimatedTotal)}
             </p>
           </div>

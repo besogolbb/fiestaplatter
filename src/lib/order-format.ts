@@ -7,9 +7,15 @@ export interface OrderSummary {
   reference: string;
   packageName: string;
   packagePrice: number | null;
-  addOns: { name: string; price: number }[];
+  /** price is the unit price; qty is how many of that item were added. */
+  addOns: { name: string; price: number; qty: number }[];
   estimatedTotal: number | null;
   lines: { label: string; value: string }[];
+}
+
+/** "Siomai" for qty 1, "Siomai x2" for qty > 1. */
+function formatAddOnLabel(addOn: { name: string; qty: number }): string {
+  return addOn.qty > 1 ? `${addOn.name} x${addOn.qty}` : addOn.name;
 }
 
 /** Generate a short human-friendly order reference. */
@@ -31,14 +37,20 @@ export function buildOrderSummary(
   const packageName = pkg ? pkg.name : "Custom order";
   const packagePrice = pkg ? pkg.price : null;
 
-  const addOns = (order.additionalItems ?? [])
-    .map((slug) => {
+  // additionalItems may contain duplicate slugs — occurrence count is the
+  // quantity (see setAddOnQty in order-form.tsx) — group them here.
+  const addOnCounts = new Map<string, number>();
+  for (const slug of order.additionalItems ?? []) {
+    addOnCounts.set(slug, (addOnCounts.get(slug) ?? 0) + 1);
+  }
+  const addOns = Array.from(addOnCounts.entries())
+    .map(([slug, qty]) => {
       const item = getMenuItem(slug);
-      return item ? { name: item.name, price: item.price } : null;
+      return item ? { name: item.name, price: item.price, qty } : null;
     })
-    .filter((x): x is { name: string; price: number } => x !== null);
+    .filter((x): x is { name: string; price: number; qty: number } => x !== null);
 
-  const addOnTotal = addOns.reduce((sum, a) => sum + a.price, 0);
+  const addOnTotal = addOns.reduce((sum, a) => sum + a.price * a.qty, 0);
   const estimatedTotal =
     packagePrice !== null ? packagePrice + addOnTotal : addOnTotal || null;
 
@@ -54,7 +66,7 @@ export function buildOrderSummary(
     { label: "Address", value: order.address },
     { label: "Package", value: packageName },
     ...(addOns.length
-      ? [{ label: "Add-ons", value: addOns.map((a) => a.name).join(", ") }]
+      ? [{ label: "Add-ons", value: addOns.map(formatAddOnLabel).join(", ") }]
       : []),
     { label: "Payment", value: order.paymentMethod },
     ...(order.specialInstructions

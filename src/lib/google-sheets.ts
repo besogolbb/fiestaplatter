@@ -152,7 +152,7 @@ export async function appendOrderToGoogleSheet(order: OrderInput, summary: Order
       order.deliveryTime,
       order.address,
       summary.packageName,
-      summary.addOns.map((a) => a.name).join(", "),
+      summary.addOns.map((a) => (a.qty > 1 ? `${a.name} x${a.qty}` : a.name)).join(", "),
       order.paymentMethod,
       order.specialInstructions ?? "",
       summary.estimatedTotal ?? "",
