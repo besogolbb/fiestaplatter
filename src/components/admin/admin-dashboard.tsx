@@ -1,6 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import {
   ChevronLeft,
   ChevronRight,
@@ -9,9 +11,15 @@ import {
   Package,
   CalendarDays,
   Award,
+  Plus,
+  Trash2,
+  Loader2,
   type LucideIcon,
 } from "lucide-react";
 import type { OrderRecord } from "@/lib/google-sheets";
+import { deleteOrderAction } from "@/app/admin/(dashboard)/actions";
+import { AddOrderModal } from "@/components/admin/add-order-modal";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
@@ -31,9 +39,28 @@ function formatPHP(n: number) {
 
 export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
   const now = new Date();
+  const router = useRouter();
   const [monthCursor, setMonthCursor] = useState(() => new Date(now.getFullYear(), now.getMonth(), 1));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [query, setQuery] = useState("");
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [deletingRef, setDeletingRef] = useState<string | null>(null);
+  const [pending, startTransition] = useTransition();
+
+  function handleDelete(reference: string) {
+    if (!window.confirm(`Delete order ${reference}? This cannot be undone.`)) return;
+    setDeletingRef(reference);
+    startTransition(async () => {
+      const result = await deleteOrderAction(reference);
+      if (result.success) {
+        toast.success(`Order ${reference} deleted.`);
+        router.refresh();
+      } else {
+        toast.error(result.error ?? "Could not delete the order.");
+      }
+      setDeletingRef(null);
+    });
+  }
 
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, o) => sum + parseTotal(o.estimatedTotal), 0);
@@ -90,6 +117,14 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
 
   return (
     <div className="space-y-6">
+      {showAddModal ? <AddOrderModal onClose={() => setShowAddModal(false)} /> : null}
+
+      <div className="flex items-center justify-end">
+        <Button size="sm" onClick={() => setShowAddModal(true)}>
+          <Plus className="h-4 w-4" /> Add Order
+        </Button>
+      </div>
+
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard icon={Package} label="Total Orders" value={String(totalOrders)} />
         <StatCard icon={TrendingUp} label="Est. Revenue" value={formatPHP(totalRevenue)} />
@@ -192,12 +227,15 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
                   <th className="px-4 py-2.5 font-semibold">Package</th>
                   <th className="px-4 py-2.5 font-semibold">Payment</th>
                   <th className="px-4 py-2.5 text-right font-semibold">Total</th>
+                  <th className="px-4 py-2.5 text-right font-semibold">
+                    <span className="sr-only">Actions</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={7} className="px-4 py-10 text-center text-foreground/50">
+                    <td colSpan={8} className="px-4 py-10 text-center text-foreground/50">
                       No orders {selectedDate || query ? "match your filters." : "yet."}
                     </td>
                   </tr>
@@ -226,6 +264,21 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
                       <td className="px-4 py-2.5 text-foreground/80">{o.paymentMethod}</td>
                       <td className="px-4 py-2.5 text-right font-semibold text-brand">
                         {formatPHP(parseTotal(o.estimatedTotal))}
+                      </td>
+                      <td className="px-4 py-2.5 text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleDelete(o.reference)}
+                          disabled={pending && deletingRef === o.reference}
+                          aria-label={`Delete order ${o.reference}`}
+                          className="rounded-lg p-1.5 text-foreground/40 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                        >
+                          {pending && deletingRef === o.reference ? (
+                            <Loader2 className="h-4 w-4 animate-spin" />
+                          ) : (
+                            <Trash2 className="h-4 w-4" />
+                          )}
+                        </button>
                       </td>
                     </tr>
                   ))

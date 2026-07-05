@@ -1,6 +1,7 @@
 import { JWT } from "google-auth-library";
 import type { OrderInput } from "@/lib/order-schema";
 import type { OrderSummary } from "@/lib/order-format";
+import { generateReference } from "@/lib/order-format";
 
 export interface OrderRecord {
   submittedAt: string;
@@ -118,6 +119,19 @@ export async function checkGoogleSheetsConnection(): Promise<SheetsConnectionSta
   }
 }
 
+/** Writes the header row if the sheet is currently empty. */
+async function ensureHeaderRow() {
+  const headerCheck = await sheetsFetch(`/values/${SHEET_NAME}!A1:A1`);
+  if (!headerCheck?.ok) return;
+  const data = (await headerCheck.json()) as { values?: unknown[] };
+  if (!data.values || data.values.length === 0) {
+    await sheetsFetch(`/values/${SHEET_NAME}!A1:P1?valueInputOption=RAW`, {
+      method: "PUT",
+      body: JSON.stringify({ values: [HEADER_ROW] }),
+    });
+  }
+}
+
 /**
  * Appends a submitted order as a row in the "Orders" sheet (writing the
  * header row first if the sheet is empty). No-ops safely if
@@ -126,18 +140,9 @@ export async function checkGoogleSheetsConnection(): Promise<SheetsConnectionSta
  */
 export async function appendOrderToGoogleSheet(order: OrderInput, summary: OrderSummary) {
   try {
-    const headerCheck = await sheetsFetch(`/values/${SHEET_NAME}!A1:A1`);
-    if (!headerCheck) return; // not configured
-
-    if (headerCheck.ok) {
-      const data = (await headerCheck.json()) as { values?: unknown[] };
-      if (!data.values || data.values.length === 0) {
-        await sheetsFetch(`/values/${SHEET_NAME}!A1:P1?valueInputOption=RAW`, {
-          method: "PUT",
-          body: JSON.stringify({ values: [HEADER_ROW] }),
-        });
-      }
-    }
+    const probe = await sheetsFetch(`/values/${SHEET_NAME}!A1:A1`);
+    if (!probe) return; // not configured
+    await ensureHeaderRow();
 
     const row = [
       new Date().toISOString(),
@@ -168,6 +173,138 @@ export async function appendOrderToGoogleSheet(order: OrderInput, summary: Order
   } catch (err) {
     // Log server-side; never block the customer's order over a sheet write.
     console.error("[appendOrderToGoogleSheet] failed:", err);
+  }
+}
+
+export interface ManualOrderInput {
+  name: string;
+  phone: string;
+  email?: string;
+  facebook?: string;
+  eventType: string;
+  guests: string;
+  deliveryDate: string;
+  deliveryTime: string;
+  address: string;
+  packageName: string;
+  addOns?: string;
+  paymentMethod: string;
+  specialInstructions?: string;
+  estimatedTotal: string;
+}
+
+export interface ManualOrderResult {
+  success: boolean;
+  reference?: string;
+  error?: string;
+}
+
+/**
+ * Appends an order taken manually by the admin (e.g. a phone / Messenger
+ * order) straight into the "Orders" sheet, bypassing the customer-facing
+ * order form and its packageSlug/menu-slug validation entirely — the admin
+ * can type any package or add-on description here.
+ */
+export async function appendManualOrder(input: ManualOrderInput): Promise<ManualOrderResult> {
+  try {
+    const probe = await sheetsFetch(`/values/${SHEET_NAME}!A1:A1`);
+    if (!probe) return { success: false, error: "Google Sheets isn't configured." };
+    await ensureHeaderRow();
+
+    const reference = generateReference();
+    const row = [
+      new Date().toISOString(),
+      reference,
+      input.name,
+      input.phone,
+      input.email ?? "",
+      input.facebook ?? "",
+      input.eventType,
+      input.guests,
+      input.deliveryDate,
+      input.deliveryTime,
+      input.address,
+      input.packageName,
+      input.addOns ?? "",
+      input.paymentMethod,
+      input.specialInstructions ?? "",
+      input.estimatedTotal,
+    ];
+
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!A:P:append?valueInputOption=USER_ENTERED`, {
+      method: "POST",
+      body: JSON.stringify({ values: [row] }),
+    });
+    if (!res || !res.ok) {
+      const body = res ? await res.text() : "";
+      console.error("[appendManualOrder] non-OK response:", res?.status, body);
+      return { success: false, error: `Sheets API returned ${res?.status ?? "no response"}: ${body.slice(0, 200)}` };
+    }
+    return { success: true, reference };
+  } catch (err) {
+    console.error("[appendManualOrder] failed:", err);
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+let cachedOrdersSheetId: number | null | undefined;
+
+/** Numeric sheetId (gid) of the "Orders" tab — needed for row-deletion requests. */
+async function getOrdersSheetId(): Promise<number | null> {
+  if (cachedOrdersSheetId !== undefined) return cachedOrdersSheetId;
+  const res = await sheetsFetch(`?fields=sheets.properties`);
+  if (!res || !res.ok) {
+    cachedOrdersSheetId = null;
+    return null;
+  }
+  const data = (await res.json()) as {
+    sheets?: { properties: { sheetId: number; title: string } }[];
+  };
+  const sheet = data.sheets?.find((s) => s.properties.title === SHEET_NAME);
+  cachedOrdersSheetId = sheet?.properties.sheetId ?? null;
+  return cachedOrdersSheetId;
+}
+
+/**
+ * Deletes the row matching the given order reference from the "Orders"
+ * sheet. Looks up the row position live (rows shift as others are
+ * added/removed) rather than trusting a cached index.
+ */
+export async function deleteOrderByReference(reference: string): Promise<ManualOrderResult> {
+  try {
+    const sheetId = await getOrdersSheetId();
+    if (sheetId === null) return { success: false, error: "Google Sheets isn't configured." };
+
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!B2:B`);
+    if (!res || !res.ok) return { success: false, error: "Could not read the sheet to locate the order." };
+
+    const data = (await res.json()) as { values?: string[][] };
+    const refs = (data.values ?? []).map((r) => r[0] ?? "");
+    const index = refs.indexOf(reference);
+    if (index === -1) return { success: false, error: "Order not found in the sheet (already deleted?)." };
+
+    // +1 for the header row, refs is 0-indexed starting at sheet row 2.
+    const startIndex = index + 1;
+    const del = await sheetsFetch(`:batchUpdate`, {
+      method: "POST",
+      body: JSON.stringify({
+        requests: [
+          {
+            deleteDimension: {
+              range: { sheetId, dimension: "ROWS", startIndex, endIndex: startIndex + 1 },
+            },
+          },
+        ],
+      }),
+    });
+    if (!del || !del.ok) {
+      const body = del ? await del.text() : "";
+      return { success: false, error: `Sheets API returned ${del?.status ?? "no response"}: ${body.slice(0, 200)}` };
+    }
+    return { success: true, reference };
+  } catch (err) {
+    console.error("[deleteOrderByReference] failed:", err);
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
 
