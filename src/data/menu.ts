@@ -12,7 +12,7 @@ export const menu: MenuItem[] = [
     shortName: "Homemade & Hearty",
     description:
       "Savory, juicy chicken embutido made with premium ingredients and wrapped with love in every slice. Our signature party centerpiece.",
-    price: 500,
+    price: 499,
     unitPrice: { amount: 160, unit: "per 350g bar" },
     category: "bilao",
     serving: '12" Bilao · 3 × 350g bars · good for 8–10 pax',
