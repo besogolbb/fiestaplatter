@@ -23,6 +23,9 @@ import { cn, formatPrice } from "@/lib/utils";
 export function AddOrderModal({ onClose }: { onClose: () => void }) {
   const [pending, startTransition] = useTransition();
   const [qtyBySlug, setQtyBySlug] = useState<Record<string, number>>({});
+  const [otherName, setOtherName] = useState("");
+  const [otherPrice, setOtherPrice] = useState("");
+  const [otherQty, setOtherQty] = useState(1);
   const router = useRouter();
 
   function setQty(slug: string, qty: number) {
@@ -37,14 +40,21 @@ export function AddOrderModal({ onClose }: { onClose: () => void }) {
   const selectedItems = menu
     .filter((item) => qtyBySlug[item.slug] > 0)
     .map((item) => ({ item, qty: qtyBySlug[item.slug] }));
-  const estimatedTotal = selectedItems.reduce((sum, { item, qty }) => sum + item.price * qty, 0);
-  const addOnsSummary = selectedItems
-    .map(({ item, qty }) => (qty > 1 ? `${item.name} x${qty}` : item.name))
-    .join(", ");
+
+  const otherPriceNum = Number(otherPrice);
+  const hasOther = otherName.trim() !== "" && otherPriceNum > 0;
+  const otherLineTotal = hasOther ? otherPriceNum * otherQty : 0;
+
+  const estimatedTotal =
+    selectedItems.reduce((sum, { item, qty }) => sum + item.price * qty, 0) + otherLineTotal;
+  const addOnsSummary = [
+    ...selectedItems.map(({ item, qty }) => (qty > 1 ? `${item.name} x${qty}` : item.name)),
+    ...(hasOther ? [otherQty > 1 ? `${otherName.trim()} x${otherQty}` : otherName.trim()] : []),
+  ].join(", ");
 
   function handleSubmit(formData: FormData) {
-    if (selectedItems.length === 0) {
-      toast.error("Select at least one menu item.");
+    if (selectedItems.length === 0 && !hasOther) {
+      toast.error("Select at least one menu item, or fill in the Others item.");
       return;
     }
     formData.set("packageName", "Custom order");
@@ -151,6 +161,53 @@ export function AddOrderModal({ onClose }: { onClose: () => void }) {
                   </div>
                 );
               })}
+
+              {/* Free-text catch-all for items not on the menu — admin types both name and price. */}
+              <div
+                className={cn(
+                  "flex flex-wrap items-center gap-2 rounded-xl border px-3.5 py-2.5 text-sm transition-colors",
+                  hasOther ? "border-brand bg-brand/10" : "border-border bg-background/60",
+                )}
+              >
+                <Input
+                  value={otherName}
+                  onChange={(e) => setOtherName(e.target.value)}
+                  placeholder="Others — item name"
+                  className="h-9 flex-1 basis-40"
+                />
+                <Input
+                  value={otherPrice}
+                  onChange={(e) => setOtherPrice(e.target.value)}
+                  type="number"
+                  min={0}
+                  placeholder="Price"
+                  className="h-9 w-24 shrink-0"
+                />
+                {hasOther ? (
+                  <div className="flex shrink-0 items-center gap-1 rounded-full border border-brand/30 bg-card">
+                    <button
+                      type="button"
+                      onClick={() => setOtherQty((q) => Math.max(1, q - 1))}
+                      aria-label="Decrease Others quantity"
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-brand hover:bg-brand/10"
+                    >
+                      <Minus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="w-4 text-center text-xs font-bold text-foreground">{otherQty}</span>
+                    <button
+                      type="button"
+                      onClick={() => setOtherQty((q) => q + 1)}
+                      aria-label="Increase Others quantity"
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-brand hover:bg-brand/10"
+                    >
+                      <Plus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ) : null}
+                <span className="w-16 shrink-0 text-right font-semibold text-brand">
+                  {hasOther ? formatPrice(otherLineTotal) : ""}
+                </span>
+              </div>
             </div>
           </div>
 
