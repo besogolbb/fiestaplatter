@@ -10,6 +10,7 @@ import {
 import { siteConfig } from "@/config/site";
 import { sendMetaCapiLead } from "@/lib/meta-capi";
 import { appendOrderToGoogleSheet } from "@/lib/google-sheets";
+import { createOrderCalendarEvent } from "@/lib/google-calendar";
 
 export interface OrderActionState {
   status: "idle" | "success" | "error";
@@ -83,11 +84,23 @@ export async function submitOrder(
   }
 
   // Record the order in Google Sheets (source of truth for the admin
-  // dashboard) and fire the Meta CAPI Lead event in parallel — both are
-  // independent, no-op safely if unconfigured, and neither should block
-  // or fail because of the other.
+  // dashboard), create a Calendar event with a 24h-before reminder, and
+  // fire the Meta CAPI Lead event — all independent, no-op safely if
+  // unconfigured, and none should block or fail because of another.
   await Promise.allSettled([
     appendOrderToGoogleSheet(order, summary),
+    createOrderCalendarEvent({
+      reference: summary.reference,
+      name: order.name,
+      phone: order.phone,
+      address: order.address,
+      deliveryDate: order.deliveryDate,
+      deliveryTime: order.deliveryTime,
+      packageName: summary.packageName,
+      addOns: summary.addOns.map((a) => (a.qty > 1 ? `${a.name} x${a.qty}` : a.name)).join(", "),
+      estimatedTotal: summary.estimatedTotal != null ? String(summary.estimatedTotal) : undefined,
+      specialInstructions: order.specialInstructions,
+    }),
     sendMetaCapiLead({
       eventId: summary.reference,
       value: summary.estimatedTotal ?? 0,

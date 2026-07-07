@@ -7,6 +7,7 @@ import {
   type ManualOrderInput,
   type ManualOrderResult,
 } from "@/lib/google-sheets";
+import { createOrderCalendarEvent } from "@/lib/google-calendar";
 
 export async function addManualOrderAction(formData: FormData): Promise<ManualOrderResult> {
   const input: ManualOrderInput = {
@@ -31,7 +32,23 @@ export async function addManualOrderAction(formData: FormData): Promise<ManualOr
   }
 
   const result = await appendManualOrder(input);
-  if (result.success) revalidatePath("/admin");
+  if (result.success) {
+    revalidatePath("/admin");
+    if (result.reference) {
+      await createOrderCalendarEvent({
+        reference: result.reference,
+        name: input.name,
+        phone: input.phone,
+        address: input.address,
+        deliveryDate: input.deliveryDate,
+        deliveryTime: input.deliveryTime,
+        packageName: input.packageName,
+        addOns: input.addOns,
+        estimatedTotal: input.estimatedTotal,
+        specialInstructions: input.specialInstructions,
+      });
+    }
+  }
   return result;
 }
 
