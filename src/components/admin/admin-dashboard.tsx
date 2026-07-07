@@ -14,10 +14,11 @@ import {
   Plus,
   Trash2,
   Loader2,
+  Truck,
   type LucideIcon,
 } from "lucide-react";
 import type { OrderRecord } from "@/lib/google-sheets";
-import { deleteOrderAction } from "@/app/admin/(dashboard)/actions";
+import { deleteOrderAction, setOrderDeliveredAction } from "@/app/admin/(dashboard)/actions";
 import { AddOrderModal } from "@/components/admin/add-order-modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -45,6 +46,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
   const [query, setQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
   const [deletingRef, setDeletingRef] = useState<string | null>(null);
+  const [togglingRef, setTogglingRef] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
   function handleDelete(reference: string) {
@@ -62,8 +64,25 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
     });
   }
 
+  function handleToggleDelivered(reference: string, delivered: boolean) {
+    setTogglingRef(reference);
+    startTransition(async () => {
+      const result = await setOrderDeliveredAction(reference, delivered);
+      if (result.success) {
+        router.refresh();
+      } else {
+        toast.error(result.error ?? "Could not update delivery status.");
+      }
+      setTogglingRef(null);
+    });
+  }
+
   const totalOrders = orders.length;
-  const totalRevenue = orders.reduce((sum, o) => sum + parseTotal(o.estimatedTotal), 0);
+  // Only delivered orders count as actual sales — everything else is still
+  // just a reservation until it's marked delivered.
+  const totalRevenue = orders
+    .filter((o) => o.delivered === "Yes")
+    .reduce((sum, o) => sum + parseTotal(o.estimatedTotal), 0);
   const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   const thisMonthCount = orders.filter((o) => o.deliveryDate?.startsWith(thisMonthKey)).length;
 
@@ -127,7 +146,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <StatCard icon={Package} label="Total Orders" value={String(totalOrders)} />
-        <StatCard icon={TrendingUp} label="Est. Revenue" value={formatPHP(totalRevenue)} />
+        <StatCard icon={TrendingUp} label="Total Sales" value={formatPHP(totalRevenue)} />
         <StatCard icon={CalendarDays} label="This Month" value={String(thisMonthCount)} />
         <StatCard icon={Award} label="Top Package" value={topPackage} />
       </div>
@@ -227,6 +246,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
                   <th className="px-4 py-2.5 font-semibold">Package</th>
                   <th className="px-4 py-2.5 font-semibold">Payment</th>
                   <th className="px-4 py-2.5 text-right font-semibold">Total</th>
+                  <th className="px-4 py-2.5 text-center font-semibold">Delivered</th>
                   <th className="px-4 py-2.5 text-right font-semibold">
                     <span className="sr-only">Actions</span>
                   </th>
@@ -235,7 +255,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="px-4 py-10 text-center text-foreground/50">
+                    <td colSpan={9} className="px-4 py-10 text-center text-foreground/50">
                       No orders {selectedDate || query ? "match your filters." : "yet."}
                     </td>
                   </tr>
@@ -264,6 +284,27 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
                       <td className="px-4 py-2.5 text-foreground/80">{o.paymentMethod}</td>
                       <td className="px-4 py-2.5 text-right font-semibold text-brand">
                         {formatPHP(parseTotal(o.estimatedTotal))}
+                      </td>
+                      <td className="px-4 py-2.5 text-center">
+                        <button
+                          type="button"
+                          onClick={() => handleToggleDelivered(o.reference, o.delivered !== "Yes")}
+                          disabled={pending && togglingRef === o.reference}
+                          aria-pressed={o.delivered === "Yes"}
+                          className={cn(
+                            "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-semibold transition-colors disabled:opacity-50",
+                            o.delivered === "Yes"
+                              ? "border-green-600/30 bg-green-600/10 text-green-700 hover:bg-green-600/20 dark:text-green-400"
+                              : "border-border text-foreground/50 hover:border-brand/40 hover:text-brand",
+                          )}
+                        >
+                          {pending && togglingRef === o.reference ? (
+                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                          ) : (
+                            <Truck className="h-3.5 w-3.5" />
+                          )}
+                          {o.delivered === "Yes" ? "Delivered" : "Mark delivered"}
+                        </button>
                       </td>
                       <td className="px-4 py-2.5 text-right">
                         <button

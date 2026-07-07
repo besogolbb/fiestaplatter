@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import {
   appendManualOrder,
   deleteOrderByReference,
+  setOrderDelivered,
   type ManualOrderInput,
   type ManualOrderResult,
 } from "@/lib/google-sheets";
@@ -54,6 +55,15 @@ export async function addManualOrderAction(formData: FormData): Promise<ManualOr
 
 export async function deleteOrderAction(reference: string): Promise<ManualOrderResult> {
   const result = await deleteOrderByReference(reference);
+  if (result.success) revalidatePath("/admin");
+  return result;
+}
+
+export async function setOrderDeliveredAction(
+  reference: string,
+  delivered: boolean,
+): Promise<ManualOrderResult> {
+  const result = await setOrderDelivered(reference, delivered);
   if (result.success) revalidatePath("/admin");
   return result;
 }

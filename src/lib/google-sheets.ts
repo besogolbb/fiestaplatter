@@ -20,18 +20,25 @@ export interface OrderRecord {
   paymentMethod: string;
   specialInstructions: string;
   estimatedTotal: string;
+  /** "Yes" once marked delivered in /admin; blank/"No" otherwise. Only delivered orders count toward Total Sales. */
+  delivered: string;
 }
 
 const SHEET_NAME = "Orders";
+// Column range covering every field below, incl. the trailing Delivered
+// column — kept in one place so append/header/read calls can't drift.
+const LAST_COLUMN = "Q";
 const RECORD_KEYS: (keyof OrderRecord)[] = [
   "submittedAt", "reference", "name", "phone", "email", "facebook",
   "eventType", "guests", "deliveryDate", "deliveryTime", "address",
   "packageName", "addOns", "paymentMethod", "specialInstructions", "estimatedTotal",
+  "delivered",
 ];
 const HEADER_ROW = [
   "Submitted At", "Reference", "Name", "Phone", "Email", "Facebook",
   "Event Type", "Guests", "Delivery Date", "Delivery Time", "Address",
   "Package", "Add-ons", "Payment Method", "Special Instructions", "Estimated Total (PHP)",
+  "Delivered",
 ];
 
 let cachedClient: JWT | null | undefined;
@@ -125,7 +132,7 @@ async function ensureHeaderRow() {
   if (!headerCheck?.ok) return;
   const data = (await headerCheck.json()) as { values?: unknown[] };
   if (!data.values || data.values.length === 0) {
-    await sheetsFetch(`/values/${SHEET_NAME}!A1:P1?valueInputOption=RAW`, {
+    await sheetsFetch(`/values/${SHEET_NAME}!A1:${LAST_COLUMN}1?valueInputOption=RAW`, {
       method: "PUT",
       body: JSON.stringify({ values: [HEADER_ROW] }),
     });
@@ -161,9 +168,10 @@ export async function appendOrderToGoogleSheet(order: OrderInput, summary: Order
       order.paymentMethod,
       order.specialInstructions ?? "",
       summary.estimatedTotal ?? "",
+      "No",
     ];
 
-    const res = await sheetsFetch(`/values/${SHEET_NAME}!A:P:append?valueInputOption=USER_ENTERED`, {
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!A:${LAST_COLUMN}:append?valueInputOption=USER_ENTERED`, {
       method: "POST",
       body: JSON.stringify({ values: [row] }),
     });
@@ -229,9 +237,10 @@ export async function appendManualOrder(input: ManualOrderInput): Promise<Manual
       input.paymentMethod,
       input.specialInstructions ?? "",
       input.estimatedTotal,
+      "No",
     ];
 
-    const res = await sheetsFetch(`/values/${SHEET_NAME}!A:P:append?valueInputOption=USER_ENTERED`, {
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!A:${LAST_COLUMN}:append?valueInputOption=USER_ENTERED`, {
       method: "POST",
       body: JSON.stringify({ values: [row] }),
     });
@@ -266,6 +275,44 @@ async function getOrdersSheetId(): Promise<number | null> {
 }
 
 /**
+ * Finds the 1-indexed sheet row number for an order reference (column B).
+ * Looked up live each time since rows shift as others are added/removed.
+ */
+async function findOrderRowNumber(reference: string): Promise<number | null> {
+  const res = await sheetsFetch(`/values/${SHEET_NAME}!B2:B`);
+  if (!res || !res.ok) return null;
+  const data = (await res.json()) as { values?: string[][] };
+  const refs = (data.values ?? []).map((r) => r[0] ?? "");
+  const index = refs.indexOf(reference);
+  if (index === -1) return null;
+  return index + 2; // +1 for the header row, +1 to convert 0-index to 1-index.
+}
+
+/**
+ * Marks (or unmarks) an order as delivered — only delivered orders count
+ * toward Total Sales on the admin dashboard.
+ */
+export async function setOrderDelivered(reference: string, delivered: boolean): Promise<ManualOrderResult> {
+  try {
+    const rowNumber = await findOrderRowNumber(reference);
+    if (rowNumber === null) return { success: false, error: "Order not found in the sheet." };
+
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!${LAST_COLUMN}${rowNumber}?valueInputOption=RAW`, {
+      method: "PUT",
+      body: JSON.stringify({ values: [[delivered ? "Yes" : "No"]] }),
+    });
+    if (!res || !res.ok) {
+      const body = res ? await res.text() : "";
+      return { success: false, error: `Sheets API returned ${res?.status ?? "no response"}: ${body.slice(0, 200)}` };
+    }
+    return { success: true, reference };
+  } catch (err) {
+    console.error("[setOrderDelivered] failed:", err);
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+/**
  * Deletes the row matching the given order reference from the "Orders"
  * sheet. Looks up the row position live (rows shift as others are
  * added/removed) rather than trusting a cached index.
@@ -275,16 +322,10 @@ export async function deleteOrderByReference(reference: string): Promise<ManualO
     const sheetId = await getOrdersSheetId();
     if (sheetId === null) return { success: false, error: "Google Sheets isn't configured." };
 
-    const res = await sheetsFetch(`/values/${SHEET_NAME}!B2:B`);
-    if (!res || !res.ok) return { success: false, error: "Could not read the sheet to locate the order." };
+    const rowNumber = await findOrderRowNumber(reference);
+    if (rowNumber === null) return { success: false, error: "Order not found in the sheet (already deleted?)." };
 
-    const data = (await res.json()) as { values?: string[][] };
-    const refs = (data.values ?? []).map((r) => r[0] ?? "");
-    const index = refs.indexOf(reference);
-    if (index === -1) return { success: false, error: "Order not found in the sheet (already deleted?)." };
-
-    // +1 for the header row, refs is 0-indexed starting at sheet row 2.
-    const startIndex = index + 1;
+    const startIndex = rowNumber - 1; // deleteDimension range is 0-indexed.
     const del = await sheetsFetch(`:batchUpdate`, {
       method: "POST",
       body: JSON.stringify({
@@ -315,7 +356,7 @@ export async function deleteOrderByReference(reference: string): Promise<ManualO
  */
 export async function fetchOrdersFromGoogleSheet(): Promise<OrderRecord[]> {
   try {
-    const res = await sheetsFetch(`/values/${SHEET_NAME}!A2:P`);
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!A2:${LAST_COLUMN}`);
     if (!res) return [];
     if (!res.ok) {
       console.error("[fetchOrdersFromGoogleSheet] non-OK response:", res.status, await res.text());
