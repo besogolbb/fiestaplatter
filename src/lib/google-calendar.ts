@@ -22,7 +22,11 @@ function getAuthClient(): JWT | null {
   cachedClient = new JWT({
     email,
     key: rawKey.replace(/\\n/g, "\n"),
-    scopes: ["https://www.googleapis.com/auth/calendar.events"],
+    // The connection-check call (GET /calendars/{id}) needs the broader
+    // "calendar" scope — "calendar.events" alone only covers the Events
+    // resource and 403s on that call with "insufficient authentication
+    // scopes" even though event creation would work.
+    scopes: ["https://www.googleapis.com/auth/calendar"],
   });
   return cachedClient;
 }
