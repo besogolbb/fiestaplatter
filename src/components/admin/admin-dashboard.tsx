@@ -15,11 +15,13 @@ import {
   Trash2,
   Loader2,
   Truck,
+  Eye,
   type LucideIcon,
 } from "lucide-react";
 import type { OrderRecord } from "@/lib/google-sheets";
 import { deleteOrderAction, setOrderDeliveredAction } from "@/app/admin/(dashboard)/actions";
 import { AddOrderModal } from "@/components/admin/add-order-modal";
+import { OrderDetailModal } from "@/components/admin/order-detail-modal";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -45,6 +47,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [showAddModal, setShowAddModal] = useState(false);
+  const [viewingOrder, setViewingOrder] = useState<OrderRecord | null>(null);
   const [deletingRef, setDeletingRef] = useState<string | null>(null);
   const [togglingRef, setTogglingRef] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -80,9 +83,11 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
   const totalOrders = orders.length;
   // Only delivered orders count as actual sales — everything else is still
   // just a reservation until it's marked delivered.
-  const totalRevenue = orders
-    .filter((o) => o.delivered === "Yes")
-    .reduce((sum, o) => sum + parseTotal(o.estimatedTotal), 0);
+  const deliveredOrders = orders.filter((o) => o.delivered === "Yes");
+  const totalRevenue = deliveredOrders.reduce((sum, o) => sum + parseTotal(o.estimatedTotal), 0);
+  // Partial figure — only reflects add-ons with known cost data; bundles/packages
+  // have no cost breakdown, so this understates true margin on package orders.
+  const totalProfit = deliveredOrders.reduce((sum, o) => sum + parseTotal(o.estimatedProfit), 0);
   const thisMonthKey = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
   const thisMonthCount = orders.filter((o) => o.deliveryDate?.startsWith(thisMonthKey)).length;
 
@@ -137,6 +142,9 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
   return (
     <div className="space-y-6">
       {showAddModal ? <AddOrderModal onClose={() => setShowAddModal(false)} /> : null}
+      {viewingOrder ? (
+        <OrderDetailModal order={viewingOrder} onClose={() => setViewingOrder(null)} />
+      ) : null}
 
       <div className="flex items-center justify-end">
         <Button size="sm" onClick={() => setShowAddModal(true)}>
@@ -144,9 +152,10 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
         </Button>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         <StatCard icon={Package} label="Total Orders" value={String(totalOrders)} />
         <StatCard icon={TrendingUp} label="Total Sales" value={formatPHP(totalRevenue)} />
+        <StatCard icon={TrendingUp} label="Net Profit" value={formatPHP(totalProfit)} />
         <StatCard icon={CalendarDays} label="This Month" value={String(thisMonthCount)} />
         <StatCard icon={Award} label="Top Package" value={topPackage} />
       </div>
@@ -306,20 +315,30 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
                           {o.delivered === "Yes" ? "Delivered" : "Mark delivered"}
                         </button>
                       </td>
-                      <td className="px-4 py-2.5 text-right">
-                        <button
-                          type="button"
-                          onClick={() => handleDelete(o.reference)}
-                          disabled={pending && deletingRef === o.reference}
-                          aria-label={`Delete order ${o.reference}`}
-                          className="rounded-lg p-1.5 text-foreground/40 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
-                        >
-                          {pending && deletingRef === o.reference ? (
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          ) : (
-                            <Trash2 className="h-4 w-4" />
-                          )}
-                        </button>
+                      <td className="px-4 py-2.5">
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            type="button"
+                            onClick={() => setViewingOrder(o)}
+                            aria-label={`View order ${o.reference}`}
+                            className="rounded-lg p-1.5 text-foreground/40 transition-colors hover:bg-brand/10 hover:text-brand"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(o.reference)}
+                            disabled={pending && deletingRef === o.reference}
+                            aria-label={`Delete order ${o.reference}`}
+                            className="rounded-lg p-1.5 text-foreground/40 transition-colors hover:bg-destructive/10 hover:text-destructive disabled:opacity-50"
+                          >
+                            {pending && deletingRef === o.reference ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Trash2 className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
                       </td>
                     </tr>
                   ))

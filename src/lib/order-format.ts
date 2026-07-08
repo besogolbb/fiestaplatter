@@ -10,6 +10,8 @@ export interface OrderSummary {
   /** price is the unit price; qty is how many of that item were added. */
   addOns: { name: string; price: number; qty: number }[];
   estimatedTotal: number | null;
+  /** Net profit from add-ons with known cost data. Packages/bundles have no cost breakdown, so this is partial, not the full order margin. */
+  estimatedProfit: number;
   lines: { label: string; value: string }[];
 }
 
@@ -43,16 +45,21 @@ export function buildOrderSummary(
   for (const slug of order.additionalItems ?? []) {
     addOnCounts.set(slug, (addOnCounts.get(slug) ?? 0) + 1);
   }
-  const addOns = Array.from(addOnCounts.entries())
+  const addOnEntries = Array.from(addOnCounts.entries())
     .map(([slug, qty]) => {
       const item = getMenuItem(slug);
-      return item ? { name: item.name, price: item.price, qty } : null;
+      return item ? { name: item.name, price: item.price, qty, cost: item.cost } : null;
     })
-    .filter((x): x is { name: string; price: number; qty: number } => x !== null);
+    .filter((x): x is { name: string; price: number; qty: number; cost: number | undefined } => x !== null);
+  const addOns = addOnEntries.map(({ name, price, qty }) => ({ name, price, qty }));
 
   const addOnTotal = addOns.reduce((sum, a) => sum + a.price * a.qty, 0);
   const estimatedTotal =
     packagePrice !== null ? packagePrice + addOnTotal : addOnTotal || null;
+  const estimatedProfit = addOnEntries.reduce(
+    (sum, a) => sum + (a.cost != null ? (a.price - a.cost) * a.qty : 0),
+    0,
+  );
 
   const lines: { label: string; value: string }[] = [
     { label: "Name", value: order.name },
@@ -74,7 +81,7 @@ export function buildOrderSummary(
       : []),
   ];
 
-  return { reference, packageName, packagePrice, addOns, estimatedTotal, lines };
+  return { reference, packageName, packagePrice, addOns, estimatedTotal, estimatedProfit, lines };
 }
 
 /** Build a prefilled Messenger message a customer can send to confirm. */

@@ -24,7 +24,7 @@ export default function MenuPage() {
         crumbs={[{ name: "Menu", path: "/menu" }]}
       />
 
-      <MenuBrowser items={menu} categories={menuCategories} />
+      <MenuBrowser items={menu.filter((m) => !m.addOnOnly)} categories={menuCategories} />
 
       <FinalCta />
       <JsonLd data={menuSchema()} />

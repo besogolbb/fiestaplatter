@@ -8,6 +8,8 @@ export interface MenuItem {
   description: string;
   /** Base price in PHP. */
   price: number;
+  /** Our cost in PHP, used to compute net profit on the admin dashboard. */
+  cost?: number;
   /** Optional "per piece / per stick" unit price for smaller orders. */
   unitPrice?: { amount: number; unit: string };
   category: MenuCategory;
@@ -19,6 +21,8 @@ export interface MenuItem {
   popular?: boolean;
   /** Optional tags used for filtering / badges. */
   tags?: string[];
+  /** Retail add-on only — excluded from the public /menu page, still available as an add-on and in the admin manual order picker. */
+  addOnOnly?: boolean;
 }
 
 export interface PackageItem {

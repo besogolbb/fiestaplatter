@@ -47,6 +47,12 @@ export function AddOrderModal({ onClose }: { onClose: () => void }) {
 
   const estimatedTotal =
     selectedItems.reduce((sum, { item, qty }) => sum + item.price * qty, 0) + otherLineTotal;
+  // "Others" items have no menu cost basis, so they contribute 0 to profit —
+  // this stays a partial "known cost" figure, not the full order margin.
+  const estimatedProfit = selectedItems.reduce(
+    (sum, { item, qty }) => sum + (item.cost != null ? (item.price - item.cost) * qty : 0),
+    0,
+  );
   const addOnsSummary = [
     ...selectedItems.map(({ item, qty }) => (qty > 1 ? `${item.name} x${qty}` : item.name)),
     ...(hasOther ? [otherQty > 1 ? `${otherName.trim()} x${otherQty}` : otherName.trim()] : []),
@@ -60,6 +66,7 @@ export function AddOrderModal({ onClose }: { onClose: () => void }) {
     formData.set("packageName", "Custom order");
     formData.set("addOns", addOnsSummary);
     formData.set("estimatedTotal", String(estimatedTotal));
+    formData.set("estimatedProfit", String(estimatedProfit));
 
     startTransition(async () => {
       const result = await addManualOrderAction(formData);
@@ -154,8 +161,15 @@ export function AddOrderModal({ onClose }: { onClose: () => void }) {
                           </button>
                         </div>
                       ) : null}
-                      <span className="w-16 shrink-0 text-right font-semibold text-brand">
-                        {formatPrice(item.price * Math.max(qty, 1))}
+                      <span className="w-16 shrink-0 text-right">
+                        <span className="block font-semibold text-brand">
+                          {formatPrice(item.price * Math.max(qty, 1))}
+                        </span>
+                        {item.cost != null ? (
+                          <span className="block text-[10px] font-medium text-green-600 dark:text-green-400">
+                            +{formatPrice((item.price - item.cost) * Math.max(qty, 1))} profit
+                          </span>
+                        ) : null}
                       </span>
                     </div>
                   </div>
@@ -212,7 +226,14 @@ export function AddOrderModal({ onClose }: { onClose: () => void }) {
           </div>
 
           <div className="flex items-center justify-between rounded-xl border-2 border-brand bg-brand/15 px-4 py-3">
-            <span className="text-sm font-bold text-foreground">Estimated Total</span>
+            <div>
+              <span className="block text-sm font-bold text-foreground">Estimated Total</span>
+              {estimatedProfit > 0 ? (
+                <span className="block text-xs font-semibold text-green-600 dark:text-green-400">
+                  {formatPrice(estimatedProfit)} net profit
+                </span>
+              ) : null}
+            </div>
             <span className="font-display text-xl font-extrabold text-brand">{formatPrice(estimatedTotal)}</span>
           </div>
 

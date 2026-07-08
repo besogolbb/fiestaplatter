@@ -53,7 +53,7 @@ export function menuSchema() {
     hasMenuSection: {
       "@type": "MenuSection",
       name: "Party Trays & Bilao",
-      hasMenuItem: menu.map((item) => ({
+      hasMenuItem: menu.filter((item) => !item.addOnOnly).map((item) => ({
         "@type": "MenuItem",
         name: item.name,
         description: item.description,

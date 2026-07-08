@@ -22,23 +22,29 @@ export interface OrderRecord {
   estimatedTotal: string;
   /** "Yes" once marked delivered in /admin; blank/"No" otherwise. Only delivered orders count toward Total Sales. */
   delivered: string;
+  /** Net profit from add-ons with known cost data (partial — packages/bundles have no cost breakdown). Appended as the last column so existing sheet rows stay aligned. */
+  estimatedProfit: string;
 }
 
 const SHEET_NAME = "Orders";
-// Column range covering every field below, incl. the trailing Delivered
-// column — kept in one place so append/header/read calls can't drift.
-const LAST_COLUMN = "Q";
+// Column range covering every field below — kept in one place so
+// append/header/read calls can't drift.
+const LAST_COLUMN = "R";
+// The Delivered column's own letter, tracked separately from LAST_COLUMN so
+// appending new trailing columns (like Estimated Profit) never breaks the
+// delivered-toggle write, which targets this exact column.
+const DELIVERED_COLUMN = "Q";
 const RECORD_KEYS: (keyof OrderRecord)[] = [
   "submittedAt", "reference", "name", "phone", "email", "facebook",
   "eventType", "guests", "deliveryDate", "deliveryTime", "address",
   "packageName", "addOns", "paymentMethod", "specialInstructions", "estimatedTotal",
-  "delivered",
+  "delivered", "estimatedProfit",
 ];
 const HEADER_ROW = [
   "Submitted At", "Reference", "Name", "Phone", "Email", "Facebook",
   "Event Type", "Guests", "Delivery Date", "Delivery Time", "Address",
   "Package", "Add-ons", "Payment Method", "Special Instructions", "Estimated Total (PHP)",
-  "Delivered",
+  "Delivered", "Estimated Profit (PHP)",
 ];
 
 let cachedClient: JWT | null | undefined;
@@ -169,6 +175,7 @@ export async function appendOrderToGoogleSheet(order: OrderInput, summary: Order
       order.specialInstructions ?? "",
       summary.estimatedTotal ?? "",
       "No",
+      summary.estimatedProfit,
     ];
 
     const res = await sheetsFetch(`/values/${SHEET_NAME}!A:${LAST_COLUMN}:append?valueInputOption=USER_ENTERED`, {
@@ -199,6 +206,7 @@ export interface ManualOrderInput {
   paymentMethod: string;
   specialInstructions?: string;
   estimatedTotal: string;
+  estimatedProfit?: string;
 }
 
 export interface ManualOrderResult {
@@ -238,6 +246,7 @@ export async function appendManualOrder(input: ManualOrderInput): Promise<Manual
       input.specialInstructions ?? "",
       input.estimatedTotal,
       "No",
+      input.estimatedProfit ?? "",
     ];
 
     const res = await sheetsFetch(`/values/${SHEET_NAME}!A:${LAST_COLUMN}:append?valueInputOption=USER_ENTERED`, {
@@ -297,7 +306,7 @@ export async function setOrderDelivered(reference: string, delivered: boolean): 
     const rowNumber = await findOrderRowNumber(reference);
     if (rowNumber === null) return { success: false, error: "Order not found in the sheet." };
 
-    const res = await sheetsFetch(`/values/${SHEET_NAME}!${LAST_COLUMN}${rowNumber}?valueInputOption=RAW`, {
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!${DELIVERED_COLUMN}${rowNumber}?valueInputOption=RAW`, {
       method: "PUT",
       body: JSON.stringify({ values: [[delivered ? "Yes" : "No"]] }),
     });
@@ -308,6 +317,57 @@ export async function setOrderDelivered(reference: string, delivered: boolean): 
     return { success: true, reference };
   } catch (err) {
     console.error("[setOrderDelivered] failed:", err);
+    return { success: false, error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+/**
+ * Overwrites every editable field of an existing order row in place —
+ * submittedAt and delivered are passed through from the caller (not part of
+ * the edit form) so an edit never resets when the order was received or
+ * clobbers its delivered status.
+ */
+export async function updateOrderByReference(
+  reference: string,
+  input: ManualOrderInput,
+  meta: { submittedAt: string; delivered: string },
+): Promise<ManualOrderResult> {
+  try {
+    const rowNumber = await findOrderRowNumber(reference);
+    if (rowNumber === null) return { success: false, error: "Order not found in the sheet." };
+
+    const row = [
+      meta.submittedAt,
+      reference,
+      input.name,
+      input.phone,
+      input.email ?? "",
+      input.facebook ?? "",
+      input.eventType,
+      input.guests,
+      input.deliveryDate,
+      input.deliveryTime,
+      input.address,
+      input.packageName,
+      input.addOns ?? "",
+      input.paymentMethod,
+      input.specialInstructions ?? "",
+      input.estimatedTotal,
+      meta.delivered,
+      input.estimatedProfit ?? "",
+    ];
+
+    const res = await sheetsFetch(`/values/${SHEET_NAME}!A${rowNumber}:${LAST_COLUMN}${rowNumber}?valueInputOption=USER_ENTERED`, {
+      method: "PUT",
+      body: JSON.stringify({ values: [row] }),
+    });
+    if (!res || !res.ok) {
+      const body = res ? await res.text() : "";
+      return { success: false, error: `Sheets API returned ${res?.status ?? "no response"}: ${body.slice(0, 200)}` };
+    }
+    return { success: true, reference };
+  } catch (err) {
+    console.error("[updateOrderByReference] failed:", err);
     return { success: false, error: err instanceof Error ? err.message : String(err) };
   }
 }
