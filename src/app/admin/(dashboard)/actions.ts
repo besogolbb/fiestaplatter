@@ -28,6 +28,8 @@ export async function addManualOrderAction(formData: FormData): Promise<ManualOr
     specialInstructions: String(formData.get("specialInstructions") ?? ""),
     estimatedTotal: String(formData.get("estimatedTotal") ?? ""),
     estimatedProfit: String(formData.get("estimatedProfit") ?? ""),
+    status: String(formData.get("status") ?? "Created"),
+    referenceNumber: String(formData.get("referenceNumber") ?? ""),
   };
 
   if (!input.name || !input.phone || !input.deliveryDate) {
@@ -76,6 +78,8 @@ export async function updateOrderAction(formData: FormData): Promise<ManualOrder
     specialInstructions: String(formData.get("specialInstructions") ?? ""),
     estimatedTotal: String(formData.get("estimatedTotal") ?? ""),
     estimatedProfit: String(formData.get("estimatedProfit") ?? ""),
+    status: String(formData.get("status") ?? "Created"),
+    referenceNumber: String(formData.get("referenceNumber") ?? ""),
   };
 
   if (!reference || !input.name || !input.phone || !input.deliveryDate) {

@@ -20,14 +20,15 @@ function formatAddOnLabel(addOn: { name: string; qty: number }): string {
   return addOn.qty > 1 ? `${addOn.name} x${addOn.qty}` : addOn.name;
 }
 
-/** Generate a short human-friendly order reference. */
+/**
+ * Generate a short human-friendly order ID. "FP-" identifies a website
+ * order; the Messenger AI agent generates its own "MS-" prefixed ID in the
+ * same shape (see docs/14-n8n-strip-order-confirmed.js) so every order's
+ * source channel is identifiable at a glance in the Orders sheet.
+ */
 export function generateReference(): string {
-  const now = new Date();
-  const y = now.getFullYear().toString().slice(-2);
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
   const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
-  return `FP-${y}${m}${d}-${rand}`;
+  return `FP-${rand}`;
 }
 
 /** Build a structured summary from validated order input. */

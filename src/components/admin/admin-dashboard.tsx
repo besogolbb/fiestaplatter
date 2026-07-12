@@ -40,6 +40,23 @@ function formatPHP(n: number) {
   }).format(n);
 }
 
+/** Color-codes the Status badge — see docs/10-AI-Sales-Agent-System-Prompt.md Section 4g for the lifecycle. */
+function statusBadgeClass(status: string): string {
+  switch (status) {
+    case "Confirmed":
+    case "Delivered":
+      return "border-green-600/30 bg-green-600/10 text-green-700 dark:text-green-400";
+    case "Payment Submitted":
+    case "Ongoing":
+      return "border-amber-500/30 bg-amber-500/10 text-amber-700 dark:text-amber-400";
+    case "Cancelled":
+      return "border-destructive/30 bg-destructive/10 text-destructive";
+    default:
+      // "Created" and anything unrecognized
+      return "border-border bg-muted/50 text-foreground/60";
+  }
+}
+
 export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
   const now = new Date();
   const router = useRouter();
@@ -249,6 +266,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
               <thead>
                 <tr className="border-b border-border text-xs uppercase tracking-wide text-foreground/50">
                   <th className="px-4 py-2.5 font-semibold">Reference</th>
+                  <th className="px-4 py-2.5 font-semibold">Status</th>
                   <th className="px-4 py-2.5 font-semibold">Customer</th>
                   <th className="px-4 py-2.5 font-semibold">Event</th>
                   <th className="px-4 py-2.5 font-semibold">Delivery</th>
@@ -264,7 +282,7 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
               <tbody>
                 {filtered.length === 0 ? (
                   <tr>
-                    <td colSpan={9} className="px-4 py-10 text-center text-foreground/50">
+                    <td colSpan={10} className="px-4 py-10 text-center text-foreground/50">
                       No orders {selectedDate || query ? "match your filters." : "yet."}
                     </td>
                   </tr>
@@ -275,6 +293,16 @@ export function AdminDashboard({ orders }: { orders: OrderRecord[] }) {
                       className="border-b border-border last:border-0 hover:bg-muted/40"
                     >
                       <td className="px-4 py-2.5 font-mono text-xs text-foreground/70">{o.reference}</td>
+                      <td className="px-4 py-2.5">
+                        <span
+                          className={cn(
+                            "inline-flex items-center rounded-full border px-2.5 py-1 text-xs font-semibold",
+                            statusBadgeClass(o.status),
+                          )}
+                        >
+                          {o.status || "Created"}
+                        </span>
+                      </td>
                       <td className="px-4 py-2.5">
                         <p className="font-medium text-foreground">{o.name}</p>
                         <p className="text-xs text-foreground/50">{o.phone}</p>

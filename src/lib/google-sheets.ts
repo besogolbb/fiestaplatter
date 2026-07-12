@@ -6,6 +6,8 @@ import { generateReference } from "@/lib/order-format";
 export interface OrderRecord {
   submittedAt: string;
   reference: string;
+  /** Created / Payment Submitted / Confirmed / Ongoing / Delivered / Cancelled — see docs/10-AI-Sales-Agent-System-Prompt.md Section 4g for the full lifecycle. */
+  status: string;
   name: string;
   phone: string;
   email: string;
@@ -18,32 +20,34 @@ export interface OrderRecord {
   packageName: string;
   addOns: string;
   paymentMethod: string;
+  /** GCash/Maya/bank transaction reference number for the down payment, if logged. */
+  referenceNumber: string;
   specialInstructions: string;
   estimatedTotal: string;
   /** "Yes" once marked delivered in /admin; blank/"No" otherwise. Only delivered orders count toward Total Sales. */
   delivered: string;
-  /** Net profit from add-ons with known cost data (partial — packages/bundles have no cost breakdown). Appended as the last column so existing sheet rows stay aligned. */
+  /** Net profit from add-ons with known cost data (partial — packages/bundles have no cost breakdown). Last column so future additions can keep appending here without reshuffling everything else. */
   estimatedProfit: string;
 }
 
 const SHEET_NAME = "Orders";
 // Column range covering every field below — kept in one place so
 // append/header/read calls can't drift.
-const LAST_COLUMN = "R";
+const LAST_COLUMN = "T";
 // The Delivered column's own letter, tracked separately from LAST_COLUMN so
 // appending new trailing columns (like Estimated Profit) never breaks the
 // delivered-toggle write, which targets this exact column.
-const DELIVERED_COLUMN = "Q";
+const DELIVERED_COLUMN = "S";
 const RECORD_KEYS: (keyof OrderRecord)[] = [
-  "submittedAt", "reference", "name", "phone", "email", "facebook",
+  "submittedAt", "reference", "status", "name", "phone", "email", "facebook",
   "eventType", "guests", "deliveryDate", "deliveryTime", "address",
-  "packageName", "addOns", "paymentMethod", "specialInstructions", "estimatedTotal",
+  "packageName", "addOns", "paymentMethod", "referenceNumber", "specialInstructions", "estimatedTotal",
   "delivered", "estimatedProfit",
 ];
 const HEADER_ROW = [
-  "Submitted At", "Reference", "Name", "Phone", "Email", "Facebook",
+  "Submitted At", "Order ID", "Status", "Name", "Phone", "Email", "Facebook",
   "Event Type", "Guests", "Delivery Date", "Delivery Time", "Address",
-  "Package", "Add-ons", "Payment Method", "Special Instructions", "Estimated Total (PHP)",
+  "Package", "Add-ons", "Payment Method", "Reference Number", "Special Instructions", "Estimated Total (PHP)",
   "Delivered", "Estimated Profit (PHP)",
 ];
 
@@ -160,6 +164,7 @@ export async function appendOrderToGoogleSheet(order: OrderInput, summary: Order
     const row = [
       new Date().toISOString(),
       summary.reference,
+      "Created",
       order.name,
       order.phone,
       order.email ?? "",
@@ -172,6 +177,7 @@ export async function appendOrderToGoogleSheet(order: OrderInput, summary: Order
       summary.packageName,
       summary.addOns.map((a) => (a.qty > 1 ? `${a.name} x${a.qty}` : a.name)).join(", "),
       order.paymentMethod,
+      "",
       order.specialInstructions ?? "",
       summary.estimatedTotal ?? "",
       "No",
@@ -207,6 +213,9 @@ export interface ManualOrderInput {
   specialInstructions?: string;
   estimatedTotal: string;
   estimatedProfit?: string;
+  /** Created / Payment Submitted / Confirmed / Ongoing / Delivered / Cancelled — defaults to "Created" for new orders. */
+  status?: string;
+  referenceNumber?: string;
 }
 
 export interface ManualOrderResult {
@@ -231,6 +240,7 @@ export async function appendManualOrder(input: ManualOrderInput): Promise<Manual
     const row = [
       new Date().toISOString(),
       reference,
+      input.status || "Created",
       input.name,
       input.phone,
       input.email ?? "",
@@ -243,6 +253,7 @@ export async function appendManualOrder(input: ManualOrderInput): Promise<Manual
       input.packageName,
       input.addOns ?? "",
       input.paymentMethod,
+      input.referenceNumber ?? "",
       input.specialInstructions ?? "",
       input.estimatedTotal,
       "No",
@@ -339,6 +350,7 @@ export async function updateOrderByReference(
     const row = [
       meta.submittedAt,
       reference,
+      input.status || "Created",
       input.name,
       input.phone,
       input.email ?? "",
@@ -351,6 +363,7 @@ export async function updateOrderByReference(
       input.packageName,
       input.addOns ?? "",
       input.paymentMethod,
+      input.referenceNumber ?? "",
       input.specialInstructions ?? "",
       input.estimatedTotal,
       meta.delivered,

@@ -195,6 +195,45 @@ export const menu: MenuItem[] = [
     tags: ["Frozen Pack", "Add-on"],
     addOnOnly: true,
   },
+  {
+    slug: "bento-siomai",
+    name: "Bento Siomai",
+    shortName: "Individual Pack",
+    description:
+      "Juicy homemade siomai in a convenient single-serving bento pack — perfect for individual meals or small gatherings.",
+    price: 80,
+    category: "bento",
+    serving: "1 pack · good for 1 pax",
+    image: "https://photos.fiestaplatter.com/Messenger/BTSiomai.webp",
+    imageAlt: "Fiesta Platter bento siomai individual pack",
+    tags: ["Individual Pack", "Bento"],
+  },
+  {
+    slug: "bento-embutido",
+    name: "Bento Embutido",
+    shortName: "Individual Pack",
+    description:
+      "Our signature chicken embutido served in a convenient single-serving bento pack.",
+    price: 80,
+    category: "bento",
+    serving: "1 pack · good for 1 pax",
+    image: "https://photos.fiestaplatter.com/Messenger/BTEmbutido.webp",
+    imageAlt: "Fiesta Platter bento embutido individual pack",
+    tags: ["Individual Pack", "Bento"],
+  },
+  {
+    slug: "combo-embutido-siomai",
+    name: "Combo Embutido & Siomai",
+    shortName: "Bento Combo",
+    description:
+      "Get both favorites in one pack — chicken embutido and siomai together in a single-serving bento combo.",
+    price: 120,
+    category: "bento",
+    serving: "1 pack · good for 1 pax",
+    image: "https://photos.fiestaplatter.com/Messenger/CBEmbutidoSiomai.webp",
+    imageAlt: "Fiesta Platter combo bento pack with embutido and siomai",
+    tags: ["Individual Pack", "Combo", "Bento"],
+  },
 ];
 
 export const bestSellers = menu.filter((m) => m.bestSeller);
@@ -211,4 +250,5 @@ export const menuCategories: { id: MenuItem["category"]; label: string }[] = [
   { id: "appetizer", label: "Appetizers" },
   { id: "sticks", label: "Grilled Sticks" },
   { id: "dessert", label: "Desserts & Kakanin" },
+  { id: "bento", label: "Bento & Individual Packs" },
 ];

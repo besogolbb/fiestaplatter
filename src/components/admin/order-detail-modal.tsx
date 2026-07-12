@@ -6,7 +6,7 @@ import { X, Loader2, Pencil, Minus, Plus } from "lucide-react";
 import { toast } from "sonner";
 import type { OrderRecord } from "@/lib/google-sheets";
 import { updateOrderAction } from "@/app/admin/(dashboard)/actions";
-import { eventTypes, paymentMethods } from "@/lib/order-schema";
+import { eventTypes, paymentMethods, orderStatuses } from "@/lib/order-schema";
 import { menu } from "@/data/menu";
 import { packages } from "@/data/packages";
 import { Field } from "@/components/order/field";
@@ -58,6 +58,7 @@ export function OrderDetailModal({ order, onClose }: { order: OrderRecord; onClo
   const [eventType, setEventType] = useState(order.eventType);
   const [paymentMethod, setPaymentMethod] = useState(order.paymentMethod);
   const [packageName, setPackageName] = useState(order.packageName);
+  const [status, setStatus] = useState(order.status || "Created");
 
   const initialParse = parseAddOns(order.addOns);
   const [qtyBySlug, setQtyBySlug] = useState<Record<string, number>>(initialParse.qtyBySlug);
@@ -103,6 +104,7 @@ export function OrderDetailModal({ order, onClose }: { order: OrderRecord; onClo
     formData.set("reference", order.reference);
     formData.set("submittedAt", order.submittedAt);
     formData.set("delivered", order.delivered);
+    formData.set("status", status);
     formData.set("eventType", eventType);
     formData.set("paymentMethod", paymentMethod);
     formData.set("packageName", packageName);
@@ -310,19 +312,39 @@ export function OrderDetailModal({ order, onClose }: { order: OrderRecord; onClo
               </div>
             </div>
 
-            <Field label="Payment Method" htmlFor="paymentMethod">
-              <Select value={paymentMethod} onValueChange={setPaymentMethod}>
-                <SelectTrigger id="paymentMethod">
-                  <SelectValue placeholder="Select payment method" />
-                </SelectTrigger>
-                <SelectContent>
-                  {paymentMethods.map((m) => (
-                    <SelectItem key={m} value={m}>
-                      {m}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Payment Method" htmlFor="paymentMethod">
+                <Select value={paymentMethod} onValueChange={setPaymentMethod}>
+                  <SelectTrigger id="paymentMethod">
+                    <SelectValue placeholder="Select payment method" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {paymentMethods.map((m) => (
+                      <SelectItem key={m} value={m}>
+                        {m}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+              <Field label="Status" htmlFor="status">
+                <Select value={status} onValueChange={setStatus}>
+                  <SelectTrigger id="status">
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {orderStatuses.map((s) => (
+                      <SelectItem key={s} value={s}>
+                        {s}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </Field>
+            </div>
+
+            <Field label="Reference Number" htmlFor="referenceNumber" hint="GCash/Maya/bank transaction reference for the down payment, once verified.">
+              <Input id="referenceNumber" name="referenceNumber" defaultValue={order.referenceNumber} />
             </Field>
 
             <Field label="Special Instructions" htmlFor="specialInstructions">
@@ -358,6 +380,7 @@ export function OrderDetailModal({ order, onClose }: { order: OrderRecord; onClo
           </form>
         ) : (
           <div className="mt-5 space-y-4 text-sm">
+            <DetailRow label="Status" value={order.status || "Created"} />
             <DetailRow label="Name" value={order.name} />
             <DetailRow label="Phone" value={order.phone} />
             <DetailRow label="Email" value={order.email} />
@@ -368,6 +391,7 @@ export function OrderDetailModal({ order, onClose }: { order: OrderRecord; onClo
             <DetailRow label="Package" value={order.packageName} />
             <DetailRow label="Add-ons" value={order.addOns || "—"} />
             <DetailRow label="Payment Method" value={order.paymentMethod} />
+            <DetailRow label="Reference Number" value={order.referenceNumber || "—"} />
             <DetailRow label="Special Instructions" value={order.specialInstructions || "—"} />
             <DetailRow label="Delivered" value={order.delivered === "Yes" ? "Yes" : "No"} />
             <div className="flex items-center justify-between rounded-xl border-2 border-brand bg-brand/15 px-4 py-3">

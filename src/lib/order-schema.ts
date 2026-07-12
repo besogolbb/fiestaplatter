@@ -26,6 +26,16 @@ export const paymentMethods = [
   "Cash on Delivery",
 ] as const;
 
+/** Order lifecycle — see docs/10-AI-Sales-Agent-System-Prompt.md Section 4g. */
+export const orderStatuses = [
+  "Created",
+  "Payment Submitted",
+  "Confirmed",
+  "Ongoing",
+  "Delivered",
+  "Cancelled",
+] as const;
+
 const phoneRegex = /^(\+?63|0)9\d{9}$/;
 
 export const orderSchema = z.object({

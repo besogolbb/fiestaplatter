@@ -1,4 +1,4 @@
-export type MenuCategory = "bilao" | "appetizer" | "sticks" | "dessert";
+export type MenuCategory = "bilao" | "appetizer" | "sticks" | "dessert" | "bento";
 
 export interface MenuItem {
   slug: string;
