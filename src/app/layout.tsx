@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Baloo_2, Figtree } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
@@ -9,18 +9,23 @@ import { Analytics } from "@/components/shared/analytics";
 import { ThemeScript } from "@/components/shared/theme-script";
 import { CartProvider } from "@/components/cart/cart-provider";
 
+// Fonts are self-hosted (src/app/fonts, OFL-licensed, from Fontsource) so
+// builds never depend on reaching Google Fonts — the Docker build on the VPS
+// failed when that fetch did. Latin subset, variable weight axis.
+
 // Figtree: plain, legible UI voice for forms, labels and body copy.
-const fontSans = Figtree({
-  subsets: ["latin"],
+const fontSans = localFont({
+  src: "./fonts/figtree-latin-wght-normal.woff2",
+  weight: "300 900",
   variable: "--font-sans",
   display: "swap",
 });
 
 // Baloo 2: round, warm display face for dish names, prices and headings —
 // the hand-lettered fiesta-sign register, kept off body text.
-const fontDisplay = Baloo_2({
-  subsets: ["latin"],
-  weight: ["600", "700", "800"],
+const fontDisplay = localFont({
+  src: "./fonts/baloo-2-latin-wght-normal.woff2",
+  weight: "400 800",
   variable: "--font-display",
   display: "swap",
 });
