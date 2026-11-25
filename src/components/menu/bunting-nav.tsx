@@ -54,7 +54,8 @@ export function BuntingNav({ sections }: BuntingNavProps) {
   return (
     <nav
       aria-label="Menu sections"
-      className="sticky top-16 z-30 border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/85"
+      // Same warm grey as the menu canvas: the strip reads as part of the menu, set apart from the white header.
+      className="sticky top-16 z-30 border-b border-foreground/10 bg-[hsl(30_18%_92%/0.96)] backdrop-blur dark:bg-muted/95"
     >
       <ul
         ref={stripRef}

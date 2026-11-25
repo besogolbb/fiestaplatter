@@ -41,9 +41,12 @@ export function Header() {
     <header
       className={cn(
         "sticky top-0 z-50 w-full transition-all duration-300",
+        // Solid white bar (card surface) so it never merges with the cream
+        // page or the warm-grey category strip below it.
+        "border-b bg-card/95 backdrop-blur-md supports-[backdrop-filter]:bg-card/90",
         scrolled
-          ? "border-b border-border bg-background/90 backdrop-blur-md shadow-sm"
-          : "bg-transparent",
+          ? "border-border shadow-[0_6px_18px_-10px_rgba(40,20,4,0.35)]"
+          : "border-transparent",
       )}
     >
       <div className="container flex h-16 items-center justify-between gap-4">
