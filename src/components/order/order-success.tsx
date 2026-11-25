@@ -9,11 +9,11 @@ import { messengerLink, telLink, siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { formatPrice } from "@/lib/utils";
 
-export function OrderSuccess({ summary }: { summary: OrderSummary }) {
+export function OrderSuccess({ summary, celebrate = true }: { summary: OrderSummary; celebrate?: boolean }) {
   const messenger = messengerLink(orderToMessengerText(summary));
 
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    if (!celebrate || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     import("canvas-confetti").then(({ default: confetti }) => {
       confetti({
         particleCount: 120,
@@ -22,7 +22,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
         colors: ["#F5821F", "#F9A825", "#161310", "#FBF9F5"],
       });
     });
-  }, []);
+  }, [celebrate]);
 
   return (
     <div className="mx-auto max-w-2xl">

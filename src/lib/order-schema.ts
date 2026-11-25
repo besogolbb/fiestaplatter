@@ -56,10 +56,13 @@ export const orderSchema = z.object({
     .trim()
     .min(2, "Please enter your full name.")
     .max(80, "Name is too long."),
+  // People type numbers the way they say them ("0917 123 4567", "+63 917-123-4567");
+  // strip the separators before validating so the example format is accepted.
   phone: z
     .string()
     .trim()
-    .regex(phoneRegex, "Enter a valid PH mobile number, e.g. 0917 123 4567."),
+    .transform((v) => v.replace(/[\s\-().]/g, ""))
+    .pipe(z.string().regex(phoneRegex, "Enter a valid PH mobile number, e.g. 0917 123 4567.")),
   facebook: z.string().trim().max(200).optional().or(z.literal("")),
   email: z
     .string()

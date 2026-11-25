@@ -13,7 +13,8 @@ import { submitOrder, type OrderActionState } from "@/app/(order)/order/actions"
 import type { CartLineKind } from "@/lib/cart/catalog";
 import { getCatalogEntry } from "@/lib/cart/catalog";
 import { earliestDeliveryDate, isValidDeliveryDate } from "@/lib/dates";
-import { siteConfig } from "@/config/site";
+import { messengerLink, siteConfig } from "@/config/site";
+import type { OrderSummary } from "@/lib/order-format";
 import { useCart } from "@/components/cart/cart-provider";
 import { FreeDeliveryMeter } from "@/components/cart/cart-sheet";
 import { FlagString } from "@/components/cart/flag-string";
@@ -40,6 +41,20 @@ const timeSuggestions = [
 ];
 
 const SUBMIT_FORM_ID = "checkout-form";
+
+/** The last placed order, kept for this tab so a refresh doesn't lose the reference and Messenger step. */
+const LAST_ORDER_KEY = "fp-last-order";
+
+function readLastOrder(): OrderSummary | null {
+  try {
+    const raw = sessionStorage.getItem(LAST_ORDER_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as OrderSummary;
+    return typeof parsed?.reference === "string" && Array.isArray(parsed.lines) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
 
 interface CheckoutFormProps {
   /** Legacy deep link (/order?package= or ?item=) — added to the cart once, then the URL is cleaned. */
@@ -85,6 +100,10 @@ export function CheckoutForm({ initialAdd }: CheckoutFormProps) {
   const [result, setResult] = useState<OrderActionState | null>(null);
   const [cartError, setCartError] = useState<string | null>(null);
   const [minDate, setMinDate] = useState("");
+  const [lastOrder, setLastOrder] = useState<OrderSummary | null>(null);
+  useEffect(() => {
+    setLastOrder(readLastOrder());
+  }, []);
 
   const {
     register,
@@ -167,8 +186,30 @@ export function CheckoutForm({ initialAdd }: CheckoutFormProps) {
     fd.append("cart", JSON.stringify(rawLines));
 
     startTransition(async () => {
-      const state = await submitOrder({ status: "idle" }, fd);
+      let state: OrderActionState;
+      try {
+        state = await submitOrder({ status: "idle" }, fd);
+      } catch (err) {
+        // Network drop, or a deploy landed mid-checkout (the old page's
+        // action ID no longer exists). Nothing was recorded — say so and
+        // give the Messenger fallback instead of failing silently.
+        console.error("[checkout] submit failed:", err);
+        toast.error("We couldn't send your order. Check your connection and tap Place order again.", {
+          description: "Still not working? Refresh the page (your cart is saved) or order on Messenger.",
+          duration: 15000,
+          action: {
+            label: "Messenger",
+            onClick: () => window.open(messengerLink("Hi Fiesta Platter! I'd like to order."), "_blank", "noopener"),
+          },
+        });
+        return;
+      }
       if (state.status === "success" && state.summary) {
+        try {
+          sessionStorage.setItem(LAST_ORDER_KEY, JSON.stringify(state.summary));
+        } catch {
+          /* private mode — success still shows, just not after a refresh */
+        }
         setResult(state);
         cart.clear();
         window.scrollTo({ top: 0 });
@@ -200,6 +241,14 @@ export function CheckoutForm({ initialAdd }: CheckoutFormProps) {
       <div className="container py-16" aria-busy="true">
         <div className="mx-auto h-8 w-48 animate-pulse rounded-full bg-muted" />
         <div className="mx-auto mt-6 h-64 max-w-2xl animate-pulse rounded-3xl bg-muted" />
+      </div>
+    );
+  }
+
+  if (itemCount === 0 && lastOrder) {
+    return (
+      <div className="container py-10">
+        <OrderSuccess summary={lastOrder} celebrate={false} />
       </div>
     );
   }

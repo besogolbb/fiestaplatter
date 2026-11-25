@@ -11,6 +11,11 @@ import { siteConfig } from "@/config/site";
 import { sendMetaCapiLead } from "@/lib/meta-capi";
 import { appendOrderToGoogleSheet } from "@/lib/google-sheets";
 import { createOrderCalendarEvent } from "@/lib/google-calendar";
+import { headers } from "next/headers";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
+
+const ORDER_LIMIT = 5;
+const ORDER_WINDOW_MS = 10 * 60 * 1000;
 
 export interface OrderActionState {
   status: "idle" | "success" | "error";
@@ -69,6 +74,19 @@ export async function submitOrder(
   // Silently accept honeypot hits without notifying the business.
   if (parsed.data.company) {
     return { status: "success", summary: buildOrderSummary(parsed.data) };
+  }
+
+  // Every accepted order writes to Sheets, Calendar and email — cap bursts
+  // from one IP so a bot can't flood them. Only valid orders count, so a
+  // customer fixing typos never gets locked out.
+  // With no client IP (proxy misconfigured) every customer would share one
+  // bucket — skip limiting rather than block real orders.
+  const ip = clientIp(await headers());
+  if (ip !== "unknown" && !rateLimit(`order:${ip}`, ORDER_LIMIT, ORDER_WINDOW_MS)) {
+    return {
+      status: "error",
+      message: "Too many orders from this connection. Please message us on Messenger and we'll take it from there.",
+    };
   }
 
   const order: OrderInput = parsed.data;

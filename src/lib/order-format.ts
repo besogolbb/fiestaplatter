@@ -27,7 +27,12 @@ function formatAddOnLabel(addOn: { name: string; qty: number }): string {
  * source channel is identifiable at a glance in the Orders sheet.
  */
 export function generateReference(): string {
-  const rand = Math.random().toString(36).slice(2, 6).toUpperCase();
+  // Crypto-random, always 4 characters, no look-alikes (0/O, 1/I/L) so
+  // customers can read it back over the phone. Kept at 4 to match the
+  // Messenger agent's "MS-XXXX" shape.
+  const alphabet = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+  const bytes = crypto.getRandomValues(new Uint8Array(4));
+  const rand = Array.from(bytes, (b) => alphabet[b % alphabet.length]).join("");
   return `FP-${rand}`;
 }
 
