@@ -41,7 +41,8 @@ export function FloatingCta() {
   if (onStore) return null;
 
   const messengerHref = messengerLink(`Hi ${siteConfig.name}! I'd like to ask about your party trays.`);
-  const showStartBar = revealed && !hasCart;
+  // The homepage is the store itself, so a "go to the menu" bar there is redundant.
+  const showStartBar = revealed && !hasCart && !isHome;
 
   return (
     <>
@@ -49,7 +50,7 @@ export function FloatingCta() {
         className={cn(
           "fixed right-4 z-40 flex flex-col gap-3 transition-[opacity,transform] duration-300",
           // With a cart, phones keep the bottom edge for the cart bar only; the header has Call.
-          hasCart ? "max-sm:hidden sm:bottom-32" : "bottom-24 sm:bottom-6",
+          hasCart ? "max-sm:hidden sm:bottom-32" : isHome ? "bottom-6" : "bottom-24 sm:bottom-6",
           revealed ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-4 opacity-0",
         )}
       >

@@ -11,7 +11,7 @@ import type { MenuItem, PackageItem } from "@/types";
 export type CartLineKind = "package" | "item";
 
 /** A section of the store page; bundles + every menu category + retail add-ons. */
-export type StoreSectionId = "bundles" | MenuItem["category"] | "frozen";
+export type StoreSectionId = "favorites" | "bundles" | MenuItem["category"] | "frozen";
 
 /** Fiesta flag colours, one per store section (repeat like real banderitas). */
 export type FlagColor = "magenta" | "yellow" | "green" | "blue" | "orange";
@@ -54,7 +54,7 @@ export const storeSections: StoreSection[] = [
   { id: "frozen", label: "Frozen Add-ons", short: "Frozen", flag: "yellow" },
 ];
 
-const sectionById = new Map(storeSections.map((s) => [s.id, s]));
+const sectionById = new Map<StoreSectionId, StoreSection>(storeSections.map((s) => [s.id, s]));
 
 export function sectionFor(id: StoreSectionId): StoreSection {
   return sectionById.get(id) ?? storeSections[0];
@@ -107,9 +107,26 @@ export function getCatalogEntry(kind: CartLineKind, slug: string): CatalogEntry 
   return index.get(catalogKey(kind, slug));
 }
 
+/**
+ * "Crowd favorites" — a shortcut row of best sellers at the top of the menu.
+ * Its items still belong to their own sections (and keep their flag colour).
+ */
+export const favoritesSection: StoreSection = {
+  id: "favorites",
+  label: "Crowd Favorites",
+  short: "Favorites",
+  flag: "orange",
+};
+
 /** Catalog entries grouped by store section, in nav order, empty sections dropped. */
-export function catalogBySection(): { section: StoreSection; entries: CatalogEntry[] }[] {
-  return storeSections
+export function catalogBySection({ withFavorites = false } = {}): {
+  section: StoreSection;
+  entries: CatalogEntry[];
+}[] {
+  const groups = storeSections
     .map((section) => ({ section, entries: catalog.filter((e) => e.section === section.id) }))
     .filter((g) => g.entries.length > 0);
+  if (!withFavorites) return groups;
+  const favorites = catalog.filter((e) => e.kind === "item" && e.bestSeller);
+  return favorites.length ? [{ section: favoritesSection, entries: favorites }, ...groups] : groups;
 }

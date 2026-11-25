@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/sections/hero";
-import { TrustBar } from "@/components/sections/trust-bar";
-import { BestSellers } from "@/components/sections/best-sellers";
+import { StoreFront } from "@/components/sections/store-front";
 import { WhyChooseUs } from "@/components/sections/why-choose-us";
 import { HowItWorks } from "@/components/sections/how-it-works";
-import { PackagesSection } from "@/components/sections/packages-section";
 import { GalleryPreview } from "@/components/sections/gallery-preview";
 import { FaqPreview } from "@/components/sections/faq-preview";
 import { FinalCta } from "@/components/sections/final-cta";
@@ -13,15 +10,13 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
+/** Store-front homepage: the menu first, the reasons to trust us after it. */
 export default function HomePage() {
   return (
     <>
-      <Hero />
-      <TrustBar />
-      <BestSellers />
+      <StoreFront />
       <WhyChooseUs />
       <HowItWorks />
-      <PackagesSection limit={3} showViewAll />
       <GalleryPreview />
       <FaqPreview />
       <FinalCta />

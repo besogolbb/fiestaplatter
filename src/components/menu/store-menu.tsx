@@ -8,17 +8,24 @@ import { MenuCard } from "@/components/menu/menu-card";
 import { ItemSheet } from "@/components/menu/item-sheet";
 import { Pennant } from "@/components/cart/pennant";
 
-const groups = catalogBySection();
+const groups = catalogBySection({ withFavorites: true });
+
+interface StoreMenuProps {
+  /** Heading level for section titles — h3 when the menu sits under a page-level h2 (homepage). */
+  sectionHeading?: "h2" | "h3";
+}
 
 /** The ordering surface: bunting nav, searchable sections of cards, item sheet. */
-export function StoreMenu() {
+export function StoreMenu({ sectionHeading: SectionTitle = "h2" }: StoreMenuProps = {}) {
   const [query, setQuery] = useState("");
   const [openEntry, setOpenEntry] = useState<CatalogEntry | null>(null);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (!q) return groups;
+    // Favorites repeat items from other sections — skip them so results don't double up.
     return groups
+      .filter((g) => g.section.id !== "favorites")
       .map((g) => ({
         ...g,
         entries: g.entries.filter((e) =>
@@ -32,7 +39,7 @@ export function StoreMenu() {
     <>
       <BuntingNav sections={filtered.map((g) => g.section)} />
 
-      <div className="container pb-36 pt-5">
+      <div className="container pb-20 pt-5">
         <div className="relative max-w-md">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/70" aria-hidden />
           <input
@@ -80,13 +87,13 @@ export function StoreMenu() {
               aria-labelledby={`${sectionAnchor(g.section.id)}-title`}
               className="scroll-mt-40 pt-8"
             >
-              <h2
+              <SectionTitle
                 id={`${sectionAnchor(g.section.id)}-title`}
                 className="flex items-center gap-2.5 font-display text-2xl font-extrabold sm:text-3xl"
               >
                 <Pennant color={g.section.flag} className="h-7 w-[22px]" />
                 {g.section.label}
-              </h2>
+              </SectionTitle>
               {g.section.id === "frozen" ? (
                 <p className="mt-1 text-sm text-foreground/70">Packed frozen, to cook at home. Add them to any order.</p>
               ) : null}
