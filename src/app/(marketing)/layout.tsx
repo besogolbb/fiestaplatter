@@ -1,6 +1,8 @@
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
 import { FloatingCta } from "@/components/layout/floating-cta";
+import { CartBar } from "@/components/cart/cart-bar";
+import { CartSheet } from "@/components/cart/cart-sheet";
 
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -18,6 +20,8 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
       </main>
       <Footer />
       <FloatingCta />
+      <CartBar />
+      <CartSheet />
     </div>
   );
 }

@@ -18,6 +18,7 @@ interface CartItem {
   id: string;
   name: string;
   price: number;
+  quantity?: number;
 }
 
 function gtag(...args: unknown[]) {
@@ -32,18 +33,25 @@ function fbq(...args: unknown[]) {
   }
 }
 
-export function trackSelectBundle(item: CartItem) {
+function toGaItem(i: CartItem) {
+  return { item_id: i.id, item_name: i.name, price: i.price, quantity: i.quantity ?? 1 };
+}
+
+/** Fired each time something is added to the cart (+ button, stepper up, item sheet). */
+export function trackAddToCart(item: CartItem) {
+  const quantity = item.quantity ?? 1;
   gtag("event", "add_to_cart", {
     currency: "PHP",
-    value: item.price,
-    items: [{ item_id: item.id, item_name: item.name, price: item.price, quantity: 1 }],
+    value: item.price * quantity,
+    items: [toGaItem({ ...item, quantity })],
   });
   fbq("track", "AddToCart", {
     content_ids: [item.id],
     content_name: item.name,
     content_type: "product",
+    contents: [{ id: item.id, quantity }],
     currency: "PHP",
-    value: item.price,
+    value: item.price * quantity,
   });
 }
 
@@ -51,13 +59,14 @@ export function trackBeginCheckout(value: number, items: CartItem[]) {
   gtag("event", "begin_checkout", {
     currency: "PHP",
     value,
-    items: items.map((i) => ({ item_id: i.id, item_name: i.name, price: i.price, quantity: 1 })),
+    items: items.map(toGaItem),
   });
   fbq("track", "InitiateCheckout", {
     content_ids: items.map((i) => i.id),
+    contents: items.map((i) => ({ id: i.id, quantity: i.quantity ?? 1 })),
     currency: "PHP",
     value,
-    num_items: items.length,
+    num_items: items.reduce((n, i) => n + (i.quantity ?? 1), 0),
   });
 }
 

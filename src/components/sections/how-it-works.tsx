@@ -37,7 +37,7 @@ export function HowItWorks() {
 
       <div className="mt-10 text-center">
         <Button asChild size="lg">
-          <Link href="/order">
+          <Link href="/menu">
             Start Your Order <ArrowRight className="h-5 w-5" />
           </Link>
         </Button>

@@ -27,11 +27,11 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
   return (
     <div className="mx-auto max-w-2xl">
       <div className="rounded-3xl border border-border bg-card p-6 text-center shadow-lg sm:p-10">
-        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100 text-green-600">
+        <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-success/15 text-success">
           <CheckCircle2 className="h-9 w-9" aria-hidden />
         </span>
         <h1 className="mt-5 font-display text-2xl font-extrabold text-foreground sm:text-3xl">
-          Order Received! 🎉
+          Order received
         </h1>
         <p className="mt-2 text-foreground/70">
           Thank you, <strong>{summary.lines[0]?.value}</strong>! Your order reference is{" "}
@@ -43,7 +43,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
         </p>
 
         <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-          <Button asChild size="lg" className="bg-[#0084FF] hover:bg-[#006fd6]">
+          <Button asChild size="lg" className="bg-[#0866FF] hover:bg-[#0657d9]">
             <a href={messenger} target="_blank" rel="noopener noreferrer">
               <MessageCircle className="h-5 w-5" /> Confirm on Messenger
             </a>
@@ -82,7 +82,7 @@ export function OrderSuccess({ summary }: { summary: OrderSummary }) {
 
         <Button asChild variant="ghost" className="mt-6">
           <Link href="/">
-            <Home className="h-4 w-4" /> Back to Home
+            <Home className="h-4 w-4" aria-hidden /> Back to home
           </Link>
         </Button>
       </div>

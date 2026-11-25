@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Plus_Jakarta_Sans } from "next/font/google";
+import { Baloo_2, Figtree } from "next/font/google";
 import { Toaster } from "sonner";
 import "./globals.css";
 import { siteConfig } from "@/config/site";
@@ -7,14 +7,18 @@ import { JsonLd } from "@/components/shared/json-ld";
 import { localBusinessSchema, websiteSchema } from "@/lib/structured-data";
 import { Analytics } from "@/components/shared/analytics";
 import { ThemeScript } from "@/components/shared/theme-script";
+import { CartProvider } from "@/components/cart/cart-provider";
 
-const fontSans = Plus_Jakarta_Sans({
+// Figtree: plain, legible UI voice for forms, labels and body copy.
+const fontSans = Figtree({
   subsets: ["latin"],
   variable: "--font-sans",
   display: "swap",
 });
 
-const fontDisplay = Poppins({
+// Baloo 2: round, warm display face for dish names, prices and headings —
+// the hand-lettered fiesta-sign register, kept off body text.
+const fontDisplay = Baloo_2({
   subsets: ["latin"],
   weight: ["600", "700", "800"],
   variable: "--font-display",
@@ -92,7 +96,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeScript />
       </head>
       <body className="font-sans">
-        {children}
+        <CartProvider>{children}</CartProvider>
         <Toaster
           position="top-center"
           richColors

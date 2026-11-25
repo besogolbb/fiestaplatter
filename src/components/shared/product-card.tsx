@@ -1,9 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Flame, Star, Users, UtensilsCrossed } from "lucide-react";
 import type { MenuItem } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { AddToCart } from "@/components/cart/add-to-cart";
 import { formatPrice } from "@/lib/utils";
 
 interface ProductCardProps {
@@ -18,7 +17,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
   const pax = paxMatch ? paxMatch[1].trim() : item.serving;
 
   return (
-    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-brand/40 hover:shadow-xl hover:shadow-black/40">
+    <article className="group flex h-full flex-col overflow-hidden rounded-3xl border border-border bg-card shadow-lg transition-all duration-300 hover:border-brand/40 hover:shadow-xl hover:shadow-black/20 motion-safe:hover:-translate-y-1">
       <div className="relative aspect-[16/10] overflow-hidden bg-gradient-to-br from-muted to-accent/10">
         <Image
           src={item.image}
@@ -64,7 +63,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
         </div>
 
         <div className="mt-4 flex items-center justify-between gap-3">
-          <span className="rounded-full bg-brand px-4 py-1.5 font-display text-lg font-extrabold text-white shadow-sm shadow-brand/30">
+          <span className="tabular font-display text-2xl font-extrabold text-foreground">
             {formatPrice(item.price)}
           </span>
           {item.unitPrice ? (
@@ -74,9 +73,7 @@ export function ProductCard({ item, priority = false }: ProductCardProps) {
           ) : null}
         </div>
 
-        <Button asChild className="mt-4 w-full" size="sm">
-          <Link href={`/order?item=${item.slug}`}>Quick Order</Link>
-        </Button>
+        <AddToCart kind="item" slug={item.slug} variant="wide" className="mt-4" />
       </div>
     </article>
   );

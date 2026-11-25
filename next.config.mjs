@@ -18,6 +18,8 @@ const nextConfig = {
       "img-src 'self' data: https://www.facebook.com https://photos.fiestaplatter.com",
       "font-src 'self' data:",
       "connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.facebook.com https://connect.facebook.net https://cloudflareinsights.com",
+      // canvas-confetti (order success) draws from a blob: worker.
+      "worker-src 'self' blob:",
       "frame-ancestors 'self'",
       "base-uri 'self'",
       "form-action 'self'",

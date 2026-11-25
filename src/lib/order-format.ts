@@ -1,6 +1,6 @@
 import type { OrderInput } from "@/lib/order-schema";
-import { getPackage } from "@/data/packages";
 import { getMenuItem } from "@/data/menu";
+import { priceCart } from "@/lib/cart/pricing";
 import { formatPrice } from "@/lib/utils";
 
 export interface OrderSummary {
@@ -36,31 +36,29 @@ export function buildOrderSummary(
   order: OrderInput,
   reference = generateReference(),
 ): OrderSummary {
-  const pkg = order.packageSlug === "custom" ? null : getPackage(order.packageSlug);
-  const packageName = pkg ? pkg.name : "Custom order";
-  const packagePrice = pkg ? pkg.price : null;
+  // Re-price from the catalog — client-sent prices are never trusted.
+  const { lines: priced, subtotal } = priceCart(order.cart);
 
-  // additionalItems may contain duplicate slugs — occurrence count is the
-  // quantity (see setAddOnQty in order-form.tsx) — group them here.
-  const addOnCounts = new Map<string, number>();
-  for (const slug of order.additionalItems ?? []) {
-    addOnCounts.set(slug, (addOnCounts.get(slug) ?? 0) + 1);
-  }
-  const addOnEntries = Array.from(addOnCounts.entries())
-    .map(([slug, qty]) => {
-      const item = getMenuItem(slug);
-      return item ? { name: item.name, price: item.price, qty, cost: item.cost } : null;
-    })
-    .filter((x): x is { name: string; price: number; qty: number; cost: number | undefined } => x !== null);
-  const addOns = addOnEntries.map(({ name, price, qty }) => ({ name, price, qty }));
+  // The Orders sheet, /admin and the Messenger agent all read one "Package"
+  // column plus an "Add-ons" column. A cart can hold several bundles, so
+  // bundles collapse into the Package column ("Fiesta Family x2, …") and
+  // menu items stay in Add-ons — the row shape is unchanged.
+  const bundleLines = priced.filter((l) => l.kind === "package");
+  const itemLines = priced.filter((l) => l.kind === "item");
 
-  const addOnTotal = addOns.reduce((sum, a) => sum + a.price * a.qty, 0);
-  const estimatedTotal =
-    packagePrice !== null ? packagePrice + addOnTotal : addOnTotal || null;
-  const estimatedProfit = addOnEntries.reduce(
-    (sum, a) => sum + (a.cost != null ? (a.price - a.cost) * a.qty : 0),
-    0,
-  );
+  const packageName = bundleLines.length
+    ? bundleLines.map((l) => formatAddOnLabel({ name: l.entry.name, qty: l.qty })).join(", ")
+    : "Custom order";
+  const packagePrice = bundleLines.length
+    ? bundleLines.reduce((sum, l) => sum + l.lineTotal, 0)
+    : null;
+
+  const addOns = itemLines.map((l) => ({ name: l.entry.name, price: l.entry.price, qty: l.qty }));
+  const estimatedTotal = subtotal > 0 ? subtotal : null;
+  const estimatedProfit = itemLines.reduce((sum, l) => {
+    const cost = getMenuItem(l.slug)?.cost;
+    return sum + (cost != null ? (l.entry.price - cost) * l.qty : 0);
+  }, 0);
 
   const lines: { label: string; value: string }[] = [
     { label: "Name", value: order.name },

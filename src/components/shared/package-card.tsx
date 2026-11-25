@@ -1,9 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import { Check, Users } from "lucide-react";
 import type { PackageItem } from "@/types";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { AddToCart } from "@/components/cart/add-to-cart";
 import { cn, formatPrice } from "@/lib/utils";
 
 export function PackageCard({ pkg }: { pkg: PackageItem }) {
@@ -12,13 +11,13 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
   return (
     <article
       className={cn(
-        "group relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-lg transition-all duration-300 hover:-translate-y-1 hover:shadow-xl hover:shadow-black/40",
+        "group relative flex h-full flex-col overflow-hidden rounded-3xl border bg-card shadow-lg transition-all duration-300 hover:shadow-xl hover:shadow-black/20 motion-safe:hover:-translate-y-1",
         pkg.featured ? "border-brand ring-2 ring-brand/30" : "border-border hover:border-brand/40",
       )}
     >
       {pkg.featured ? (
         <div className="bg-brand py-1.5 text-center text-xs font-bold uppercase tracking-wider text-white">
-          ⭐ Chef&apos;s Recommendation
+          Chef&apos;s recommendation
         </div>
       ) : null}
 
@@ -67,18 +66,11 @@ export function PackageCard({ pkg }: { pkg: PackageItem }) {
             ) : null}
           </div>
           {saving > 0 ? (
-            <p className="mt-1 text-xs font-bold text-green-500">You save {formatPrice(saving)}</p>
+            <p className="mt-1 text-xs font-bold text-success">You save {formatPrice(saving)}</p>
           ) : null}
         </div>
 
-        <Button
-          asChild
-          className="mt-5 w-full"
-          size="lg"
-          variant={pkg.featured ? "default" : "outline"}
-        >
-          <Link href={`/order?package=${pkg.slug}`}>Order {pkg.name}</Link>
-        </Button>
+        <AddToCart kind="package" slug={pkg.slug} variant="wide" className="mt-5" />
       </div>
     </article>
   );

@@ -46,6 +46,17 @@ const config: Config = {
           // Aligned to the same WCAG-safe dark orange used for `brand`.
           600: "#AF5308",
         },
+        // Banderitas — fiesta bunting colours. Each tags one store section
+        // (pennant, section marker, cart flag). Fills only, never body text.
+        flag: {
+          magenta: "#C2185B",
+          yellow: "#F2B200",
+          green: "#15803D",
+          blue: "#2850C8",
+          orange: "#AF5308",
+        },
+        // Savings / unlocked states. Theme-aware so it passes AA on both grounds.
+        success: "hsl(var(--success) / <alpha-value>)",
         cream: "#17130E",
         ink: "#211D17",
         primary: {
@@ -76,7 +87,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: ["var(--font-sans)", "system-ui", "sans-serif"],
-        display: ["var(--font-display)", "Georgia", "serif"],
+        display: ["var(--font-display)", "var(--font-sans)", "system-ui", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
@@ -95,12 +106,19 @@ const config: Config = {
           "0%, 100%": { transform: "translateY(0)" },
           "50%": { transform: "translateY(-8px)" },
         },
+        // A pennant catching the breeze when it is hung on the cart string.
+        "flag-hang": {
+          "0%": { transform: "translateY(-10px) rotate(-14deg)", opacity: "0" },
+          "55%": { transform: "translateY(1px) rotate(6deg)", opacity: "1" },
+          "100%": { transform: "translateY(0) rotate(0deg)", opacity: "1" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "fade-up": "fade-up 0.6s ease-out both",
         float: "float 4s ease-in-out infinite",
+        "flag-hang": "flag-hang 0.55s cubic-bezier(0.16, 1, 0.3, 1) both",
       },
     },
   },

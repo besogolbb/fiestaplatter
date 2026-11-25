@@ -32,7 +32,7 @@ export function FinalCta() {
 
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <Button asChild size="lg" variant="white" className="shadow-md">
-                <Link href="/order">
+                <Link href="/menu">
                   Order Now <ArrowRight className="h-5 w-5" />
                 </Link>
               </Button>

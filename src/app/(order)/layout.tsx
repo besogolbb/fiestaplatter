@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ChevronLeft, ShieldCheck } from "lucide-react";
 import { Logo } from "@/components/layout/logo";
-import { FloatingCta } from "@/components/layout/floating-cta";
+import { CartSheet } from "@/components/cart/cart-sheet";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
 
 /**
@@ -23,10 +23,10 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
           <div className="flex items-center gap-3">
             <ThemeToggle />
             <Link
-              href="/"
-              className="inline-flex items-center gap-1 text-sm font-semibold text-foreground/60 transition-colors hover:text-brand"
+              href="/menu"
+              className="inline-flex min-h-11 items-center gap-1 text-sm font-semibold text-foreground/70 transition-colors hover:text-brand"
             >
-              <ChevronLeft className="h-4 w-4" /> Back to site
+              <ChevronLeft className="h-4 w-4" aria-hidden /> Back to menu
             </Link>
           </div>
         </div>
@@ -39,12 +39,12 @@ export default function OrderLayout({ children }: { children: React.ReactNode })
       <footer className="border-t border-border py-6">
         <div className="container flex flex-col items-center justify-center gap-2 text-center text-xs text-foreground/70 sm:flex-row sm:gap-6">
           <span className="inline-flex items-center gap-1.5">
-            <ShieldCheck className="h-4 w-4 text-green-600" /> Secure &amp; no upfront payment
+            <ShieldCheck className="h-4 w-4 text-success" aria-hidden /> No payment on this site. We confirm on Messenger first.
           </span>
         </div>
       </footer>
 
-      <FloatingCta />
+      <CartSheet />
     </div>
   );
 }

@@ -9,6 +9,7 @@ import { siteConfig, telLink } from "@/config/site";
 import { Logo } from "@/components/layout/logo";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/shared/theme-toggle";
+import { CartButton } from "@/components/cart/cart-button";
 import { cn } from "@/lib/utils";
 
 export function Header() {
@@ -75,23 +76,28 @@ export function Header() {
               <Phone className="h-4 w-4" /> Call
             </a>
           </Button>
-          <Button asChild size="sm">
-            <Link href="/order">Order Now</Link>
-          </Button>
+          <CartButton />
+          {pathname.startsWith("/menu") ? null : (
+            <Button asChild size="sm">
+              <Link href="/menu">Order Now</Link>
+            </Button>
+          )}
         </div>
 
         {/* Mobile controls */}
         <div className="flex items-center gap-2 lg:hidden">
-          <ThemeToggle />
-          <Button asChild size="sm" className="px-4">
-            <Link href="/order">Order</Link>
-          </Button>
+          {pathname.startsWith("/menu") ? null : (
+            <Button asChild size="sm" className="h-11 px-4">
+              <Link href="/menu">Order</Link>
+            </Button>
+          )}
+          <CartButton />
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? "Close menu" : "Open menu"}
             aria-expanded={open}
-            className="flex h-10 w-10 items-center justify-center rounded-xl border border-border text-foreground"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -121,8 +127,12 @@ export function Header() {
             })}
             <div className="mt-6 flex flex-col gap-3">
               <Button asChild size="lg">
-                <Link href="/order">Order Now</Link>
+                <Link href="/menu">Order Now</Link>
               </Button>
+              <div className="flex items-center justify-between rounded-2xl border border-border px-4 py-2">
+                <span className="text-sm font-semibold">Dark mode</span>
+                <ThemeToggle />
+              </div>
               <Button asChild size="lg" variant="outline">
                 <a href={telLink}>
                   <Phone className="h-4 w-4" /> Call {siteConfig.contact.phoneDisplay}

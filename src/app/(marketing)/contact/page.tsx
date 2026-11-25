@@ -106,7 +106,7 @@ export default function ContactPage() {
                 your schedule.
               </p>
               <Button asChild className="mt-4 w-full">
-                <Link href="/order">Order Now</Link>
+                <Link href="/menu">Order Now</Link>
               </Button>
             </div>
           </div>

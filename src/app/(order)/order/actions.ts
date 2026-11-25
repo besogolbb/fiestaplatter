@@ -20,6 +20,17 @@ export interface OrderActionState {
   summary?: OrderSummary;
 }
 
+/** The cart travels as one JSON field; anything malformed becomes an empty cart and fails validation. */
+function parseCartField(value: FormDataEntryValue | null): unknown[] {
+  if (typeof value !== "string" || value.length > 10_000) return [];
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 /**
  * Server Action: validate the order, email the business (via Resend when
  * configured), and return a structured summary for the success screen +
@@ -39,8 +50,7 @@ export async function submitOrder(
     address: formData.get("address"),
     eventType: formData.get("eventType"),
     guests: formData.get("guests"),
-    packageSlug: formData.get("packageSlug"),
-    additionalItems: formData.getAll("additionalItems").map(String),
+    cart: parseCartField(formData.get("cart")),
     specialInstructions: formData.get("specialInstructions") ?? "",
     paymentMethod: formData.get("paymentMethod"),
     company: formData.get("company") ?? "", // honeypot

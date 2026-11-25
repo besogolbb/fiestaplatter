@@ -28,6 +28,8 @@
     --ring: 27 91% 54%;
 
     --radius: 0.9rem;
+
+    --success: 142 69% 28%; /* #167A3E — 5.3:1 on white */
   }
 
   .dark {
@@ -53,6 +55,8 @@
     --border: 40 8% 20%;
     --input: 40 8% 24%;
     --ring: 27 91% 54%;
+
+    --success: 142 60% 58%; /* #5BD68A on charcoal */
   }
 
   * {
@@ -68,8 +72,18 @@
     @apply bg-background text-foreground antialiased transition-colors duration-200;
     font-feature-settings: "rlig" 1, "calt" 1;
     text-rendering: optimizeLegibility;
+    caret-color: #af5308;
+    scrollbar-color: hsl(var(--foreground) / 0.25) transparent;
   }
 
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Reduced motion: drop movement, keep feedback. Keyframe motion (slides,
+     the pennant hang) collapses to its end state; colour/opacity transitions
+     stay so state changes are still visible. Components gate transform
+     transitions with `motion-safe:`. */
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
@@ -79,7 +93,6 @@
     *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
-      transition-duration: 0.01ms !important;
     }
   }
 
@@ -110,5 +123,18 @@
 
   .text-pretty {
     text-wrap: pretty;
+  }
+
+  /* Hide the scrollbar on horizontal strips that still scroll by touch/keys. */
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Prices and quantities line up as they change. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
   }
 }
