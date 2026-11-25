@@ -13,20 +13,34 @@ import { CartProvider } from "@/components/cart/cart-provider";
 // builds never depend on reaching Google Fonts — the Docker build on the VPS
 // failed when that fetch did. Latin subset, variable weight axis.
 
-// Figtree: plain, legible UI voice for forms, labels and body copy.
+// Figtree carries the whole site: bold/extra-bold for headings, dish names and
+// prices, regular for body and UI. One professional family, one download.
 const fontSans = localFont({
   src: "./fonts/figtree-latin-wght-normal.woff2",
   weight: "300 900",
   variable: "--font-sans",
   display: "swap",
+  // No auto Arial fallback here: it would sit between fontSans and fontSansExt
+  // in the stack and win for ₱. fontSansExt keeps its own fallback instead.
+  adjustFontFallback: false,
 });
 
-// Baloo 2: round, warm display face for dish names, prices and headings —
-// the hand-lettered fiesta-sign register, kept off body text.
-const fontDisplay = localFont({
-  src: "./fonts/baloo-2-latin-wght-normal.woff2",
-  weight: "400 800",
-  variable: "--font-display",
+// Latin Extended half of Figtree — carries the peso sign (₱, U+20B1), which
+// the Latin file lacks. Listed after fontSans in the stack, so the browser
+// only uses it for glyphs the Latin file doesn't have.
+const fontSansExt = localFont({
+  src: "./fonts/figtree-latin-ext-wght-normal.woff2",
+  weight: "300 900",
+  variable: "--font-sans-ext",
+  display: "swap",
+});
+
+// Manrope: geometric numerals for prices — crisp, even figures that read as
+// premium retail pricing. Numbers only; the ₱ stays in Figtree.
+const fontPrice = localFont({
+  src: "./fonts/manrope-latin-wght-normal.woff2",
+  weight: "200 800",
+  variable: "--font-price",
   display: "swap",
 });
 
@@ -94,7 +108,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html
       lang="en-PH"
-      className={`${fontSans.variable} ${fontDisplay.variable}`}
+      className={`${fontSans.variable} ${fontSansExt.variable} ${fontPrice.variable}`}
       suppressHydrationWarning
     >
       <head>

@@ -39,6 +39,7 @@ export function StoreMenu({ sectionHeading: SectionTitle = "h2" }: StoreMenuProp
     <>
       <BuntingNav sections={filtered.map((g) => g.section)} />
 
+      <div className="bg-[hsl(30_18%_92%)] dark:bg-background">
       <div className="container pb-20 pt-5">
         <div className="relative max-w-md">
           <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground/70" aria-hidden />
@@ -97,7 +98,7 @@ export function StoreMenu({ sectionHeading: SectionTitle = "h2" }: StoreMenuProp
               {g.section.id === "frozen" ? (
                 <p className="mt-1 text-sm text-foreground/70">Packed frozen, to cook at home. Add them to any order.</p>
               ) : null}
-              <div className="mt-4 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+              <div className="mt-5 grid grid-cols-2 gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-9 md:grid-cols-3 xl:grid-cols-4">
                 {g.entries.map((entry, i) => (
                   <MenuCard
                     key={`${entry.kind}:${entry.slug}`}
@@ -110,6 +111,7 @@ export function StoreMenu({ sectionHeading: SectionTitle = "h2" }: StoreMenuProp
             </section>
           ))
         )}
+      </div>
       </div>
 
       <ItemSheet entry={openEntry} onClose={() => setOpenEntry(null)} />

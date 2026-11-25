@@ -133,6 +133,66 @@
     display: none;
   }
 
+  /* Apple TV-style floating tile: layered depth shadow at rest, lifts and
+     tilts toward the pointer on hover (tilt vars set in MenuCard), and a
+     soft light follows the pointer across the photo. Keyboard focus lifts it
+     too. Reduced motion keeps the depth but drops tilt, lift and shine. */
+  .tv-tile {
+    --rx: 0deg;
+    --ry: 0deg;
+    --mx: 50%;
+    --my: 0%;
+    --tile-shadow: 20 24 32;
+    transform: perspective(900px) rotateX(var(--rx)) rotateY(var(--ry));
+    /* Large, soft drop shadow that falls well below the card — the card reads
+       as raised off the page rather than outlined on it. */
+    box-shadow:
+      0 1px 2px rgb(var(--tile-shadow) / 0.05),
+      0 10px 20px -8px rgb(var(--tile-shadow) / 0.12),
+      0 32px 56px -18px rgb(var(--tile-shadow) / 0.30);
+    transition:
+      transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .dark .tv-tile {
+    --tile-shadow: 0 0 0;
+  }
+  .tv-tile:hover,
+  .group:hover .tv-tile,
+  .tv-tile:focus-visible,
+  .tv-tile:has(:focus-visible),
+  .group:has(:focus-visible) .tv-tile {
+    transform: perspective(1100px) rotateX(var(--rx)) rotateY(var(--ry)) translateY(-8px) scale(1.02);
+    box-shadow:
+      0 2px 4px rgb(var(--tile-shadow) / 0.06),
+      0 16px 28px -10px rgb(var(--tile-shadow) / 0.16),
+      0 48px 80px -22px rgb(var(--tile-shadow) / 0.40);
+  }
+  .tv-tile-shine {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    background: radial-gradient(90% 70% at var(--mx) var(--my), rgb(255 255 255 / 0.32), transparent 60%);
+    transition: opacity 0.4s ease-out;
+  }
+  .group:hover .tv-tile-shine {
+    opacity: 1;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .tv-tile,
+    .tv-tile:hover,
+    .group:hover .tv-tile,
+    .tv-tile:focus-visible,
+    .tv-tile:has(:focus-visible),
+    .group:has(:focus-visible) .tv-tile {
+      transform: none;
+    }
+    .tv-tile-shine {
+      display: none;
+    }
+  }
+
   /* Prices and quantities line up as they change. */
   .tabular {
     font-variant-numeric: tabular-nums;

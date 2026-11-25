@@ -8,6 +8,7 @@ import { useCart } from "@/components/cart/cart-provider";
 import { QtyStepper } from "@/components/cart/qty-control";
 import { Pennant } from "@/components/cart/pennant";
 import { Sheet } from "@/components/ui/sheet";
+import { Price } from "@/components/shared/price";
 import { formatPrice } from "@/lib/utils";
 
 interface ItemSheetProps {
@@ -70,9 +71,9 @@ export function ItemSheet({ entry, onClose }: ItemSheetProps) {
                 {entry.name}
               </p>
               <div className="mt-1 flex items-baseline gap-2">
-                <span className="tabular font-display text-2xl font-extrabold text-brand">{formatPrice(entry.price)}</span>
+                <Price amount={entry.price} className="text-[1.75rem] text-brand" />
                 {entry.compareAtPrice ? (
-                  <span className="tabular text-sm text-foreground/70 line-through">{formatPrice(entry.compareAtPrice)}</span>
+                  <Price amount={entry.compareAtPrice} strike className="text-sm" />
                 ) : null}
                 {saving > 0 ? (
                   <span className="text-sm font-bold text-success">Save {formatPrice(saving)}</span>

@@ -19,10 +19,7 @@ export function FinalCta() {
           />
 
           <div className="relative mx-auto max-w-2xl">
-            <p className="text-sm font-bold uppercase tracking-wider text-accent">
-              Ready to celebrate?
-            </p>
-            <h2 className="mt-3 text-balance font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
+            <h2 className="text-balance font-display text-3xl font-extrabold leading-tight text-white sm:text-4xl">
               Ready for Your Next Celebration?
             </h2>
             <p className="mt-4 text-pretty text-lg leading-relaxed text-white">
@@ -43,7 +40,7 @@ export function FinalCta() {
               </Button>
             </div>
 
-            <p className="mt-5 text-sm text-white/70">
+            <p className="mt-5 text-sm text-white">
               {siteConfig.ordering.downpaymentNote} · Book at least{" "}
               {siteConfig.ordering.minLeadTimeHours} hours ahead.
             </p>
