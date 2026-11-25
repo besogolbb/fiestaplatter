@@ -21,6 +21,14 @@ export const siteConfig = {
     "Premium homemade Filipino party trays prepared fresh for birthdays, family gatherings, office celebrations, reunions and special occasions. Signature Chicken Embutido, jumbo siomai, pork BBQ, pancit, carbonara and more.",
   url: SITE_URL,
 
+  // ── Brand assets (public/) ─────────────────────────────────────────────
+  brand: {
+    /** Round bilao emblem, transparent PNG — header/footer mark and schema logo. */
+    logo: "/brand/fp-mark.png",
+    /** 1200×630 emblem + wordmark lockup for link previews. */
+    ogImage: "/brand/og-banner.jpg",
+  },
+
   // ── Contact ────────────────────────────────────────────────────────────
   contact: {
     phoneDisplay: "0968 570 7018",

@@ -15,7 +15,7 @@ export function pageMetadata({
   title,
   description,
   path,
-  image = "/opengraph-image",
+  image = siteConfig.brand.ogImage,
 }: PageMetaOptions): Metadata {
   const url = absoluteUrl(path);
   return {

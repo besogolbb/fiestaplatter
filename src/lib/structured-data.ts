@@ -16,7 +16,8 @@ export function localBusinessSchema() {
     url: siteConfig.url,
     telephone: contact.phoneE164,
     email: contact.email,
-    image: absoluteUrl("/opengraph-image"),
+    image: absoluteUrl(siteConfig.brand.ogImage),
+    logo: absoluteUrl(siteConfig.brand.logo),
     servesCuisine: "Filipino",
     priceRange: "₱₱",
     address: {
